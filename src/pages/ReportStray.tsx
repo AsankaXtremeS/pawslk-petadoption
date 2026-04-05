@@ -1,27 +1,67 @@
-import { useState } from 'react';
-import { useReportAnimal, useUploadPhoto } from '@/hooks/useAnimals';
+import { useState, useEffect } from 'react';
+import { useReportAnimal, useUploadPhoto, useAnimal, useUpdateAnimal } from '@/hooks/useAnimals';
+import { useUser } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaCamera as Camera, FaCat as Cat, FaDog as Dog, FaMapMarkerAlt as MapPin, FaMars as Mars, FaPaw as PawPrint, FaVenus as Venus, FaCrosshairs as Crosshairs } from 'react-icons/fa';
 
 export default function ReportStray() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('edit');
+  const isEditing = !!editId;
+
+  const { user } = useUser();
   const reportAnimal = useReportAnimal();
+  const updateAnimal = useUpdateAnimal();
   const uploadPhoto = useUploadPhoto();
+
+  // If editing, fetch existing animal data
+  const { data: existingAnimal } = useAnimal(editId || '');
+
   const [form, setForm] = useState({
     type: 'dog' as 'dog' | 'cat',
     gender: 'male' as 'male' | 'female',
     location_name: '',
     description: '',
-    reporter_name: '',
+    reporter_name: user?.name || '',
   });
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Pre-fill form data for editing
+  useEffect(() => {
+    if (isEditing && existingAnimal) {
+      // Security check: only owner can edit
+      if (user && existingAnimal.user_id !== user.id) {
+        toast.error('You can only edit your own posts.');
+        navigate('/animals');
+        return;
+      }
+      setForm({
+        type: existingAnimal.type,
+        gender: existingAnimal.gender,
+        location_name: existingAnimal.location_name,
+        description: existingAnimal.description || '',
+        reporter_name: existingAnimal.reporter_name || user?.name || '',
+      });
+      if (existingAnimal.photo_url) {
+        setPhotoPreview(existingAnimal.photo_url);
+      }
+    }
+  }, [existingAnimal, isEditing, user, navigate]);
+
+  // Auto-fill reporter name from user context
+  useEffect(() => {
+    if (user?.name && !isEditing) {
+      setForm(f => ({ ...f, reporter_name: user.name }));
+    }
+  }, [user, isEditing]);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -88,16 +128,37 @@ export default function ReportStray() {
       if (photo) {
         photo_url = await uploadPhoto.mutateAsync(photo);
       }
-      await reportAnimal.mutateAsync({
-        type: form.type,
-        gender: form.gender,
-        location_name: form.location_name.trim(),
-        description: form.description.trim() || undefined,
-        reporter_name: form.reporter_name.trim() || undefined,
-        photo_url,
-      });
-      toast.success('Thank you! You may have just saved a life.');
-      navigate('/animals');
+
+      if (isEditing && editId) {
+        // Update existing animal
+        await updateAnimal.mutateAsync({
+          id: editId,
+          updates: {
+            type: form.type,
+            gender: form.gender,
+            location_name: form.location_name.trim(),
+            description: form.description.trim() || undefined,
+            ...(photo_url ? { photo_url } : {}),
+          },
+        });
+        toast.success('Post updated successfully!');
+        navigate(`/animals/${editId}`);
+      } else {
+        // Create new animal with user_id and contact_number
+        // user.mobile already includes country code digits (e.g. "94760589218")
+        await reportAnimal.mutateAsync({
+          type: form.type,
+          gender: form.gender,
+          location_name: form.location_name.trim(),
+          description: form.description.trim() || undefined,
+          reporter_name: form.reporter_name.trim() || undefined,
+          photo_url,
+          user_id: user?.id,
+          contact_number: user?.mobile || undefined,
+        });
+        toast.success('Thank you! You may have just saved a life.');
+        navigate('/animals');
+      }
     } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
@@ -114,10 +175,12 @@ export default function ReportStray() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-2xl md:text-3xl font-heading font-bold">Report a Stray</h1>
+          <h1 className="text-2xl md:text-3xl font-heading font-bold">
+            {isEditing ? 'Edit Post' : 'Report a Stray'}
+          </h1>
           <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
             <PawPrint className="h-3.5 w-3.5 text-primary" />
-            Help us rescue a furry friend in need
+            {isEditing ? 'Update the details of your post' : 'Help us rescue a furry friend in need'}
           </p>
         </motion.div>
 
@@ -251,15 +314,19 @@ export default function ReportStray() {
             />
           </div>
 
-          {/* Name */}
+          {/* Name — auto-filled from user context */}
           <div>
-            <Label className="text-sm font-medium text-foreground">Your Name <span className="text-muted-foreground font-normal">(optional)</span></Label>
+            <Label className="text-sm font-medium text-foreground">Your Name</Label>
             <input
               placeholder="Your first name"
               value={form.reporter_name}
               onChange={e => setForm(f => ({ ...f, reporter_name: e.target.value }))}
               className="mt-2 w-full h-12 px-4 rounded-xl border bg-card text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
+              readOnly={!!user?.name}
             />
+            {user?.name && (
+              <p className="text-xs text-muted-foreground mt-1">Auto-filled from your profile</p>
+            )}
           </div>
 
           {/* Submit */}
@@ -271,7 +338,10 @@ export default function ReportStray() {
             disabled={isSubmitting}
           >
             <PawPrint className="h-5 w-5 mr-2" />
-            {isSubmitting ? 'Submitting...' : 'Submit Report'}
+            {isSubmitting
+              ? (isEditing ? 'Updating...' : 'Submitting...')
+              : (isEditing ? 'Update Post' : 'Submit Report')
+            }
           </Button>
         </motion.form>
       </div>

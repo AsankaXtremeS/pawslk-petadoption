@@ -1,9 +1,17 @@
 import { Link } from 'react-router-dom';
 import type { Animal } from '@/hooks/useAnimals';
-import { FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaHeart as Heart, FaMapMarkerAlt as MapPin } from 'react-icons/fa';
+import { FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaHeart as Heart, FaMapMarkerAlt as MapPin, FaPhoneAlt as PhoneIcon } from 'react-icons/fa';
 
 export default function AnimalCard({ animal }: { animal: Animal }) {
   const isAdopted = animal.is_adopted;
+
+  // Format contact number for display (e.g., "94760589218" → "+94 760 589 218")
+  const formatPhone = (num: string | null) => {
+    if (!num) return null;
+    // If it starts with country code digits, add + prefix
+    const withPlus = num.startsWith('+') ? num : `+${num}`;
+    return withPlus;
+  };
 
   return (
     <Link to={`/animals/${animal.id}`} className="block group">
@@ -67,6 +75,14 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
             <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
               {animal.description}
             </p>
+          )}
+
+          {/* Contact number */}
+          {animal.contact_number && !isAdopted && (
+            <div className="flex items-center gap-1.5 text-xs text-primary font-semibold">
+              <PhoneIcon className="w-3 h-3" />
+              <span>{formatPhone(animal.contact_number)}</span>
+            </div>
           )}
 
           <div className="flex items-center justify-between pt-1">

@@ -1,0 +1,162 @@
+import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import { supabase } from '@/utils/supabase';
+
+export interface UserData {
+  id: string;
+  name: string;
+  mobile: string;
+  countryCode: string;
+  language: 'en' | 'si' | 'ta';
+}
+
+interface UserContextType {
+  user: UserData | null;
+  setUser: (user: UserData | null) => void;
+  isRegistered: boolean;
+  clearUser: () => void;
+  registerUser: (data: Omit<UserData, 'id'>) => Promise<UserData>;
+  loginByMobile: (mobile: string) => Promise<UserData>;
+}
+
+const UserContext = createContext<UserContextType | undefined>(undefined);
+
+const STORAGE_KEY = 'pawslk_user';
+
+function getStoredUser(): UserData | null {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function UserProvider({ children }: { children: ReactNode }) {
+  const [user, setUserState] = useState<UserData | null>(getStoredUser);
+
+  const setUser = useCallback((userData: UserData | null) => {
+    setUserState(userData);
+    if (userData) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+    } else {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, []);
+
+  const clearUser = useCallback(() => {
+    setUserState(null);
+    localStorage.removeItem(STORAGE_KEY);
+  }, []);
+
+  /**
+   * Register a new user or return existing user if mobile already exists.
+   * Uses upsert to handle "already registered" case gracefully.
+   */
+  const registerUser = useCallback(async (data: Omit<UserData, 'id'>): Promise<UserData> => {
+    // Clean the mobile number — strip spaces
+    const cleanMobile = data.mobile.replace(/\s/g, '');
+
+    // First check if user already exists with this mobile number
+    const { data: existing, error: lookupError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('mobile', cleanMobile)
+      .maybeSingle();
+
+    if (lookupError) throw new Error('Failed to check existing user');
+
+    if (existing) {
+      // User already exists — update name/language if needed and return
+      const { data: updated, error: updateErr } = await supabase
+        .from('users')
+        .update({ name: data.name, language: data.language, country_code: data.countryCode })
+        .eq('id', existing.id)
+        .select()
+        .single();
+
+      if (updateErr) throw new Error('Failed to update user');
+
+      const userData: UserData = {
+        id: updated.id,
+        name: updated.name,
+        mobile: updated.mobile,
+        countryCode: updated.country_code,
+        language: updated.language,
+      };
+      setUser(userData);
+      return userData;
+    }
+
+    // New user — insert
+    const { data: newUser, error: insertErr } = await supabase
+      .from('users')
+      .insert({
+        name: data.name,
+        mobile: cleanMobile,
+        country_code: data.countryCode,
+        language: data.language,
+      })
+      .select()
+      .single();
+
+    if (insertErr) throw new Error('Failed to register user');
+
+    const userData: UserData = {
+      id: newUser.id,
+      name: newUser.name,
+      mobile: newUser.mobile,
+      countryCode: newUser.country_code,
+      language: newUser.language,
+    };
+    setUser(userData);
+    return userData;
+  }, [setUser]);
+
+  /**
+   * Login by mobile number — look up existing user.
+   * Throws if user not found.
+   */
+  const loginByMobile = useCallback(async (mobile: string): Promise<UserData> => {
+    const cleanMobile = mobile.replace(/\s/g, '');
+
+    const { data: existing, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('mobile', cleanMobile)
+      .maybeSingle();
+
+    if (error) throw new Error('Failed to look up user');
+    if (!existing) throw new Error('No account found with this number');
+
+    const userData: UserData = {
+      id: existing.id,
+      name: existing.name,
+      mobile: existing.mobile,
+      countryCode: existing.country_code,
+      language: existing.language,
+    };
+    setUser(userData);
+    return userData;
+  }, [setUser]);
+
+  return (
+    <UserContext.Provider value={{
+      user,
+      setUser,
+      isRegistered: !!user,
+      clearUser,
+      registerUser,
+      loginByMobile,
+    }}>
+      {children}
+    </UserContext.Provider>
+  );
+}
+
+export function useUser() {
+  const context = useContext(UserContext);
+  if (context === undefined) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
+}

@@ -10,7 +10,7 @@ type FilterChip = { key: string; label: string; icon?: React.ReactNode };
 export default function BrowseAnimals() {
   const [type, setType] = useState('all');
   const [gender, setGender] = useState('all');
-  const [status, setStatus] = useState('all');
+  const [status, setStatus] = useState('waiting'); // Default to waiting (hide adopted from main)
   const [search, setSearch] = useState('');
 
   const { data: animals, isLoading } = useAnimals({
@@ -27,9 +27,9 @@ export default function BrowseAnimals() {
   ];
 
   const statusFilters: FilterChip[] = [
-    { key: 'all', label: 'All' },
     { key: 'waiting', label: 'Waiting', icon: <HeartPulse className="h-3.5 w-3.5" /> },
     { key: 'adopted', label: 'Adopted', icon: <CheckCircle2 className="h-3.5 w-3.5" /> },
+    { key: 'all', label: 'All' },
   ];
 
   const genderFilters: FilterChip[] = [
@@ -61,8 +61,14 @@ export default function BrowseAnimals() {
     <div className="px-4 md:px-0 md:container py-6 md:py-10">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-heading font-bold">Browse Animals</h1>
-        <p className="text-sm text-muted-foreground mt-1">Find a furry friend waiting for love</p>
+        <h1 className="text-2xl md:text-3xl font-heading font-bold">
+          {status === 'adopted' ? 'Adopted Animals' : 'Browse Animals'}
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          {status === 'adopted'
+            ? 'These pets found their forever homes 🎉'
+            : 'Find a furry friend waiting for love'}
+        </p>
       </div>
 
       {/* Search */}
@@ -118,7 +124,11 @@ export default function BrowseAnimals() {
           ))}
         </div>
       ) : (
-        <EmptyState />
+        <EmptyState
+          message={status === 'adopted'
+            ? 'No adopted animals yet'
+            : undefined}
+        />
       )}
     </div>
   );

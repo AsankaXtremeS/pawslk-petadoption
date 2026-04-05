@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAnimal, useMarkAdopted } from '@/hooks/useAnimals';
+import { useUser } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
-import { FaArrowLeft as ArrowLeft, FaCalendarAlt as Calendar, FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaHeart as Heart, FaMapMarkerAlt as MapPin, FaMars as Mars, FaSearch as Search, FaRegCheckCircle as CircleCheck, FaUser as User, FaVenus as Venus } from 'react-icons/fa';
+import { FaArrowLeft as ArrowLeft, FaCalendarAlt as Calendar, FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaEdit as Edit, FaHeart as Heart, FaMapMarkerAlt as MapPin, FaMars as Mars, FaPhoneAlt as PhoneIcon, FaSearch as Search, FaRegCheckCircle as CircleCheck, FaUser as User, FaVenus as Venus } from 'react-icons/fa';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 import { useState } from 'react';
@@ -23,11 +24,19 @@ export default function AnimalDetail() {
   const { id } = useParams<{ id: string }>();
   const { data: animal, isLoading } = useAnimal(id!);
   const markAdopted = useMarkAdopted();
+  const { user } = useUser();
   const [justAdopted, setJustAdopted] = useState(false);
 
+  // Check if the current user is the post owner
+  const isOwner = user && animal && animal.user_id === user.id;
+
   const handleAdopt = async () => {
+    if (!user) {
+      toast.error('You must be logged in to do this.');
+      return;
+    }
     try {
-      await markAdopted.mutateAsync(id!);
+      await markAdopted.mutateAsync({ id: id!, userId: user.id });
       setJustAdopted(true);
       toast.success('This animal has been marked as adopted! Thank you!');
       confetti({
@@ -37,8 +46,13 @@ export default function AnimalDetail() {
         colors: ['#a855f7', '#f97316', '#4ade80', '#3b82f6'],
       });
     } catch {
-      toast.error('Something went wrong. Please try again.');
+      toast.error('Something went wrong. Only the post creator can change status.');
     }
+  };
+
+  const formatPhone = (num: string | null) => {
+    if (!num) return null;
+    return num.startsWith('+') ? num : `+${num}`;
   };
 
   if (isLoading) {
@@ -107,6 +121,15 @@ export default function AnimalDetail() {
               </span>
             )}
           </div>
+
+          {/* Owner badge */}
+          {isOwner && (
+            <div className="absolute bottom-4 right-4">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground shadow-md">
+                Your Post
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -158,33 +181,67 @@ export default function AnimalDetail() {
           )}
         </div>
 
-        {/* Adopt button */}
-        {!isAdopted && (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="success" size="lg" className="w-full text-base">
-                <CheckCircle2 className="h-5 w-5 mr-2" />
-                Mark as Adopted
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="mx-4 rounded-2xl">
-              <AlertDialogHeader>
-                <AlertDialogTitle className="font-heading inline-flex items-center gap-2">
-                  <CircleCheck className="h-5 w-5 text-success" />
-                  Confirm Adoption
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure this animal has been adopted? This will update the status for everyone to see.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleAdopt} disabled={markAdopted.isPending} className="rounded-xl bg-success hover:bg-success/90">
-                  {markAdopted.isPending ? 'Updating...' : 'Yes, Mark as Adopted!'}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+        {/* Contact number — shown for non-adopted animals to non-owners */}
+        {animal.contact_number && !isAdopted && (
+          <div className="flex items-center gap-3 p-4 rounded-xl bg-primary/5 border border-primary/10">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <PhoneIcon className="w-4 h-4 text-primary" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground font-medium">Contact to adopt</p>
+              <p className="text-sm font-bold text-foreground">{formatPhone(animal.contact_number)}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Owner actions: Edit + Mark Adopted */}
+        {isOwner && !isAdopted && (
+          <div className="space-y-3">
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full"
+              onClick={() => navigate(`/report?edit=${animal.id}`)}
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              Edit Post
+            </Button>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="success" size="lg" className="w-full text-base">
+                  <CheckCircle2 className="h-5 w-5 mr-2" />
+                  Mark as Adopted
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="mx-4 rounded-2xl">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="font-heading inline-flex items-center gap-2">
+                    <CircleCheck className="h-5 w-5 text-success" />
+                    Confirm Adoption
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure this animal has been adopted? This will move the post to the adopted section and remove it from the main view.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleAdopt} disabled={markAdopted.isPending} className="rounded-xl bg-success hover:bg-success/90">
+                    {markAdopted.isPending ? 'Updating...' : 'Yes, Mark as Adopted!'}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        )}
+
+        {/* Non-owner sees a message for waiting animals */}
+        {!isOwner && !isAdopted && animal.contact_number && (
+          <div className="bg-muted/50 rounded-2xl p-4 text-center">
+            <p className="text-sm text-muted-foreground">
+              Interested in adopting? Contact the reporter using the phone number above.
+            </p>
+          </div>
         )}
 
         {/* Adopted banner */}

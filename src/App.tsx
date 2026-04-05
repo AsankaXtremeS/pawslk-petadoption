@@ -10,28 +10,44 @@ import AnimalDetail from "./pages/AnimalDetail";
 import ReportStray from "./pages/ReportStray";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
-import { useState, useEffect } from 'react';
-import { supabase } from './utils/supabase';
+import Welcome from "./pages/Welcome";
+import { UserProvider, useUser } from "@/contexts/UserContext";
 
 const queryClient = new QueryClient();
+
+function AppContent() {
+  const { isRegistered } = useUser();
+
+  // If user hasn't registered, show the Welcome/GetStarted flow
+  if (!isRegistered) {
+    return <Welcome />;
+  }
+
+  // Once registered, show the main app
+  return (
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/animals" element={<BrowseAnimals />} />
+          <Route path="/animals/:id" element={<AnimalDetail />} />
+          <Route path="/report" element={<ReportStray />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
+  );
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/animals" element={<BrowseAnimals />} />
-            <Route path="/animals/:id" element={<AnimalDetail />} />
-            <Route path="/report" element={<ReportStray />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
-      </BrowserRouter>
+      <UserProvider>
+        <AppContent />
+      </UserProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
