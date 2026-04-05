@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/utils/supabase';
+import { supabase, createSecureClient } from '@/utils/supabase';
 import { useEffect } from 'react';
 
 export type Animal = {
@@ -13,6 +13,8 @@ export type Animal = {
   reporter_name: string | null;
   is_adopted: boolean;
   adopted_at: string | null;
+  user_id: string | null;
+  contact_number: string | null;
 };
 
 export function useAnimals(filters?: { type?: string; gender?: string; status?: string; search?: string }) {
@@ -57,6 +59,37 @@ export function useAnimals(filters?: { type?: string; gender?: string; status?: 
   });
 }
 
+/**
+ * Fetch waiting (not adopted) animals only — used for main Index view.
+ */
+export function useWaitingAnimals() {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('animals-waiting')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'animals' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['animals', 'waiting'] });
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient]);
+
+  return useQuery({
+    queryKey: ['animals', 'waiting'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('animals')
+        .select('*')
+        .eq('is_adopted', false)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as Animal[];
+    },
+  });
+}
+
 export function useAnimal(id: string) {
   return useQuery({
     queryKey: ['animals', id],
@@ -72,7 +105,16 @@ export function useAnimal(id: string) {
 export function useReportAnimal() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (animal: { type: string; gender: string; photo_url?: string; location_name: string; description?: string; reporter_name?: string }) => {
+    mutationFn: async (animal: {
+      type: string;
+      gender: string;
+      photo_url?: string;
+      location_name: string;
+      description?: string;
+      reporter_name?: string;
+      user_id?: string;
+      contact_number?: string;
+    }) => {
       const { data, error } = await supabase.from('animals').insert([animal]).select().single();
       if (error) throw error;
       return data;
@@ -81,11 +123,47 @@ export function useReportAnimal() {
   });
 }
 
+/**
+ * Update an animal post — only the owner should call this.
+ * Uses createSecureClient with user_token header for SERVER-SIDE ownership verification.
+ * The RLS policy checks x-user-token against the user's secret in the DB.
+ */
+export function useUpdateAnimal() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, userToken, updates }: {
+      id: string;
+      userToken: string;
+      updates: Partial<Pick<Animal, 'type' | 'gender' | 'photo_url' | 'location_name' | 'description'>>
+    }) => {
+      const secureClient = createSecureClient(userToken);
+      const { data, error } = await secureClient
+        .from('animals')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['animals'] }),
+  });
+}
+
+/**
+ * Mark an animal as adopted — only the post creator should call this.
+ * Uses secure client with user_token for server-side ownership check.
+ */
 export function useMarkAdopted() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from('animals').update({ is_adopted: true, adopted_at: new Date().toISOString() }).eq('id', id);
+    mutationFn: async ({ id, userId, userToken }: { id: string; userId: string; userToken: string }) => {
+      const secureClient = createSecureClient(userToken);
+      const { error } = await secureClient
+        .from('animals')
+        .update({ is_adopted: true, adopted_at: new Date().toISOString() })
+        .eq('id', id)
+        .eq('user_id', userId);
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['animals'] }),

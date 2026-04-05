@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaHome as Home, FaPaw as PawPrint, FaPlus as Plus, FaTachometerAlt as Gauge } from 'react-icons/fa';
+import { FaHome as Home, FaPaw as PawPrint, FaPlus as Plus, FaTachometerAlt as Gauge, FaSignOutAlt as LogOut, FaUser as UserIcon } from 'react-icons/fa';
+import { useUser } from '@/contexts/UserContext';
 
 const navItems = [
   { to: '/', label: 'Home', Icon: Home },
@@ -11,6 +12,7 @@ const navItems = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const { user, clearUser } = useUser();
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
@@ -21,7 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="w-7 h-7 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
               <PawPrint className="h-4 w-4 text-primary" />
             </div>
-            <span className="font-heading text-lg font-bold text-foreground">PawsLK</span>
+            <span className="font-heading text-lg font-bold text-foreground">PawConnect</span>
           </Link>
 
           <div className="flex items-center gap-1">
@@ -44,6 +46,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
+
+            {/* User info + Logout */}
+            {user && (
+              <div className="flex items-center gap-2 ml-3 pl-3 border-l border-border">
+                <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                  <UserIcon className="h-3 w-3" />
+                  {user.name.split(' ')[0]}
+                </span>
+                <button
+                  onClick={clearUser}
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+                  title="Log out"
+                >
+                  <LogOut className="h-3 w-3" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </nav>
@@ -55,8 +74,24 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="w-7 h-7 rounded bg-primary/10 flex items-center justify-center">
               <PawPrint className="h-4 w-4 text-primary" />
             </div>
-            <span className="font-heading text-lg font-bold tracking-tight">PawsLK</span>
+            <span className="font-heading text-lg font-bold tracking-tight">PawConnect</span>
           </Link>
+
+          {/* User info on mobile */}
+          {user && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground font-medium">
+                {user.name.split(' ')[0]}
+              </span>
+              <button
+                onClick={clearUser}
+                className="w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+                title="Log out"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -80,7 +115,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="container text-center text-sm text-muted-foreground space-y-2">
           <div className="flex items-center justify-center gap-2">
             <PawPrint className="h-5 w-5 text-primary" />
-            <span className="font-heading text-base font-semibold text-foreground">PawsLK</span>
+            <span className="font-heading text-base font-semibold text-foreground">PawConnect</span>
           </div>
           <p>Helping Sri Lanka's stray animals find loving homes.</p>
         </div>

@@ -1,0 +1,393 @@
+/* =============================================
+   GET STARTED PAGE — Minimalist / White + Primary (Teal)
+   Uses index.css CSS variables throughout
+   ============================================= */
+
+.get-started-page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--background));
+  position: relative;
+  overflow: hidden;
+  padding: 2rem 1.5rem;
+}
+
+/* Subtle radial glow */
+.get-started-page::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120%;
+  height: 70%;
+  background: radial-gradient(ellipse at center, hsl(var(--primary) / 0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Decorative paw prints */
+.gs-decor {
+  position: absolute;
+  color: hsl(var(--primary) / 0.06);
+  pointer-events: none;
+  z-index: 0;
+}
+.gs-decor svg { width: 100%; height: 100%; }
+.gs-decor-1 { top: 8%; left: 6%; width: 70px; height: 70px; transform: rotate(15deg); animation: gs-float-1 6s ease-in-out infinite; }
+.gs-decor-2 { bottom: 10%; right: 7%; width: 90px; height: 90px; transform: rotate(-20deg); animation: gs-float-2 7s ease-in-out infinite; }
+.gs-decor-3 { top: 40%; right: 5%; width: 50px; height: 50px; transform: rotate(45deg); animation: gs-float-1 8s ease-in-out infinite; }
+.gs-decor-4 { bottom: 30%; left: 8%; width: 45px; height: 45px; transform: rotate(-10deg); animation: gs-float-2 5s ease-in-out infinite; }
+
+@keyframes gs-float-1 {
+  0%, 100% { transform: translateY(0) rotate(15deg); }
+  50% { transform: translateY(-10px) rotate(20deg); }
+}
+@keyframes gs-float-2 {
+  0%, 100% { transform: translateY(0) rotate(-20deg); }
+  50% { transform: translateY(-8px) rotate(-15deg); }
+}
+
+/* Content */
+.gs-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 440px;
+  width: 100%;
+  gap: 1.75rem;
+}
+
+/* Logo */
+.gs-logo { display: flex; align-items: center; gap: 0.6rem; }
+.gs-logo-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: hsl(var(--primary) / 0.1);
+  display: flex; align-items: center; justify-content: center;
+  color: hsl(var(--primary));
+}
+.gs-logo-icon svg { width: 18px; height: 18px; }
+.gs-logo-text {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-weight: 800; font-size: 1.4rem;
+  color: hsl(var(--foreground));
+  letter-spacing: -0.02em;
+}
+
+/* Large paw icon centerpiece */
+.gs-paw-hero {
+  width: 100px; height: 100px;
+  border-radius: 28px;
+  background: hsl(var(--primary) / 0.08);
+  display: flex; align-items: center; justify-content: center;
+  color: hsl(var(--primary));
+  animation: gs-paw-pulse 3s ease-in-out infinite;
+}
+.gs-paw-hero svg { width: 48px; height: 48px; }
+
+@keyframes gs-paw-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 hsl(var(--primary) / 0.15); }
+  50% { transform: scale(1.04); box-shadow: 0 0 0 14px hsl(var(--primary) / 0); }
+}
+
+/* Text */
+.gs-text { text-align: center; }
+.gs-title {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-weight: 800; font-size: 2rem; line-height: 1.15;
+  color: hsl(var(--foreground));
+  margin-bottom: 0.6rem;
+}
+.gs-title-accent {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(173 58% 28%));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.gs-subtitle {
+  font-size: 0.95rem; line-height: 1.6;
+  color: hsl(var(--muted-foreground));
+  max-width: 340px; margin: 0 auto;
+}
+
+/* CTA Button */
+.gs-cta-button {
+  display: flex; align-items: center; gap: 1rem;
+  width: 100%; max-width: 340px;
+  padding: 0.9rem 1.75rem;
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(173 58% 32%));
+  border: none; border-radius: 60px; cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 6px 24px hsl(var(--primary) / 0.25);
+  font-family: 'Nunito', system-ui, sans-serif;
+  margin-top: 0.25rem;
+}
+.gs-cta-button:hover {
+  box-shadow: 0 10px 32px hsl(var(--primary) / 0.35);
+  transform: translateY(-1px);
+}
+.gs-cta-arrow {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: hsl(var(--primary-foreground));
+  display: flex; align-items: center; justify-content: center;
+  color: hsl(var(--primary)); flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+.gs-cta-button:hover .gs-cta-arrow { transform: translateX(3px); }
+.gs-cta-button span {
+  font-size: 1.05rem; font-weight: 700;
+  color: hsl(var(--primary-foreground));
+  flex: 1; text-align: center;
+}
+
+
+/* =============================================
+   REGISTER FLOW PAGE
+   ============================================= */
+.register-flow-page {
+  min-height: 100dvh;
+  background: hsl(var(--background));
+  display: flex; flex-direction: column;
+  position: relative; overflow: hidden;
+}
+
+.rf-bg-pattern {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 20%, hsl(var(--primary) / 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, hsl(var(--primary) / 0.03) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Topbar */
+.rf-topbar {
+  position: relative; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+}
+
+.rf-back-btn {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 0.75rem; border-radius: 12px;
+  background: hsl(var(--muted)); border: 1px solid hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+  font-size: 0.85rem; font-family: 'Nunito', system-ui, sans-serif;
+  font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.rf-back-btn:hover {
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+  border-color: hsl(var(--primary) / 0.2);
+}
+.rf-back-btn svg { width: 14px; height: 14px; }
+
+.rf-logo {
+  display: flex; align-items: center; gap: 0.4rem;
+  color: hsl(var(--foreground));
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-weight: 800; font-size: 1.1rem;
+  position: absolute; left: 50%; transform: translateX(-50%);
+}
+.rf-logo svg { width: 18px; height: 18px; color: hsl(var(--primary)); }
+
+.rf-steps { display: flex; align-items: center; gap: 0.25rem; }
+.rf-step-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: hsl(var(--muted)); transition: all 0.3s ease;
+}
+.rf-step-dot.active {
+  background: hsl(var(--primary));
+  box-shadow: 0 0 10px hsl(var(--primary) / 0.3);
+}
+.rf-step-line {
+  width: 24px; height: 2px;
+  background: hsl(var(--border)); border-radius: 1px;
+}
+
+/* Content */
+.rf-content {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  padding: 2rem 1.5rem; max-width: 480px; width: 100%; margin: 0 auto;
+  overflow: hidden;
+}
+.rf-step-content { display: flex; flex-direction: column; gap: 2rem; }
+
+/* Step Header */
+.rf-step-header { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.rf-step-icon {
+  width: 56px; height: 56px; border-radius: 16px;
+  background: hsl(var(--primary) / 0.1);
+  border: 1px solid hsl(var(--primary) / 0.15);
+  display: flex; align-items: center; justify-content: center;
+  color: hsl(var(--primary));
+}
+.rf-step-icon svg { width: 24px; height: 24px; }
+.rf-step-title {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-weight: 800; font-size: 1.6rem;
+  color: hsl(var(--foreground)); letter-spacing: -0.01em;
+}
+
+/* Language Grid */
+.rf-lang-grid { display: flex; flex-direction: column; gap: 0.75rem; }
+.rf-lang-card {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1.25rem 1.5rem; border-radius: 16px;
+  background: hsl(var(--card));
+  border: 1.5px solid hsl(var(--border));
+  cursor: pointer; transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  font-family: 'Nunito', system-ui, sans-serif;
+  text-align: left; width: 100%;
+}
+.rf-lang-card:hover {
+  border-color: hsl(var(--primary) / 0.3);
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.08);
+}
+.rf-lang-card.selected {
+  background: hsl(var(--primary) / 0.05);
+  border-color: hsl(var(--primary));
+  box-shadow: 0 4px 20px hsl(var(--primary) / 0.12);
+}
+.rf-lang-flag { font-size: 1.6rem; flex-shrink: 0; }
+.rf-lang-native { font-size: 1.1rem; font-weight: 700; color: hsl(var(--foreground)); flex: 1; }
+.rf-lang-label { font-size: 0.85rem; color: hsl(var(--muted-foreground)); font-weight: 500; }
+
+/* Form */
+.rf-form { display: flex; flex-direction: column; gap: 1.5rem; }
+.rf-field { display: flex; flex-direction: column; gap: 0.5rem; }
+.rf-label {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 0.85rem; font-weight: 700;
+  color: hsl(var(--muted-foreground));
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+.rf-input-wrapper {
+  display: flex; align-items: center; border-radius: 14px;
+  background: hsl(var(--card));
+  border: 1.5px solid hsl(var(--border));
+  transition: all 0.25s ease; overflow: hidden;
+}
+.rf-input-wrapper:focus-within {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+}
+.rf-input-wrapper.error {
+  border-color: hsl(var(--destructive));
+  box-shadow: 0 0 0 3px hsl(var(--destructive) / 0.1);
+}
+
+.rf-input {
+  flex: 1; padding: 1rem 1.25rem; background: transparent;
+  border: none; outline: none;
+  color: hsl(var(--foreground));
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 1rem; font-weight: 500;
+}
+.rf-input::placeholder { color: hsl(var(--muted-foreground) / 0.5); }
+
+.rf-mobile-input { display: flex; align-items: center; }
+.rf-country-code {
+  padding: 1rem 0.5rem 1rem 1rem; background: transparent;
+  border: none; color: hsl(var(--foreground));
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 0.95rem; font-weight: 600;
+  cursor: pointer; outline: none;
+  appearance: none; -webkit-appearance: none; min-width: 95px;
+}
+.rf-country-code option { background: hsl(var(--background)); color: hsl(var(--foreground)); }
+.rf-input-divider { width: 1px; height: 28px; background: hsl(var(--border)); flex-shrink: 0; }
+
+.rf-error {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 0.8rem; color: hsl(var(--destructive));
+  font-weight: 600; padding-left: 0.25rem;
+}
+
+/* Submit Button */
+.rf-submit-btn {
+  display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+  width: 100%; padding: 1rem; border-radius: 14px;
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(173 58% 32%));
+  border: none; color: hsl(var(--primary-foreground));
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 1rem; font-weight: 700; cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  margin-top: 0.5rem;
+  box-shadow: 0 4px 20px hsl(var(--primary) / 0.25);
+}
+.rf-submit-btn:hover {
+  box-shadow: 0 6px 28px hsl(var(--primary) / 0.35);
+  transform: translateY(-1px);
+}
+.rf-submit-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+.rf-submit-btn svg { width: 16px; height: 16px; }
+
+.rf-spinner {
+  width: 22px; height: 22px;
+  border: 2.5px solid hsl(var(--primary-foreground) / 0.3);
+  border-top-color: hsl(var(--primary-foreground));
+  border-radius: 50%; animation: rf-spin 0.6s linear infinite;
+}
+@keyframes rf-spin { to { transform: rotate(360deg); } }
+
+
+/* =============================================
+   DESKTOP
+   ============================================= */
+@media (min-width: 768px) {
+  .gs-content { max-width: 500px; gap: 2rem; }
+  .gs-paw-hero { width: 120px; height: 120px; border-radius: 32px; }
+  .gs-paw-hero svg { width: 56px; height: 56px; }
+  .gs-title { font-size: 2.75rem; }
+  .gs-subtitle { font-size: 1.05rem; max-width: 400px; }
+  .gs-cta-button { max-width: 360px; padding: 1rem 2rem; }
+  .gs-decor-1 { width: 100px; height: 100px; }
+  .gs-decor-2 { width: 120px; height: 120px; }
+
+  .rf-content { max-width: 520px; padding: 2rem 2rem 3rem; }
+  .rf-lang-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .rf-lang-card {
+    flex-direction: column; align-items: center; text-align: center;
+    padding: 2rem 1rem; gap: 0.75rem;
+  }
+  .rf-lang-flag { font-size: 2rem; }
+  .rf-step-title { font-size: 2rem; }
+}
+
+/* =============================================
+   SMALL SCREENS
+   ============================================= */
+@media (max-width: 380px) {
+  .gs-title { font-size: 1.65rem; }
+  .gs-subtitle { font-size: 0.85rem; }
+  .gs-paw-hero { width: 80px; height: 80px; }
+  .gs-paw-hero svg { width: 38px; height: 38px; }
+  .gs-cta-button { padding: 0.8rem 1.5rem; }
+  .gs-cta-arrow { width: 36px; height: 36px; }
+  .gs-cta-button span { font-size: 1rem; }
+}
+
+/* Login link below Get Started */
+.gs-login-link {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 0.85rem;
+  color: hsl(var(--muted-foreground));
+}
+.gs-login-btn {
+  background: none;
+  border: none;
+  color: hsl(var(--primary));
+  font-weight: 700;
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.2s;
+}
+.gs-login-btn:hover {
+  color: hsl(173 58% 28%);
+}

@@ -1,14 +1,14 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useAnimals, useAnimalStats } from '@/hooks/useAnimals';
+import { useWaitingAnimals, useAnimalStats } from '@/hooks/useAnimals';
 import AnimalCard from '@/components/AnimalCard';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import EmptyState from '@/components/EmptyState';
 import { motion } from 'framer-motion';
-import { FaArrowRight as ArrowRight, FaBullhorn as Megaphone, FaHeart as HeartPulse, FaPaw as PawPrint, FaUsers as Users, FaPlus as Plus } from 'react-icons/fa';
+import { FaArrowRight as ArrowRight, FaHeart as HeartPulse, FaPaw as PawPrint, FaUsers as Users, FaPlus as Plus } from 'react-icons/fa';
 
 export default function Index() {
-  const { data: animals, isLoading } = useAnimals();
+  const { data: animals, isLoading } = useWaitingAnimals();
   const { data: stats } = useAnimalStats();
   const recentAnimals = animals?.slice(0, 6) || [];
 
@@ -124,7 +124,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Recent Animals */}
+      {/* Recent Animals (Waiting only) */}
       <section className="px-4 md:px-0 md:container pb-12 pt-6 md:pt-16">
         <div className="flex items-end justify-between mb-6">
           <div>
