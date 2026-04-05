@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/utils/supabase';
+import { supabase, createSecureClient } from '@/utils/supabase';
 import { useEffect } from 'react';
 
 export type Animal = {
@@ -125,16 +125,19 @@ export function useReportAnimal() {
 
 /**
  * Update an animal post — only the owner should call this.
- * Ownership is verified client-side (UI hides button) and server-side (RLS).
+ * Uses createSecureClient with user_token header for SERVER-SIDE ownership verification.
+ * The RLS policy checks x-user-token against the user's secret in the DB.
  */
 export function useUpdateAnimal() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, updates }: {
+    mutationFn: async ({ id, userToken, updates }: {
       id: string;
+      userToken: string;
       updates: Partial<Pick<Animal, 'type' | 'gender' | 'photo_url' | 'location_name' | 'description'>>
     }) => {
-      const { data, error } = await supabase
+      const secureClient = createSecureClient(userToken);
+      const { data, error } = await secureClient
         .from('animals')
         .update(updates)
         .eq('id', id)
@@ -149,16 +152,18 @@ export function useUpdateAnimal() {
 
 /**
  * Mark an animal as adopted — only the post creator should call this.
+ * Uses secure client with user_token for server-side ownership check.
  */
 export function useMarkAdopted() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, userId }: { id: string; userId: string }) => {
-      const { error } = await supabase
+    mutationFn: async ({ id, userId, userToken }: { id: string; userId: string; userToken: string }) => {
+      const secureClient = createSecureClient(userToken);
+      const { error } = await secureClient
         .from('animals')
         .update({ is_adopted: true, adopted_at: new Date().toISOString() })
         .eq('id', id)
-        .eq('user_id', userId); // Double-check ownership
+        .eq('user_id', userId);
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['animals'] }),

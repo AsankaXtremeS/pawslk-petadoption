@@ -36,7 +36,7 @@ export default function AnimalDetail() {
       return;
     }
     try {
-      await markAdopted.mutateAsync({ id: id!, userId: user.id });
+      await markAdopted.mutateAsync({ id: id!, userId: user.id, userToken: user.userToken });
       setJustAdopted(true);
       toast.success('This animal has been marked as adopted! Thank you!');
       confetti({

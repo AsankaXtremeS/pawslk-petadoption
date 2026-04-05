@@ -133,6 +133,7 @@ export default function ReportStray() {
         // Update existing animal
         await updateAnimal.mutateAsync({
           id: editId,
+          userToken: user?.userToken || '',
           updates: {
             type: form.type,
             gender: form.gender,
