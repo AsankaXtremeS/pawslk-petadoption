@@ -15,7 +15,7 @@ export default function Index() {
   return (
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden min-h-[100dvh] md:min-h-[calc(100vh-4rem)] flex flex-col justify-center pb-40 md:py-16 bg-background">
+      <section className="relative overflow-hidden min-h-[85dvh] md:min-h-[calc(100vh-4rem)] flex flex-col justify-center pb-20 md:pb-0 md:py-16 bg-background">
         {/* Decorative Paws */}
         <div className="absolute top-20 left-[10%] opacity-5 text-primary rotate-12 -z-0">
           <PawPrint size={120} />
@@ -29,8 +29,7 @@ export default function Index() {
 
 
         <div className="relative z-10 px-5 md:px-0 md:container flex-1 flex flex-col justify-center">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4 lg:gap-8 w-full mt-8 md:mt-0">
-            
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-4 lg:gap-8 w-full mt-8 md:mt-0">
             {/* Left side for desktop: Text content */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -58,14 +57,14 @@ export default function Index() {
                 Report, rescue, and adopt stray dogs and cats across Sri Lanka. Your action changes a life.
               </p>
 
-              <div className="flex flex-row gap-3 md:gap-2 justify-center md:justify-start items-center w-full">
-                <Link to="/animals" className="flex-1 sm:w-auto">
+              <div className="flex flex-row gap-3 md:gap-4 justify-center md:justify-start items-center w-full">
+                <Link to="/animals" className="flex-1 sm:flex-none">
                   <Button variant="hero" size="lg" className="w-full sm:w-auto px-4 md:px-8 py-6 md:py-7 text-sm md:text-base">
                     <PawPrint className="mr-1.5 h-4 w-4 md:h-5 md:w-5" />
                     Animals
                   </Button>
                 </Link>
-                <Link to="/report" className="flex-1 sm:w-auto">
+                <Link to="/report" className="flex-1 sm:flex-none">
                   <Button variant="hero-outline" size="lg" className="w-full sm:w-auto px-4 md:px-8 py-6 md:py-7 text-sm md:text-base">
                     <Plus className="mr-1.5 h-4 w-4 md:h-5 md:w-5" />
                     Add New
@@ -79,12 +78,12 @@ export default function Index() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className="w-4/5 sm:w-2/3 md:w-auto md:flex-shrink-0 flex justify-center py-4 md:py-0"
+              className="w-4/5 sm:w-2/3 md:w-auto md:flex-shrink-0 flex justify-center py-2 sm:py-3 md:py-0"
             >
               <img 
                 src="/HeroImage.png" 
                 alt="Happy stray pet" 
-                className="object-contain max-h-[250px] md:max-h-[350px] lg:max-h-[450px] animate-float drop-shadow-2xl"
+                className="object-contain max-h-[220px] sm:max-h-[250px] md:max-h-[350px] lg:max-h-[450px] animate-float drop-shadow-2xl"
               />
             </motion.div>
 
@@ -126,7 +125,7 @@ export default function Index() {
       </section>
 
       {/* Recent Animals */}
-      <section className="px-4 md:px-0 md:container pb-12 pt-8 md:pt-16">
+      <section className="px-4 md:px-0 md:container pb-12 pt-6 md:pt-16">
         <div className="flex items-end justify-between mb-6">
           <div>
             <h2 className="text-2xl md:text-3xl font-heading font-bold">Recently Reported</h2>
