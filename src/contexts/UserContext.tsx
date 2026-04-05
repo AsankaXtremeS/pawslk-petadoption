@@ -22,7 +22,7 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-const STORAGE_KEY = 'pawslk_user';
+const STORAGE_KEY = 'PawConnect_user';
 
 function getStoredUser(): UserData | null {
   try {

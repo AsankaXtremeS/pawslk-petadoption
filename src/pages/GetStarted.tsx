@@ -23,10 +23,7 @@ export default function GetStarted({ onGetStarted, onLogin }: GetStartedProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="gs-logo-icon">
-            <PawPrint />
-          </div>
-          <span className="gs-logo-text">PawsLK</span>
+          <span className="gs-logo-text">PawConnect</span>
         </motion.div>
 
         {/* Large paw icon as the visual centerpiece */}

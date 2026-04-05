@@ -23,7 +23,7 @@ export default function Welcome() {
   const handleRegisterComplete = async (userData: { name: string; mobile: string; countryCode: string; language: 'en' | 'si' | 'ta' }) => {
     try {
       await registerUser(userData);
-      toast.success('Welcome to PawsLK! 🐾');
+      toast.success('Welcome to PawConnect! 🐾');
     } catch (err: any) {
       toast.error(err.message || 'Registration failed. Please try again.');
     }

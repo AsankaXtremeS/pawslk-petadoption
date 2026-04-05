@@ -65,7 +65,7 @@ export default function LoginFlow({ onComplete, onBack, onRegister }: LoginFlowP
 
         <div className="rf-logo">
           <PawPrint />
-          <span>PawsLK</span>
+          <span>PawConnect</span>
         </div>
 
         <div style={{ width: 40 }} />

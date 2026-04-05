@@ -180,7 +180,7 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
 
         <div className="rf-logo">
           <PawPrint />
-          <span>PawsLK</span>
+          <span>PawConnect</span>
         </div>
 
         {/* Step indicator */}

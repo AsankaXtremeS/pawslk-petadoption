@@ -23,7 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="w-7 h-7 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
               <PawPrint className="h-4 w-4 text-primary" />
             </div>
-            <span className="font-heading text-lg font-bold text-foreground">PawsLK</span>
+            <span className="font-heading text-lg font-bold text-foreground">PawConnect</span>
           </Link>
 
           <div className="flex items-center gap-1">
@@ -74,7 +74,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="w-7 h-7 rounded bg-primary/10 flex items-center justify-center">
               <PawPrint className="h-4 w-4 text-primary" />
             </div>
-            <span className="font-heading text-lg font-bold tracking-tight">PawsLK</span>
+            <span className="font-heading text-lg font-bold tracking-tight">PawConnect</span>
           </Link>
 
           {/* User info on mobile */}
@@ -115,7 +115,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="container text-center text-sm text-muted-foreground space-y-2">
           <div className="flex items-center justify-center gap-2">
             <PawPrint className="h-5 w-5 text-primary" />
-            <span className="font-heading text-base font-semibold text-foreground">PawsLK</span>
+            <span className="font-heading text-base font-semibold text-foreground">PawConnect</span>
           </div>
           <p>Helping Sri Lanka's stray animals find loving homes.</p>
         </div>
