@@ -2,11 +2,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAnimal, useMarkAdopted } from '@/hooks/useAnimals';
 import { useUser } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
-import { FaArrowLeft as ArrowLeft, FaCalendarAlt as Calendar, FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaEdit as Edit, FaHeart as Heart, FaMapMarkerAlt as MapPin, FaMars as Mars, FaPhoneAlt as PhoneIcon, FaSearch as Search, FaRegCheckCircle as CircleCheck, FaUser as User, FaVenus as Venus } from 'react-icons/fa';
+import { FaArrowLeft as ArrowLeft, FaCalendarAlt as Calendar, FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaEdit as Edit, FaHeart as Heart, FaMapMarkerAlt as MapPin, FaMars as Mars, FaPhoneAlt as PhoneIcon, FaSearch as Search, FaRegCheckCircle as CircleCheck, FaUser as User, FaVenus as Venus, FaChevronLeft as ChevronLeft, FaChevronRight as ChevronRight } from 'react-icons/fa';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useCallback, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { parsePhotoUrls } from '@/utils/imageCompression';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,9 +27,59 @@ export default function AnimalDetail() {
   const markAdopted = useMarkAdopted();
   const { user } = useUser();
   const [justAdopted, setJustAdopted] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   // Check if the current user is the post owner
   const isOwner = user && animal && animal.user_id === user.id;
+
+  // Parse multiple photo URLs
+  const photoUrls = animal ? parsePhotoUrls(animal.photo_url) : [];
+  const hasMultiplePhotos = photoUrls.length > 1;
+
+  // Touch/swipe handling
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && currentSlide < photoUrls.length - 1) {
+      setCurrentSlide(prev => prev + 1);
+    }
+    if (isRightSwipe && currentSlide > 0) {
+      setCurrentSlide(prev => prev - 1);
+    }
+  };
+
+  const goToSlide = useCallback((index: number) => {
+    setCurrentSlide(index);
+  }, []);
+
+  const goNext = useCallback(() => {
+    setCurrentSlide(prev => (prev < photoUrls.length - 1 ? prev + 1 : 0));
+  }, [photoUrls.length]);
+
+  const goPrev = useCallback(() => {
+    setCurrentSlide(prev => (prev > 0 ? prev - 1 : photoUrls.length - 1));
+  }, [photoUrls.length]);
+
+  // Reset slide when animal changes
+  useEffect(() => {
+    setCurrentSlide(0);
+  }, [animal?.id]);
 
   const handleAdopt = async () => {
     if (!user) {
@@ -84,15 +135,77 @@ export default function AnimalDetail() {
 
   return (
     <div className="pb-6">
-      {/* Full-width image on mobile */}
+      {/* Photo carousel section */}
       <div className="relative">
         <div className={`relative aspect-[4/3] md:aspect-video bg-muted overflow-hidden md:max-w-2xl md:mx-auto md:mt-6 md:rounded-2xl ${isAdopted ? 'md:ring-4 md:ring-success/20' : ''}`}>
-          {animal.photo_url ? (
-            <img
-              src={animal.photo_url}
-              alt={`${animal.type} at ${animal.location_name}`}
-              className="w-full h-full object-cover"
-            />
+          {photoUrls.length > 0 ? (
+            <div
+              className="relative w-full h-full"
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
+            >
+              {/* Slides */}
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={currentSlide}
+                  src={photoUrls[currentSlide]}
+                  alt={`${animal.type} at ${animal.location_name} - Photo ${currentSlide + 1}`}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                />
+              </AnimatePresence>
+
+              {/* Desktop arrow navigation */}
+              {hasMultiplePhotos && (
+                <>
+                  <button
+                    onClick={goPrev}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/50 transition-colors z-10 hidden md:flex"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={goNext}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/50 transition-colors z-10 hidden md:flex"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </>
+              )}
+
+              {/* Dot indicators */}
+              {hasMultiplePhotos && (
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+                  {photoUrls.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToSlide(index)}
+                      className={`
+                        rounded-full transition-all duration-300
+                        ${currentSlide === index
+                          ? 'w-6 h-2 bg-white shadow-md'
+                          : 'w-2 h-2 bg-white/50 hover:bg-white/80'
+                        }
+                      `}
+                      aria-label={`Go to photo ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Photo counter */}
+              {hasMultiplePhotos && (
+                <div className="absolute top-4 left-14 md:left-4 z-10">
+                  <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-black/40 text-white backdrop-blur-sm">
+                    {currentSlide + 1} / {photoUrls.length}
+                  </span>
+                </div>
+              )}
+            </div>
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-lavender to-peach">
               <TypeIcon className="h-16 w-16 text-primary/30" />
@@ -102,13 +215,13 @@ export default function AnimalDetail() {
           {/* Back button */}
           <button
             onClick={() => navigate(-1)}
-            className="absolute top-4 left-4 w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/50 transition-colors"
+            className="absolute top-4 left-4 w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/50 transition-colors z-20"
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
 
           {/* Status badge */}
-          <div className="absolute top-4 right-4">
+          <div className="absolute top-4 right-4 z-20">
             {isAdopted ? (
               <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold bg-success text-success-foreground shadow-md">
                 <CheckCircle2 className="h-4 w-4" />
@@ -124,7 +237,7 @@ export default function AnimalDetail() {
 
           {/* Owner badge */}
           {isOwner && (
-            <div className="absolute bottom-4 right-4">
+            <div className="absolute bottom-3 right-4 z-20">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground shadow-md">
                 Your Post
               </span>

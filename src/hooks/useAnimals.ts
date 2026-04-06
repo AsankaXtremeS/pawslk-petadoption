@@ -173,9 +173,21 @@ export function useMarkAdopted() {
 export function useUploadPhoto() {
   return useMutation({
     mutationFn: async (file: File) => {
-      const ext = file.name.split('.').pop();
-      const fileName = `${crypto.randomUUID()}.${ext}`;
-      const { error } = await supabase.storage.from('animal-photos').upload(fileName, file);
+      // Dynamically import to keep the main bundle lean
+      const { compressImage, validateImageSize } = await import('@/utils/imageCompression');
+
+      // Validate size (max 5MB)
+      if (!validateImageSize(file)) {
+        throw new Error('Image is too large. Maximum size is 5MB.');
+      }
+
+      // Compress to WebP (~300KB, max 1200px)
+      const compressed = await compressImage(file);
+
+      const fileName = `${crypto.randomUUID()}.webp`;
+      const { error } = await supabase.storage.from('animal-photos').upload(fileName, compressed, {
+        contentType: 'image/webp',
+      });
       if (error) throw error;
       const { data: urlData } = supabase.storage.from('animal-photos').getPublicUrl(fileName);
       return urlData.publicUrl;

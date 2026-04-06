@@ -5,8 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { FaCamera as Camera, FaCat as Cat, FaDog as Dog, FaMapMarkerAlt as MapPin, FaMars as Mars, FaPaw as PawPrint, FaVenus as Venus, FaCrosshairs as Crosshairs } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaCamera as Camera, FaCat as Cat, FaDog as Dog, FaMapMarkerAlt as MapPin, FaMars as Mars, FaPaw as PawPrint, FaVenus as Venus, FaCrosshairs as Crosshairs, FaTimes as X, FaPlus as Plus } from 'react-icons/fa';
+import { parsePhotoUrls } from '@/utils/imageCompression';
+
+const MAX_PHOTOS = 3;
 
 export default function ReportStray() {
   const navigate = useNavigate();
@@ -29,10 +32,13 @@ export default function ReportStray() {
     description: '',
     reporter_name: user?.name || '',
   });
-  const [photo, setPhoto] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  // Up to 3 photos — each slot has a File (new) or null (empty/existing)
+  const [photos, setPhotos] = useState<(File | null)[]>([null, null, null]);
+  const [photoPreviews, setPhotoPreviews] = useState<(string | null)[]>([null, null, null]);
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Track existing URLs (for edit mode — slots that haven't changed)
+  const [existingUrls, setExistingUrls] = useState<(string | null)[]>([null, null, null]);
 
   // Pre-fill form data for editing
   useEffect(() => {
@@ -51,7 +57,17 @@ export default function ReportStray() {
         reporter_name: existingAnimal.reporter_name || user?.name || '',
       });
       if (existingAnimal.photo_url) {
-        setPhotoPreview(existingAnimal.photo_url);
+        const urls = parsePhotoUrls(existingAnimal.photo_url);
+        const previews: (string | null)[] = [null, null, null];
+        const existing: (string | null)[] = [null, null, null];
+        urls.forEach((url, i) => {
+          if (i < MAX_PHOTOS) {
+            previews[i] = url;
+            existing[i] = url;
+          }
+        });
+        setPhotoPreviews(previews);
+        setExistingUrls(existing);
       }
     }
   }, [existingAnimal, isEditing, user, navigate]);
@@ -63,12 +79,43 @@ export default function ReportStray() {
     }
   }, [user, isEditing]);
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setPhoto(file);
-      setPhotoPreview(URL.createObjectURL(file));
+    if (!file) return;
+
+    // Validate size
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image too large. Maximum size is 5MB.');
+      return;
     }
+
+    const newPhotos = [...photos];
+    const newPreviews = [...photoPreviews];
+    const newExisting = [...existingUrls];
+    newPhotos[index] = file;
+    newPreviews[index] = URL.createObjectURL(file);
+    newExisting[index] = null; // Override existing URL
+    setPhotos(newPhotos);
+    setPhotoPreviews(newPreviews);
+    setExistingUrls(newExisting);
+  };
+
+  const removePhoto = (index: number) => {
+    const newPhotos = [...photos];
+    const newPreviews = [...photoPreviews];
+    const newExisting = [...existingUrls];
+
+    // Revoke object URL if it was a local file preview
+    if (newPreviews[index] && newPhotos[index]) {
+      URL.revokeObjectURL(newPreviews[index]!);
+    }
+
+    newPhotos[index] = null;
+    newPreviews[index] = null;
+    newExisting[index] = null;
+    setPhotos(newPhotos);
+    setPhotoPreviews(newPreviews);
+    setExistingUrls(newExisting);
   };
 
   const getNearestLocation = async (lat: number, lng: number) => {
@@ -122,12 +169,31 @@ export default function ReportStray() {
       toast.error("Please enter a location name");
       return;
     }
+
+    // At least one photo required
+    const hasAnyPhoto = photos.some(p => p !== null) || existingUrls.some(u => u !== null);
+    if (!hasAnyPhoto) {
+      toast.error("Please upload at least one photo");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      let photo_url: string | undefined;
-      if (photo) {
-        photo_url = await uploadPhoto.mutateAsync(photo);
+      // Upload all new photos & collect final URLs
+      const finalUrls: string[] = [];
+      for (let i = 0; i < MAX_PHOTOS; i++) {
+        if (photos[i]) {
+          // New file — upload with compression
+          const url = await uploadPhoto.mutateAsync(photos[i]!);
+          finalUrls.push(url);
+        } else if (existingUrls[i]) {
+          // Keep existing URL
+          finalUrls.push(existingUrls[i]!);
+        }
       }
+
+      // Store as JSON array
+      const photo_url = finalUrls.length > 0 ? JSON.stringify(finalUrls) : undefined;
 
       if (isEditing && editId) {
         // Update existing animal
@@ -146,7 +212,6 @@ export default function ReportStray() {
         navigate(`/animals/${editId}`);
       } else {
         // Create new animal with user_id and contact_number
-        // user.mobile already includes country code digits (e.g. "94760589218")
         await reportAnimal.mutateAsync({
           type: form.type,
           gender: form.gender,
@@ -166,6 +231,9 @@ export default function ReportStray() {
       setIsSubmitting(false);
     }
   };
+
+  // Count filled slots
+  const filledCount = photoPreviews.filter(p => p !== null).length;
 
   return (
     <div className="px-4 md:px-0 md:container py-6 md:py-10">
@@ -192,39 +260,102 @@ export default function ReportStray() {
           onSubmit={handleSubmit}
           className="space-y-6"
         >
-          {/* Photo upload */}
+          {/* Photo upload — 3 slots */}
           <div>
-            <Label className="text-sm font-medium text-foreground">Photo</Label>
-            <div
-              className="mt-2 border-2 border-dashed border-border rounded-2xl overflow-hidden cursor-pointer hover:border-primary/40 transition-colors bg-muted/30"
-              onClick={() => document.getElementById('photo-input')?.click()}
-            >
-              {photoPreview ? (
-                <div className="relative aspect-[4/3]">
-                  <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center">
-                    <span className="opacity-0 hover:opacity-100 text-white text-sm font-medium bg-black/50 px-4 py-2 rounded-full">
-                      Change photo
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                  <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-3">
-                    <Camera className="w-6 h-6 text-primary/60" />
-                  </div>
-                  <p className="text-sm font-medium text-foreground/70">Tap to upload a photo</p>
-                  <p className="text-xs text-muted-foreground mt-1">JPG, PNG up to 5MB</p>
-                </div>
-              )}
-              <input
-                id="photo-input"
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoChange}
-                className="hidden"
-              />
+            <div className="flex items-center justify-between mb-2">
+              <Label className="text-sm font-medium text-foreground">Photos</Label>
+              <span className="text-xs text-muted-foreground">{filledCount}/{MAX_PHOTOS}</span>
             </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              {[0, 1, 2].map((index) => (
+                <div key={index} className="relative">
+                  <input
+                    id={`photo-input-${index}`}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handlePhotoChange(index, e)}
+                    className="hidden"
+                  />
+                  <AnimatePresence mode="wait">
+                    {photoPreviews[index] ? (
+                      <motion.div
+                        key="preview"
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        className="relative aspect-square rounded-2xl overflow-hidden border-2 border-primary/20 group cursor-pointer"
+                        onClick={() => document.getElementById(`photo-input-${index}`)?.click()}
+                      >
+                        <img
+                          src={photoPreviews[index]!}
+                          alt={`Photo ${index + 1}`}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        {/* Primary badge */}
+                        {index === 0 && (
+                          <div className="absolute top-1.5 left-1.5">
+                            <span className="px-2 py-0.5 text-[10px] font-bold bg-primary text-primary-foreground rounded-full shadow-sm">
+                              Cover
+                            </span>
+                          </div>
+                        )}
+                        {/* Hover overlay */}
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                        {/* Remove button */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removePhoto(index);
+                          }}
+                          className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="empty"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className={`
+                          aspect-square rounded-2xl border-2 border-dashed cursor-pointer
+                          flex flex-col items-center justify-center gap-1.5
+                          transition-all duration-200
+                          ${index === 0
+                            ? 'border-primary/30 bg-primary/5 hover:border-primary/50 hover:bg-primary/10'
+                            : 'border-border bg-muted/30 hover:border-primary/30 hover:bg-muted/50'
+                          }
+                        `}
+                        onClick={() => document.getElementById(`photo-input-${index}`)?.click()}
+                      >
+                        {index === 0 ? (
+                          <>
+                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                              <Camera className="w-5 h-5 text-primary/60" />
+                            </div>
+                            <span className="text-[11px] font-medium text-primary/70">Cover photo</span>
+                          </>
+                        ) : (
+                          <>
+                            <div className="w-8 h-8 rounded-lg bg-muted/60 flex items-center justify-center">
+                              <Plus className="w-4 h-4 text-muted-foreground/60" />
+                            </div>
+                            <span className="text-[10px] text-muted-foreground">Photo {index + 1}</span>
+                          </>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-xs text-muted-foreground mt-2">
+              Upload up to 3 photos • JPG, PNG up to 5MB each • Auto-compressed to WebP
+            </p>
           </div>
 
           {/* Animal type */}
@@ -340,7 +471,7 @@ export default function ReportStray() {
           >
             <PawPrint className="h-5 w-5 mr-2" />
             {isSubmitting
-              ? (isEditing ? 'Updating...' : 'Submitting...')
+              ? (isEditing ? 'Updating...' : 'Compressing & uploading...')
               : (isEditing ? 'Update Post' : 'Submit Report')
             }
           </Button>
