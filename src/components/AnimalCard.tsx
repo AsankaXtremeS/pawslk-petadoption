@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
 import type { Animal } from '@/hooks/useAnimals';
 import { FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaHeart as Heart, FaMapMarkerAlt as MapPin, FaPhoneAlt as PhoneIcon } from 'react-icons/fa';
+import { getPrimaryPhotoUrl } from '@/utils/imageCompression';
 
 export default function AnimalCard({ animal }: { animal: Animal }) {
   const isAdopted = animal.is_adopted;
+  const primaryPhoto = getPrimaryPhotoUrl(animal.photo_url);
 
   // Format contact number for display (e.g., "94760589218" → "+94 760 589 218")
   const formatPhone = (num: string | null) => {
@@ -22,9 +24,9 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
       `}>
         {/* Image */}
         <div className="relative aspect-[4/3] bg-muted overflow-hidden">
-          {animal.photo_url ? (
+          {primaryPhoto ? (
             <img
-              src={animal.photo_url}
+              src={primaryPhoto}
               alt={`${animal.type} at ${animal.location_name}`}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               loading="lazy"
