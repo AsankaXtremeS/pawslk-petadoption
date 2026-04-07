@@ -327,7 +327,7 @@ export default function AnimalDetail() {
                   Mark as Adopted
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="mx-4 rounded-2xl">
+              <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
                 <AlertDialogHeader>
                   <AlertDialogTitle className="font-heading inline-flex items-center gap-2">
                     <CircleCheck className="h-5 w-5 text-success" />

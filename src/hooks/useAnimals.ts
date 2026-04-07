@@ -245,3 +245,56 @@ export function useAnimalStats() {
     },
   });
 }
+
+/**
+ * Fetch all animals belonging to a specific user.
+ * Used on the Profile page to show the user's listings.
+ */
+export function useUserAnimals(userId: string | undefined) {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (!userId) return;
+    const channel = supabase
+      .channel('user-animals-' + userId)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'animals' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['animals', 'user', userId] });
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient, userId]);
+
+  return useQuery({
+    queryKey: ['animals', 'user', userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('animals')
+        .select('*')
+        .eq('user_id', userId!)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as Animal[];
+    },
+    enabled: !!userId,
+  });
+}
+
+/**
+ * Delete an animal post — only the owner can do this.
+ * Uses createSecureClient with user_token header for SERVER-SIDE ownership verification.
+ */
+export function useDeleteAnimal() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, userToken }: { id: string; userToken: string }) => {
+      const secureClient = createSecureClient(userToken);
+      const { error } = await secureClient
+        .from('animals')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['animals'] }),
+  });
+}
