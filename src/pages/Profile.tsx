@@ -122,7 +122,7 @@ function ProfileListingCard({ animal, onDelete }: { animal: Animal; onDelete: (i
               <Trash className="w-3 h-3" />
             </button>
           </AlertDialogTrigger>
-          <AlertDialogContent className="mx-4 rounded-2xl">
+          <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
             <AlertDialogHeader>
               <AlertDialogTitle className="font-heading inline-flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-destructive" />
@@ -478,7 +478,7 @@ export default function Profile() {
                   <span>{deletingAccount ? 'Deleting...' : 'Delete Account'}</span>
                 </button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="mx-4 rounded-2xl">
+              <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
                 <AlertDialogHeader>
                   <AlertDialogTitle className="font-heading inline-flex items-center gap-2 text-destructive">
                     <AlertTriangle className="h-5 w-5" />
