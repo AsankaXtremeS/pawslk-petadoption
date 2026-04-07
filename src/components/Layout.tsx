@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaHome as Home, FaPaw as PawPrint, FaPlus as Plus, FaTachometerAlt as Gauge, FaSignOutAlt as LogOut, FaUser as UserIcon } from 'react-icons/fa';
+import { FaHome as Home, FaPaw as PawPrint, FaPlus as Plus, FaTachometerAlt as Gauge, FaSignOutAlt as LogOut, FaUser as UserIcon, FaSignInAlt as LogIn, FaUserPlus as UserPlus } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
 
 const navItems = [
@@ -12,7 +12,7 @@ const navItems = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-  const { user, clearUser } = useUser();
+  const { user, isRegistered, clearUser } = useUser();
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
@@ -47,13 +47,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               );
             })}
 
-            {/* User info + Logout */}
-            {user && (
+            {/* Auth section */}
+            {isRegistered && user ? (
               <div className="flex items-center gap-2 ml-3 pl-3 border-l border-border">
-                <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                  <UserIcon className="h-3 w-3" />
+                <Link
+                  to="/profile"
+                  className="text-xs text-muted-foreground font-medium flex items-center gap-1 hover:text-primary transition-colors"
+                >
+                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
                   {user.name.split(' ')[0]}
-                </span>
+                </Link>
                 <button
                   onClick={clearUser}
                   className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
@@ -61,6 +66,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 >
                   <LogOut className="h-3 w-3" />
                 </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 ml-3 pl-3 border-l border-border">
+                <Link to="/login">
+                  <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-200">
+                    <LogIn className="h-3.5 w-3.5" />
+                    Log In
+                  </button>
+                </Link>
+                <Link to="/register">
+                  <button className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 transition-all duration-200">
+                    <UserPlus className="h-3.5 w-3.5" />
+                    Sign Up
+                  </button>
+                </Link>
               </div>
             )}
           </div>
@@ -77,19 +97,28 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <span className="font-heading text-lg font-bold tracking-tight">PawConnect</span>
           </Link>
 
-          {/* User info on mobile */}
-          {user && (
+          {/* Auth section — mobile */}
+          {isRegistered && user ? (
             <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground font-medium">
-                {user.name.split(' ')[0]}
-              </span>
-              <button
-                onClick={clearUser}
-                className="w-7 h-7 rounded-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
-                title="Log out"
+              <Link
+                to="/profile"
+                className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold"
               >
-                <LogOut className="h-3.5 w-3.5" />
-              </button>
+                {user.name.charAt(0).toUpperCase()}
+              </Link>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5">
+              <Link to="/login">
+                <button className="px-2.5 py-1 rounded-full text-[11px] font-medium text-muted-foreground hover:text-foreground transition-colors">
+                  Log In
+                </button>
+              </Link>
+              <Link to="/register">
+                <button className="px-3 py-1 rounded-full text-[11px] font-semibold bg-primary text-primary-foreground shadow-sm">
+                  Sign Up
+                </button>
+              </Link>
             </div>
           )}
         </div>
@@ -157,6 +186,27 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </Link>
             );
           })}
+
+          {/* Profile tab */}
+          <Link to={isRegistered ? '/profile' : '/login'} className="flex flex-col items-center py-1 px-3">
+            <div className={`
+              w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200
+              ${location.pathname === '/profile' ? 'bg-primary/10' : ''}
+            `}>
+              {isRegistered && user ? (
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-colors
+                  ${location.pathname === '/profile' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}
+                `}>
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+              ) : (
+                <UserIcon className={`h-5 w-5 transition-colors ${location.pathname === '/profile' ? 'text-primary' : 'text-muted-foreground'}`} />
+              )}
+            </div>
+            <span className={`text-[10px] mt-0.5 font-medium ${location.pathname === '/profile' ? 'text-primary' : 'text-muted-foreground'}`}>
+              {isRegistered ? 'Profile' : 'Login'}
+            </span>
+          </Link>
         </div>
       </div>
     </div>

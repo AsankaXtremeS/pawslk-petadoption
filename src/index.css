@@ -506,3 +506,597 @@
 .browse-results-bar {
   margin-bottom: 1rem;
 }
+
+
+/* Profile Header */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.profile-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(173 58% 28%));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px hsl(var(--primary) / 0.25);
+}
+.profile-avatar span {
+  color: hsl(var(--primary-foreground));
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.profile-header-info {
+  flex: 1;
+  min-width: 0;
+}
+.profile-name {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: hsl(var(--foreground));
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.profile-phone {
+  font-size: 0.85rem;
+  color: hsl(var(--muted-foreground));
+  font-weight: 500;
+  margin-top: 0.15rem;
+}
+
+/* Quick Stats */
+.profile-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 1rem;
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 1rem;
+  margin-bottom: 1.5rem;
+}
+.profile-stat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+}
+.profile-stat-value {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: hsl(var(--foreground));
+  line-height: 1.2;
+}
+.profile-stat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.profile-stat-divider {
+  width: 1px;
+  height: 32px;
+  background: hsl(var(--border));
+  flex-shrink: 0;
+}
+
+/* Sections */
+.profile-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Profile Card (settings block) */
+.profile-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.profile-card:hover {
+  box-shadow: 0 2px 12px hsl(var(--foreground) / 0.04);
+}
+
+.profile-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+
+.profile-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: hsl(var(--primary) / 0.08);
+  border: 1px solid hsl(var(--primary) / 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: hsl(var(--primary));
+}
+.profile-card-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.profile-card-title-group {
+  flex: 1;
+  min-width: 0;
+}
+.profile-card-title {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+.profile-card-sub {
+  font-size: 0.8rem;
+  color: hsl(var(--muted-foreground));
+  font-weight: 500;
+  margin-top: 0.1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-card-action {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: none;
+  background: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.profile-card-action:hover {
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+}
+.profile-card-action svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Card expand section */
+.profile-card-expand {
+  overflow: hidden;
+  border-top: 1px solid hsl(var(--border));
+}
+
+/* Phone edit */
+.profile-phone-edit {
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.profile-save-btn {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(173 58% 32%));
+  color: hsl(var(--primary-foreground));
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 12px hsl(var(--primary) / 0.2);
+}
+.profile-save-btn:hover {
+  box-shadow: 0 4px 20px hsl(var(--primary) / 0.3);
+  transform: translateY(-1px);
+}
+.profile-save-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Language selector */
+.profile-lang-grid {
+  padding: 0.75rem 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.profile-lang-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1.5px solid hsl(var(--border));
+  background: hsl(var(--background));
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Nunito', system-ui, sans-serif;
+  width: 100%;
+  text-align: left;
+}
+.profile-lang-option:hover {
+  border-color: hsl(var(--primary) / 0.3);
+  background: hsl(var(--primary) / 0.03);
+}
+.profile-lang-option.active {
+  border-color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.06);
+}
+.profile-lang-flag {
+  font-size: 1.2rem;
+}
+.profile-lang-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  flex: 1;
+}
+.profile-lang-check {
+  width: 16px;
+  height: 16px;
+  color: hsl(var(--primary));
+}
+
+/* Add new listing button */
+.profile-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 10px;
+  background: hsl(var(--primary) / 0.08);
+  color: hsl(var(--primary));
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.profile-add-btn:hover {
+  background: hsl(var(--primary) / 0.15);
+}
+.profile-add-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Listings */
+.profile-listings {
+  padding: 0 1.25rem 1.25rem;
+}
+
+.profile-listings-loading,
+.profile-listings-empty {
+  padding: 1.5rem 0;
+}
+
+.profile-listing-skeleton {
+  height: 72px;
+  background: hsl(var(--muted) / 0.5);
+  border-radius: 12px;
+  animation: pulse 1.5s ease-in-out infinite;
+  margin-bottom: 0.5rem;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.profile-listings-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+.profile-empty-icon {
+  width: 32px;
+  height: 32px;
+  color: hsl(var(--muted-foreground) / 0.3);
+}
+.profile-listings-empty p {
+  font-size: 0.85rem;
+  color: hsl(var(--muted-foreground));
+  font-weight: 500;
+}
+.profile-empty-cta {
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Listing Card */
+.profile-listing-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 14px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  margin-bottom: 0.5rem;
+  transition: all 0.15s;
+}
+.profile-listing-card:hover {
+  border-color: hsl(var(--primary) / 0.2);
+  box-shadow: 0 2px 8px hsl(var(--foreground) / 0.04);
+}
+
+.profile-listing-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+  background: hsl(var(--muted));
+}
+.profile-listing-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s;
+}
+.profile-listing-thumb:hover img {
+  transform: scale(1.05);
+}
+.profile-listing-no-photo {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, hsl(var(--lavender)), hsl(var(--peach)));
+  color: hsl(var(--primary) / 0.3);
+}
+.profile-listing-no-photo svg {
+  width: 24px;
+  height: 24px;
+}
+
+.profile-listing-status {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 5px;
+  border-radius: 6px;
+  font-size: 0.55rem;
+  font-weight: 700;
+  font-family: 'Nunito', system-ui, sans-serif;
+}
+.profile-listing-status svg {
+  width: 7px;
+  height: 7px;
+}
+.profile-listing-status.adopted {
+  background: hsl(var(--success));
+  color: hsl(var(--success-foreground));
+}
+.profile-listing-status.waiting {
+  background: hsl(var(--waiting));
+  color: hsl(var(--waiting-foreground));
+}
+
+.profile-listing-info {
+  flex: 1;
+  min-width: 0;
+}
+.profile-listing-title {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.profile-listing-type-icon {
+  width: 14px;
+  height: 14px;
+  color: hsl(var(--primary) / 0.6);
+  flex-shrink: 0;
+}
+.profile-listing-date {
+  font-size: 0.7rem;
+  color: hsl(var(--muted-foreground));
+  font-weight: 500;
+  margin-top: 0.1rem;
+}
+
+/* Listing action buttons */
+.profile-listing-actions {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+.profile-listing-action-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: transparent;
+}
+.profile-listing-action-btn svg {
+  width: 12px;
+  height: 12px;
+}
+.profile-listing-action-btn.view {
+  color: hsl(var(--muted-foreground));
+}
+.profile-listing-action-btn.view:hover {
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+}
+.profile-listing-action-btn.edit {
+  color: hsl(var(--muted-foreground));
+}
+.profile-listing-action-btn.edit:hover {
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+}
+.profile-listing-action-btn.delete {
+  color: hsl(var(--muted-foreground));
+}
+.profile-listing-action-btn.delete:hover {
+  background: hsl(var(--destructive) / 0.1);
+  color: hsl(var(--destructive));
+}
+
+/* Logout button */
+.profile-logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.875rem;
+  border-radius: 1rem;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  color: hsl(var(--muted-foreground));
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.profile-logout-btn:hover {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+.profile-logout-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Danger Zone */
+.profile-danger-zone {
+  background: hsl(var(--destructive) / 0.03);
+  border: 1px solid hsl(var(--destructive) / 0.15);
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+.profile-danger-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: hsl(var(--destructive));
+  margin-bottom: 0.5rem;
+}
+.profile-danger-title svg {
+  width: 16px;
+  height: 16px;
+}
+.profile-danger-desc {
+  font-size: 0.8rem;
+  color: hsl(var(--muted-foreground));
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.profile-delete-account-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1.5px solid hsl(var(--destructive) / 0.3);
+  background: transparent;
+  color: hsl(var(--destructive));
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.profile-delete-account-btn:hover {
+  background: hsl(var(--destructive) / 0.08);
+  border-color: hsl(var(--destructive));
+}
+.profile-delete-account-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.profile-delete-account-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ---- Mobile responsive adjustments ---- */
+@media (max-width: 380px) {
+  .profile-avatar {
+    width: 48px;
+    height: 48px;
+  }
+  .profile-avatar span {
+    font-size: 1.2rem;
+  }
+  .profile-name {
+    font-size: 1.25rem;
+  }
+  .profile-stat-value {
+    font-size: 1.25rem;
+  }
+  .profile-listing-thumb {
+    width: 48px;
+    height: 48px;
+  }
+  .profile-listing-title {
+    font-size: 0.8rem;
+  }
+  .profile-listing-action-btn {
+    width: 26px;
+    height: 26px;
+  }
+  .profile-listing-action-btn svg {
+    width: 10px;
+    height: 10px;
+  }
+}
