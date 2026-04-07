@@ -45,12 +45,12 @@ const i18n: Record<Language, {
     name: 'Full Name',
     namePlaceholder: 'Enter your name',
     mobile: 'Mobile Number',
-    mobilePlaceholder: '7X XXX XXXX',
+    mobilePlaceholder: '7XXXXXXXX',
     continue: 'Create Account',
     back: 'Back',
     nameRequired: 'Name is required',
     mobileRequired: 'Mobile number is required',
-    mobileInvalid: 'Enter a valid mobile number',
+    mobileInvalid: 'Enter a valid 9-digit mobile number (e.g. 76xxxxxxx)',
   },
   si: {
     chooseLanguage: 'ඔබේ භාෂාව තෝරන්න',
@@ -58,12 +58,12 @@ const i18n: Record<Language, {
     name: 'සම්පූර්ණ නම',
     namePlaceholder: 'ඔබේ නම ඇතුළත් කරන්න',
     mobile: 'ජංගම දුරකථන අංකය',
-    mobilePlaceholder: '7X XXX XXXX',
+    mobilePlaceholder: '7XXXXXXXX',
     continue: 'ගිණුම සාදන්න',
     back: 'ආපසු',
     nameRequired: 'නම අවශ්‍යයි',
     mobileRequired: 'ජංගම අංකය අවශ්‍යයි',
-    mobileInvalid: 'වලංගු ජංගම අංකයක් ඇතුළත් කරන්න',
+    mobileInvalid: 'වලංගු අංක 9ක ජංගම දුරකථන අංකයක් ඇතුළත් කරන්න',
   },
   ta: {
     chooseLanguage: 'உங்கள் மொழியை தேர்ந்தெடுக்கவும்',
@@ -71,12 +71,12 @@ const i18n: Record<Language, {
     name: 'முழு பெயர்',
     namePlaceholder: 'உங்கள் பெயரை உள்ளிடவும்',
     mobile: 'கைபேசி எண்',
-    mobilePlaceholder: '7X XXX XXXX',
+    mobilePlaceholder: '7XXXXXXXX',
     continue: 'கணக்கை உருவாக்கு',
     back: 'பின்னால்',
     nameRequired: 'பெயர் தேவை',
     mobileRequired: 'கைபேசி எண் தேவை',
-    mobileInvalid: 'சரியான கைபேசி எண்ணை உள்ளிடவும்',
+    mobileInvalid: 'சரியான 9-இலக்க கைபேசி எண்ணை உள்ளிடவும்',
   },
 };
 
@@ -140,9 +140,14 @@ export default function RegisterPage() {
       newErrors.name = t.nameRequired;
     }
 
-    if (!mobile.trim()) {
+    let cleanMobile = mobile.replace(/[^0-9]/g, '');
+    if (cleanMobile.startsWith('0')) {
+      cleanMobile = cleanMobile.substring(1);
+    }
+
+    if (!cleanMobile) {
       newErrors.mobile = t.mobileRequired;
-    } else if (!/^[0-9]{7,15}$/.test(mobile.replace(/\s/g, ''))) {
+    } else if (!/^[0-9]{9}$/.test(cleanMobile)) {
       newErrors.mobile = t.mobileInvalid;
     }
 
@@ -155,7 +160,9 @@ export default function RegisterPage() {
 
     setIsSubmitting(true);
 
-    const cleanMobile = mobile.replace(/\s/g, '');
+    let cleanMobile = mobile.replace(/[^0-9]/g, '');
+    if (cleanMobile.startsWith('0')) cleanMobile = cleanMobile.substring(1);
+    
     const fullMobile = countryCode.replace('+', '') + cleanMobile;
 
     try {

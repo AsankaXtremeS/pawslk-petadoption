@@ -36,13 +36,19 @@ export default function LoginPage() {
   }
 
   const handleSubmit = async () => {
-    const clean = mobile.replace(/\s/g, '');
+    let clean = mobile.replace(/[^0-9]/g, '');
+    
+    // Automatically strip leading zero if present (e.g. 076... -> 76...)
+    if (clean.startsWith('0')) {
+      clean = clean.substring(1);
+    }
+    
     if (!clean) {
       setError('Mobile number is required');
       return;
     }
-    if (!/^[0-9]{7,15}$/.test(clean)) {
-      setError('Enter a valid mobile number');
+    if (!/^[0-9]{9}$/.test(clean)) {
+      setError('Enter a valid 9-digit mobile number (e.g. 76xxxxxxx)');
       return;
     }
 

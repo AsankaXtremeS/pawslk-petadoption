@@ -176,9 +176,13 @@ export default function Profile() {
   };
 
   const handlePhoneSave = async () => {
-    const clean = newMobile.replace(/\s/g, '');
+    let clean = newMobile.replace(/[^0-9]/g, '');
+    if (clean.startsWith('0')) {
+      clean = clean.substring(1);
+    }
+    
     if (!clean) { toast.error('Phone number is required'); return; }
-    if (!/^[0-9]{7,15}$/.test(clean)) { toast.error('Enter a valid phone number'); return; }
+    if (!/^[0-9]{9}$/.test(clean)) { toast.error('Enter a valid 9-digit phone number'); return; }
 
     setPhoneSaving(true);
     try {
