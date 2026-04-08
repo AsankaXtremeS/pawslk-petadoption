@@ -15,6 +15,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import NotFound from "./pages/NotFound";
 import { UserProvider } from "@/contexts/UserContext";
+import { Analytics } from "@vercel/analytics/react";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +75,7 @@ const App = () => (
       <Sonner />
       <UserProvider>
         <AppContent />
+        <Analytics />
       </UserProvider>
     </TooltipProvider>
   </QueryClientProvider>
