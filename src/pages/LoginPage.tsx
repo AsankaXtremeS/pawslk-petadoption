@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaPhone as Phone } from 'react-icons/fa';
+import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaPhone as Phone, FaLock as Lock, FaEye as Eye, FaEyeSlash as EyeSlash } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
@@ -26,6 +26,8 @@ export default function LoginPage() {
 
   const [countryCode, setCountryCode] = useState('+94');
   const [mobile, setMobile] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -51,13 +53,17 @@ export default function LoginPage() {
       setError('Enter a valid 9-digit mobile number (e.g. 76xxxxxxx)');
       return;
     }
+    if (!password) {
+      setError('Password is required');
+      return;
+    }
 
     setIsSubmitting(true);
     setError('');
 
     const fullMobile = countryCode.replace('+', '') + clean;
     try {
-      await loginByMobile(fullMobile);
+      await loginByMobile(fullMobile, password);
       toast.success('Welcome back! 🐾');
       navigate(decodeURIComponent(redirectTo), { replace: true });
     } catch (err: any) {
@@ -144,7 +150,7 @@ export default function LoginPage() {
                   }}
                 />
               </div>
-              {error && (
+                  {error && (
                 <motion.p
                   className="rf-error"
                   initial={{ opacity: 0, y: -5 }}
@@ -153,6 +159,41 @@ export default function LoginPage() {
                   {error}
                 </motion.p>
               )}
+            </div>
+
+            {/* Password Input */}
+            <div className="rf-field">
+              <label className="rf-label" htmlFor="login-password">Password</label>
+              <div className={`rf-input-wrapper ${error === 'Password is required' || error === 'Invalid password' ? 'error' : ''}`} style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ paddingLeft: '1rem', color: 'hsl(var(--muted-foreground))' }}>
+                  <Lock className="w-4 h-4" />
+                </div>
+                <input
+                  id="login-password"
+                  type={showPassword ? "text" : "password"}
+                  className="rf-input"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (error) setError('');
+                  }}
+                  autoComplete="current-password"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSubmit();
+                  }}
+                  style={{ paddingLeft: '0.75rem' }}
+                />
+                <button
+                  type="button"
+                  className="rf-toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label="Toggle password visibility"
+                  style={{ padding: '0 1rem', color: 'hsl(var(--muted-foreground))', display: 'flex', alignItems: 'center', background: 'none', border: 'none', cursor: 'pointer' }}
+                >
+                  {showPassword ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             {/* Submit Button */}

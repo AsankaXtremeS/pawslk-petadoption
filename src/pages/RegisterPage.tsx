@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaGlobeAsia as Globe } from 'react-icons/fa';
+import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaGlobeAsia as Globe, FaLock as Lock, FaEye as Eye, FaEyeSlash as EyeSlash } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 
@@ -33,11 +33,15 @@ const i18n: Record<Language, {
   namePlaceholder: string;
   mobile: string;
   mobilePlaceholder: string;
+  password: string;
+  passwordPlaceholder: string;
   continue: string;
   back: string;
   nameRequired: string;
   mobileRequired: string;
   mobileInvalid: string;
+  passwordRequired: string;
+  passwordLength: string;
 }> = {
   en: {
     chooseLanguage: 'Choose your language',
@@ -46,11 +50,15 @@ const i18n: Record<Language, {
     namePlaceholder: 'Enter your name',
     mobile: 'Mobile Number',
     mobilePlaceholder: '7XXXXXXXX',
+    password: 'Password',
+    passwordPlaceholder: 'Create a password',
     continue: 'Create Account',
     back: 'Back',
     nameRequired: 'Name is required',
     mobileRequired: 'Mobile number is required',
     mobileInvalid: 'Enter a valid 9-digit mobile number (e.g. 76xxxxxxx)',
+    passwordRequired: 'Password is required',
+    passwordLength: 'Password must be at least 6 characters',
   },
   si: {
     chooseLanguage: 'ඔබේ භාෂාව තෝරන්න',
@@ -59,11 +67,15 @@ const i18n: Record<Language, {
     namePlaceholder: 'ඔබේ නම ඇතුළත් කරන්න',
     mobile: 'ජංගම දුරකථන අංකය',
     mobilePlaceholder: '7XXXXXXXX',
+    password: 'මුරපදය',
+    passwordPlaceholder: 'මුරපදයක් සාදන්න',
     continue: 'ගිණුම සාදන්න',
     back: 'ආපසු',
     nameRequired: 'නම අවශ්‍යයි',
     mobileRequired: 'ජංගම අංකය අවශ්‍යයි',
     mobileInvalid: 'වලංගු අංක 9ක ජංගම දුරකථන අංකයක් ඇතුළත් කරන්න',
+    passwordRequired: 'මුරපදයක් අවශ්‍යයි',
+    passwordLength: 'මුරපදය අවම වශයෙන් අක්ෂර 6ක් විය යුතුය',
   },
   ta: {
     chooseLanguage: 'உங்கள் மொழியை தேர்ந்தெடுக்கவும்',
@@ -72,11 +84,15 @@ const i18n: Record<Language, {
     namePlaceholder: 'உங்கள் பெயரை உள்ளிடவும்',
     mobile: 'கைபேசி எண்',
     mobilePlaceholder: '7XXXXXXXX',
+    password: 'கடவுச்சொல்',
+    passwordPlaceholder: 'கடவுச்சொல்லை உருவாக்கவும்',
     continue: 'கணக்கை உருவாக்கு',
     back: 'பின்னால்',
     nameRequired: 'பெயர் தேவை',
     mobileRequired: 'கைபேசி எண் தேவை',
     mobileInvalid: 'சரியான 9-இலக்க கைபேசி எண்ணை உள்ளிடவும்',
+    passwordRequired: 'கடவுச்சொல் தேவை',
+    passwordLength: 'கடவுச்சொல் குறைந்தபட்சம் 6 எழுத்துக்களாக இருக்க வேண்டும்',
   },
 };
 
@@ -107,7 +123,9 @@ export default function RegisterPage() {
   const [name, setName] = useState('');
   const [countryCode, setCountryCode] = useState('+94');
   const [mobile, setMobile] = useState('');
-  const [errors, setErrors] = useState<{ name?: string; mobile?: string }>({});
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<{ name?: string; mobile?: string; password?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // If already logged in, redirect immediately
@@ -134,7 +152,7 @@ export default function RegisterPage() {
   };
 
   const validateForm = (): boolean => {
-    const newErrors: { name?: string; mobile?: string } = {};
+    const newErrors: { name?: string; mobile?: string; password?: string } = {};
 
     if (!name.trim()) {
       newErrors.name = t.nameRequired;
@@ -149,6 +167,12 @@ export default function RegisterPage() {
       newErrors.mobile = t.mobileRequired;
     } else if (!/^[0-9]{9}$/.test(cleanMobile)) {
       newErrors.mobile = t.mobileInvalid;
+    }
+
+    if (!password) {
+      newErrors.password = t.passwordRequired;
+    } else if (password.length < 6) {
+      newErrors.password = t.passwordLength;
     }
 
     setErrors(newErrors);
@@ -169,6 +193,7 @@ export default function RegisterPage() {
       await registerUser({
         name: name.trim(),
         mobile: fullMobile,
+        password,
         countryCode,
         language: selectedLang,
       });
@@ -334,6 +359,47 @@ export default function RegisterPage() {
                       animate={{ opacity: 1, y: 0 }}
                     >
                       {errors.mobile}
+                    </motion.p>
+                  )}
+                </div>
+
+                {/* Password Input */}
+                <div className="rf-field">
+                  <label className="rf-label" htmlFor="register-password">{t.password}</label>
+                  <div className={`rf-input-wrapper ${errors.password ? 'error' : ''}`} style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ paddingLeft: '1rem', color: 'hsl(var(--muted-foreground))' }}>
+                      <Lock className="w-4 h-4" />
+                    </div>
+                    <input
+                      id="register-password"
+                      type={showPassword ? "text" : "password"}
+                      className="rf-input"
+                      placeholder={t.passwordPlaceholder}
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        if (errors.password) setErrors(prev => ({ ...prev, password: undefined }));
+                      }}
+                      autoComplete="new-password"
+                      style={{ paddingLeft: '0.75rem' }}
+                    />
+                    <button
+                      type="button"
+                      className="rf-toggle-password"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label="Toggle password visibility"
+                      style={{ padding: '0 1rem', color: 'hsl(var(--muted-foreground))', display: 'flex', alignItems: 'center', background: 'none', border: 'none', cursor: 'pointer' }}
+                    >
+                      {showPassword ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <motion.p
+                      className="rf-error"
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                    >
+                      {errors.password}
                     </motion.p>
                   )}
                 </div>

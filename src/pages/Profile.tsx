@@ -17,6 +17,8 @@ import {
   FaCat as Cat,
   FaDog as Dog,
   FaChevronRight as ChevronRight,
+  FaLock as Lock,
+  FaEyeSlash as EyeSlash,
 } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
 import { useUserAnimals, useDeleteAnimal, type Animal } from '@/hooks/useAnimals';
@@ -150,7 +152,7 @@ function ProfileListingCard({ animal, onDelete }: { animal: Animal; onDelete: (i
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { user, updateUser, deleteAccount, clearUser } = useUser();
+  const { user, updateUser, deleteAccount, clearUser, updatePassword } = useUser();
   const { data: userAnimals, isLoading: animalsLoading } = useUserAnimals(user?.id);
   const deleteAnimal = useDeleteAnimal();
 
@@ -162,6 +164,13 @@ export default function Profile() {
 
   const [editingLang, setEditingLang] = useState(false);
   const [langSaving, setLangSaving] = useState(false);
+
+  const [editingPassword, setEditingPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [passwordSaving, setPasswordSaving] = useState(false);
 
   const [deletingAccount, setDeletingAccount] = useState(false);
 
@@ -209,6 +218,24 @@ export default function Profile() {
       toast.error(friendlyError(err, 'Failed to update language.'));
     } finally {
       setLangSaving(false);
+    }
+  };
+
+  const handlePasswordSave = async () => {
+    if (!currentPassword) { toast.error('Current password is required'); return; }
+    if (newPassword.length < 6) { toast.error('New password must be at least 6 characters'); return; }
+    
+    setPasswordSaving(true);
+    try {
+      await updatePassword(currentPassword, newPassword);
+      toast.success('Password updated successfully!');
+      setEditingPassword(false);
+      setCurrentPassword('');
+      setNewPassword('');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update password.');
+    } finally {
+      setPasswordSaving(false);
     }
   };
 
@@ -391,6 +418,92 @@ export default function Profile() {
                         {user.language === lang.code && <CheckCircle className="w-4 h-4 text-primary" />}
                       </button>
                     ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* Password */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }} className="bg-card border rounded-2xl overflow-hidden transition-shadow hover:shadow-sm">
+            <div className="flex items-center gap-3 p-4">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center text-primary flex-shrink-0">
+                <Lock className="w-[18px] h-[18px]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-bold">Password</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">Update your password</p>
+              </div>
+              <button
+                className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all flex-shrink-0"
+                onClick={() => {
+                  setEditingPassword(!editingPassword);
+                  setCurrentPassword('');
+                  setNewPassword('');
+                }}
+              >
+                {editingPassword ? <X className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+
+            <AnimatePresence>
+              {editingPassword && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden border-t"
+                >
+                  <div className="p-4 flex flex-col gap-3">
+                    <div className="rf-field">
+                      <label className="text-xs font-bold text-muted-foreground mb-1 block">Current Password</label>
+                      <div className="rf-input-wrapper flex items-center">
+                        <input
+                          type={showCurrentPassword ? "text" : "password"}
+                          className="rf-input w-full bg-transparent border-none focus:outline-none"
+                          placeholder="Enter current password"
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                          style={{ paddingLeft: '0.75rem' }}
+                        />
+                        <button
+                          type="button"
+                          className="p-2 text-muted-foreground"
+                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                        >
+                          {showCurrentPassword ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="rf-field">
+                      <label className="text-xs font-bold text-muted-foreground mb-1 block border-t pt-2">New Password</label>
+                      <div className="rf-input-wrapper flex items-center">
+                        <input
+                          type={showNewPassword ? "text" : "password"}
+                          className="rf-input w-full bg-transparent border-none focus:outline-none"
+                          placeholder="At least 6 characters"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          style={{ paddingLeft: '0.75rem' }}
+                        />
+                        <button
+                          type="button"
+                          className="p-2 text-muted-foreground"
+                          onClick={() => setShowNewPassword(!showNewPassword)}
+                        >
+                          {showNewPassword ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <button
+                      className="w-full py-3 mt-1 rounded-xl bg-gradient-to-r from-primary to-[hsl(173_58%_32%)] text-primary-foreground font-bold text-sm shadow-glow hover:shadow-lg hover:-translate-y-px transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
+                      onClick={handlePasswordSave}
+                      disabled={passwordSaving}
+                    >
+                      {passwordSaving ? 'Updating...' : 'Update Password'}
+                    </button>
                   </div>
                 </motion.div>
               )}
