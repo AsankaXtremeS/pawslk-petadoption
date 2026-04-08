@@ -16,10 +16,11 @@ interface UserContextType {
   setUser: (user: UserData | null) => void;
   isRegistered: boolean;
   clearUser: () => void;
-  registerUser: (data: Omit<UserData, 'id' | 'userToken'>) => Promise<UserData>;
-  loginByMobile: (mobile: string) => Promise<UserData>;
+  registerUser: (data: Omit<UserData, 'id' | 'userToken'> & { password: string }) => Promise<UserData>;
+  loginByMobile: (mobile: string, password: string) => Promise<UserData>;
   updateUser: (updates: Partial<Pick<UserData, 'name' | 'mobile' | 'countryCode' | 'language'>>) => Promise<UserData>;
   deleteAccount: () => Promise<void>;
+  updatePassword: (currentPassword: string, newPassword: string) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -56,13 +57,14 @@ export function UserProvider({ children }: { children: ReactNode }) {
    * Register a new user or return existing user if mobile already exists.
    * Uses the secure_register database function to prevent user_token leakage.
    */
-  const registerUser = useCallback(async (data: Omit<UserData, 'id' | 'userToken'>): Promise<UserData> => {
+  const registerUser = useCallback(async (data: Omit<UserData, 'id' | 'userToken'> & { password: string }): Promise<UserData> => {
     const cleanMobile = data.mobile.replace(/\s/g, '');
 
     const { data: result, error } = await supabase
       .rpc('secure_register', {
         p_name: data.name,
         p_mobile: cleanMobile,
+        p_password: data.password,
         p_country_code: data.countryCode,
         p_language: data.language,
       });
@@ -87,11 +89,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
    * Login by mobile number using the secure_login database function.
    * The function runs as SECURITY DEFINER so it can read the hidden user_token column.
    */
-  const loginByMobile = useCallback(async (mobile: string): Promise<UserData> => {
+  const loginByMobile = useCallback(async (mobile: string, password: string): Promise<UserData> => {
     const cleanMobile = mobile.replace(/\s/g, '');
 
     const { data: result, error } = await supabase
-      .rpc('secure_login', { p_mobile: cleanMobile });
+      .rpc('secure_login', { p_mobile: cleanMobile, p_password: password });
 
     if (error) throw new Error(error.message || 'Failed to look up user');
     if (!result || result.length === 0) throw new Error('No account found with this number');
@@ -164,6 +166,24 @@ export function UserProvider({ children }: { children: ReactNode }) {
     clearUser();
   }, [user, clearUser]);
 
+  /**
+   * Update the user's password securely.
+   */
+  const updatePassword = useCallback(async (currentPassword: string, newPassword: string): Promise<void> => {
+    if (!user) throw new Error('Not logged in');
+
+    const secureClient = createSecureClient(user.userToken);
+
+    const { error } = await secureClient
+      .rpc('update_password', {
+        p_user_id: user.id,
+        p_current_password: currentPassword,
+        p_new_password: newPassword,
+      });
+
+    if (error) throw new Error(error.message || 'Failed to update password');
+  }, [user]);
+
   return (
     <UserContext.Provider value={{
       user,
@@ -174,6 +194,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       loginByMobile,
       updateUser,
       deleteAccount,
+      updatePassword,
     }}>
       {children}
     </UserContext.Provider>
