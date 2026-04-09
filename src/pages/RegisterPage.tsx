@@ -271,15 +271,6 @@ export default function RegisterPage() {
                   <Globe />
                 </div>
                 <h2 className="rf-step-title">{t.chooseLanguage}</h2>
-                <p className="rf-step-subtitle" style={{ color: 'hsl(var(--muted-foreground))', fontSize: '0.85rem', marginTop: '-0.25rem' }}>
-                  {t.alreadyHaveAccount}
-                  <Link 
-                    to={`/login?lang=${selectedLang}${redirectTo !== '/' ? `&redirect=${encodeURIComponent(redirectTo)}` : ''}`}
-                    className="text-primary hover:underline font-medium"
-                  >
-                    {t.login}
-                  </Link>
-                </p>
               </div>
 
               <div className="rf-lang-grid">
