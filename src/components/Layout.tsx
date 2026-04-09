@@ -188,7 +188,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           })}
 
           {/* Profile tab */}
-          <Link to={isRegistered ? '/profile' : '/login'} className="flex flex-col items-center py-1 px-3">
+          <Link to={isRegistered ? '/profile' : '/register'} className="flex flex-col items-center py-1 px-3">
             <div className={`
               w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200
               ${location.pathname === '/profile' ? 'bg-primary/10' : ''}
