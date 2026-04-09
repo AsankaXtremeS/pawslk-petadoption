@@ -74,7 +74,7 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
           </div>
 
           {animal.description && (
-            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed break-words">
               {animal.description}
             </p>
           )}
