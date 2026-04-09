@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaGlobeAsia as Globe, FaLock as Lock, FaEye as Eye, FaEyeSlash as EyeSlash } from 'react-icons/fa';
@@ -42,6 +42,8 @@ const i18n: Record<Language, {
   mobileInvalid: string;
   passwordRequired: string;
   passwordLength: string;
+  alreadyHaveAccount: string;
+  login: string;
 }> = {
   en: {
     chooseLanguage: 'Choose your language',
@@ -59,6 +61,8 @@ const i18n: Record<Language, {
     mobileInvalid: 'Enter a valid 9-digit mobile number (e.g. 76xxxxxxx)',
     passwordRequired: 'Password is required',
     passwordLength: 'Password must be at least 6 characters',
+    alreadyHaveAccount: 'Already have an account? ',
+    login: 'Login',
   },
   si: {
     chooseLanguage: 'ඔබේ භාෂාව තෝරන්න',
@@ -76,6 +80,8 @@ const i18n: Record<Language, {
     mobileInvalid: 'වලංගු අංක 9ක ජංගම දුරකථන අංකයක් ඇතුළත් කරන්න',
     passwordRequired: 'මුරපදයක් අවශ්‍යයි',
     passwordLength: 'මුරපදය අවම වශයෙන් අක්ෂර 6ක් විය යුතුය',
+    alreadyHaveAccount: 'දැනටමත් ගිණුමක් තිබේද? ',
+    login: 'ඇතුල් වන්න',
   },
   ta: {
     chooseLanguage: 'உங்கள் மொழியை தேர்ந்தெடுக்கவும்',
@@ -93,6 +99,8 @@ const i18n: Record<Language, {
     mobileInvalid: 'சரியான 9-இலக்க கைபேசி எண்ணை உள்ளிடவும்',
     passwordRequired: 'கடவுச்சொல் தேவை',
     passwordLength: 'கடவுச்சொல் குறைந்தபட்சம் 6 எழுத்துக்களாக இருக்க வேண்டும்',
+    alreadyHaveAccount: 'ஏற்கனவே ஒரு கணக்கு உள்ளதா? ',
+    login: 'உள்நுழைய',
   },
 };
 
@@ -127,6 +135,15 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; mobile?: string; password?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Auto-select language if passed in query params
+  useEffect(() => {
+    const lang = searchParams.get('lang') as Language;
+    if (lang && i18n[lang]) {
+      setSelectedLang(lang);
+      setStep(2);
+    }
+  }, [searchParams]);
 
   // If already logged in, redirect immediately
   if (isRegistered) {
@@ -254,6 +271,15 @@ export default function RegisterPage() {
                   <Globe />
                 </div>
                 <h2 className="rf-step-title">{t.chooseLanguage}</h2>
+                <p className="rf-step-subtitle" style={{ color: 'hsl(var(--muted-foreground))', fontSize: '0.85rem', marginTop: '-0.25rem' }}>
+                  {t.alreadyHaveAccount}
+                  <Link 
+                    to={`/login?lang=${selectedLang}${redirectTo !== '/' ? `&redirect=${encodeURIComponent(redirectTo)}` : ''}`}
+                    className="text-primary hover:underline font-medium"
+                  >
+                    {t.login}
+                  </Link>
+                </p>
               </div>
 
               <div className="rf-lang-grid">
@@ -290,6 +316,15 @@ export default function RegisterPage() {
                   <PawPrint />
                 </div>
                 <h2 className="rf-step-title">{t.yourDetails}</h2>
+                <p className="rf-step-subtitle" style={{ color: 'hsl(var(--muted-foreground))', fontSize: '0.85rem', marginTop: '-0.25rem' }}>
+                  {t.alreadyHaveAccount}
+                  <Link 
+                    to={`/login?lang=${selectedLang}${redirectTo !== '/' ? `&redirect=${encodeURIComponent(redirectTo)}` : ''}`}
+                    className="text-primary hover:underline font-medium"
+                  >
+                    {t.login}
+                  </Link>
+                </p>
               </div>
 
               <div className="rf-form">
@@ -422,16 +457,7 @@ export default function RegisterPage() {
                   )}
                 </motion.button>
 
-                {/* Login link */}
-                <p className="gs-login-link" style={{ textAlign: 'center', marginTop: '0.5rem' }}>
-                  Already have an account?{' '}
-                  <Link
-                    to={`/login${redirectTo !== '/' ? `?redirect=${encodeURIComponent(redirectTo)}` : ''}`}
-                    className="gs-login-btn"
-                  >
-                    Log in
-                  </Link>
-                </p>
+
               </div>
             </motion.div>
           )}

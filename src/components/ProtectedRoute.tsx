@@ -11,7 +11,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
   if (!isRegistered) {
     const redirectTo = encodeURIComponent(location.pathname + location.search);
-    return <Navigate to={`/login?redirect=${redirectTo}`} replace />;
+    return <Navigate to={`/register?redirect=${redirectTo}`} replace />;
   }
 
   return <>{children}</>;
