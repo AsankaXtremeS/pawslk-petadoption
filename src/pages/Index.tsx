@@ -50,7 +50,8 @@ export default function Index() {
                 className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-6"
               >
                 <PawPrint className="h-3 w-3" />
-                {t('home.heroBadge')}
+                <span className="hidden md:inline">{t('home.heroBadge')}</span>
+                <span className="md:hidden">Paw Connect</span>
               </motion.div>
 
               <h1 className="text-4xl md:text-5xl lg:text-7xl font-heading font-bold leading-[1.1] mb-5">
