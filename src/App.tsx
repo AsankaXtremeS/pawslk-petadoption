@@ -19,6 +19,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import { UserProvider } from "@/contexts/UserContext";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +85,7 @@ const App = () => (
       <UserProvider>
         <AppContent />
         <Analytics />
+        <SpeedInsights />
       </UserProvider>
     </TooltipProvider>
   </QueryClientProvider>

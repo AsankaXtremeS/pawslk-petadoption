@@ -191,16 +191,7 @@ export default function RegisterPage() {
                 <div className="rf-step-icon">
                   <Globe />
                 </div>
-                <h2 className="rf-step-title">{t('auth.chooseLanguage')}</h2>
-                <p className="rf-step-subtitle" style={{ color: 'hsl(var(--muted-foreground))', fontSize: '0.85rem', marginTop: '-0.25rem' }}>
-                  {t('auth.alreadyHaveAccount')}{' '}
-                  <Link 
-                    to={`/login?lang=${i18n.language}${redirectTo !== '/' ? `&redirect=${encodeURIComponent(redirectTo)}` : ''}`}
-                    className="text-primary hover:underline font-medium"
-                  >
-                    {t('common.login')}
-                  </Link>
-                </p>
+                <h2 className="rf-step-title">{t.chooseLanguage}</h2>
               </div>
 
               <div className="rf-lang-grid">

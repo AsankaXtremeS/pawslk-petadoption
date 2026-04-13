@@ -283,7 +283,7 @@ export default function AnimalDetail() {
 
         {/* Description */}
         {animal.description && (
-          <p className="text-foreground/80 leading-relaxed">{animal.description}</p>
+          <p className="text-foreground/80 leading-relaxed break-words whitespace-pre-wrap">{animal.description}</p>
         )}
 
         {/* Details grid */}
