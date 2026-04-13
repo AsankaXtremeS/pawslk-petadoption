@@ -89,14 +89,14 @@ export default function Index() {
               />
             </motion.div>
 
-            {/* Right side for desktop / Bottom for mobile: Stats */}
+            {/* Right side for desktop / Hidden on mobile: Stats */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="w-full md:w-auto flex flex-row md:flex-col gap-2 md:gap-4 justify-center items-center md:items-end"
+              className="hidden md:flex flex-col gap-4 items-end"
             >
-              <div className="bg-white rounded-2xl md:rounded-2xl border shadow-sm flex-1 md:flex-none md:w-[260px] z-10 transition-colors">
+              <div className="bg-white rounded-2xl border shadow-sm w-[260px] z-10">
                 <AnimatedCounter
                   end={stats?.adopted || 0}
                   label={t('home.stats.saved')}
@@ -104,7 +104,7 @@ export default function Index() {
                   iconColorClass=" text-emerald-600"
                 />
               </div>
-              <div className="bg-white rounded-xl md:rounded-2xl border shadow-sm flex-1 md:flex-none md:w-[260px] z-20 transition-colors">
+              <div className="bg-white rounded-2xl border shadow-sm w-[260px] z-20">
                 <AnimatedCounter
                   end={stats?.waiting || 0}
                   label={t('home.stats.waiting')}
@@ -112,7 +112,7 @@ export default function Index() {
                   iconColorClass=" text-rose-400"
                 />
               </div>
-              <div className="bg-white rounded-xl md:rounded-2xl border shadow-sm flex-1 md:flex-none md:w-[260px] z-30 transition-colors">
+              <div className="bg-white rounded-2xl border shadow-sm w-[260px] z-30">
                 <AnimatedCounter
                   end={stats?.total || 0}
                   label={t('home.stats.rescuers')}
@@ -121,8 +121,45 @@ export default function Index() {
                 />
               </div>
             </motion.div>
-
           </div>
+        </div>
+
+        {/* Mobile Floating Statistics Bar (Glassmorphism) - Floating above Hero */}
+        <div className="md:hidden absolute bottom-6 left-4 right-4 z-20">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex items-center justify-around p-4 rounded-[2rem] bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl overflow-hidden"
+          >
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-600">
+                <PawPrint className="h-5 w-5" />
+              </div>
+              <span className="text-xl font-bold text-foreground">{stats?.adopted || 0}</span>
+              <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/80">{t('home.stats.saved')}</span>
+            </div>
+            
+            <div className="w-[1px] h-10 bg-black/5" />
+
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400">
+                <HeartPulse className="h-5 w-5" />
+              </div>
+              <span className="text-xl font-bold text-foreground">{stats?.waiting || 0}</span>
+              <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/80">{t('home.stats.waiting')}</span>
+            </div>
+
+            <div className="w-[1px] h-10 bg-black/5" />
+
+            <div className="flex flex-col items-center gap-1">
+              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-600">
+                <Users className="h-5 w-5" />
+              </div>
+              <span className="text-xl font-bold text-foreground">{stats?.total || 0}</span>
+              <span className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/80 text-center">{t('home.stats.rescuers')}</span>
+            </div>
+          </motion.div>
         </div>
       </section>
 
