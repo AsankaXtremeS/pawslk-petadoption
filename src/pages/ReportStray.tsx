@@ -8,10 +8,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaCamera as Camera, FaCat as Cat, FaDog as Dog, FaMapMarkerAlt as MapPin, FaMars as Mars, FaPaw as PawPrint, FaVenus as Venus, FaCrosshairs as Crosshairs, FaTimes as X, FaPlus as Plus } from 'react-icons/fa';
 import { parsePhotoUrls } from '@/utils/imageCompression';
+import { useTranslation } from 'react-i18next';
 
 const MAX_PHOTOS = 3;
 
 export default function ReportStray() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('edit');
@@ -45,7 +47,7 @@ export default function ReportStray() {
     if (isEditing && existingAnimal) {
       // Security check: only owner can edit
       if (user && existingAnimal.user_id !== user.id) {
-        toast.error('You can only edit your own posts.');
+        toast.error(t('report.errors.editOwnOnly'));
         navigate('/animals');
         return;
       }
@@ -70,7 +72,7 @@ export default function ReportStray() {
         setExistingUrls(existing);
       }
     }
-  }, [existingAnimal, isEditing, user, navigate]);
+  }, [existingAnimal, isEditing, user, navigate, t]);
 
   // Auto-fill reporter name from user context
   useEffect(() => {
@@ -85,7 +87,7 @@ export default function ReportStray() {
 
     // Validate size
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image too large. Maximum size is 5MB.');
+      toast.error(t('report.errors.sizeLimit'));
       return;
     }
 
@@ -152,7 +154,7 @@ export default function ReportStray() {
           position.coords.longitude,
         );
         setForm(f => ({ ...f, location_name: f.location_name.trim() || nearestLocation }));
-        toast.success('Location found and suggested.');
+        toast.success(t('report.success.locationFound'));
         setIsFetchingLocation(false);
       },
       () => {
@@ -166,14 +168,14 @@ export default function ReportStray() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.location_name.trim()) {
-      toast.error("Please enter a location name");
+      toast.error(t('report.errors.locationRequired'));
       return;
     }
 
     // At least one photo required
     const hasAnyPhoto = photos.some(p => p !== null) || existingUrls.some(u => u !== null);
     if (!hasAnyPhoto) {
-      toast.error("Please upload at least one photo");
+      toast.error(t('report.errors.photoRequired'));
       return;
     }
 
@@ -208,7 +210,7 @@ export default function ReportStray() {
             ...(photo_url ? { photo_url } : {}),
           },
         });
-        toast.success('Post updated successfully!');
+        toast.success(t('report.success.updated'));
         navigate(`/animals/${editId}`);
       } else {
         // Create new animal with user_id and contact_number
@@ -222,11 +224,11 @@ export default function ReportStray() {
           user_id: user?.id,
           contact_number: user?.mobile || undefined,
         });
-        toast.success('Thank you! You may have just saved a life.');
+        toast.success(t('report.success.reported'));
         navigate('/animals');
       }
     } catch {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t('report.errors.genericError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -245,11 +247,11 @@ export default function ReportStray() {
           className="mb-8"
         >
           <h1 className="text-2xl md:text-3xl font-heading font-bold">
-            {isEditing ? 'Edit Post' : 'Report a Stray'}
+            {isEditing ? t('report.editTitle') : t('report.title')}
           </h1>
           <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
             <PawPrint className="h-3.5 w-3.5 text-primary" />
-            {isEditing ? 'Update the details of your post' : 'Help us rescue a furry friend in need'}
+            {isEditing ? t('report.editSubtitle') : t('report.subtitle')}
           </p>
         </motion.div>
 
@@ -263,7 +265,7 @@ export default function ReportStray() {
           {/* Photo upload — 3 slots */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <Label className="text-sm font-medium text-foreground">Photos</Label>
+              <Label className="text-sm font-medium text-foreground">{t('report.photos')}</Label>
               <span className="text-xs text-muted-foreground">{filledCount}/{MAX_PHOTOS}</span>
             </div>
 
@@ -296,7 +298,7 @@ export default function ReportStray() {
                         {index === 0 && (
                           <div className="absolute top-1.5 left-1.5">
                             <span className="px-2 py-0.5 text-[10px] font-bold bg-primary text-primary-foreground rounded-full shadow-sm">
-                              Cover
+                              {t('report.cover')}
                             </span>
                           </div>
                         )}
@@ -336,14 +338,14 @@ export default function ReportStray() {
                             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                               <Camera className="w-5 h-5 text-primary/60" />
                             </div>
-                            <span className="text-[11px] font-medium text-primary/70">Cover photo</span>
+                            <span className="text-[11px] font-medium text-primary/70">{t('report.coverPhoto')}</span>
                           </>
                         ) : (
                           <>
                             <div className="w-8 h-8 rounded-lg bg-muted/60 flex items-center justify-center">
                               <Plus className="w-4 h-4 text-muted-foreground/60" />
                             </div>
-                            <span className="text-[10px] text-muted-foreground">Photo {index + 1}</span>
+                            <span className="text-[10px] text-muted-foreground">{t('report.photoSlot', { count: index + 1 })}</span>
                           </>
                         )}
                       </motion.div>
@@ -354,15 +356,15 @@ export default function ReportStray() {
             </div>
 
             <p className="text-xs text-muted-foreground mt-2">
-              Upload up to 3 photos • JPG, PNG up to 5MB each • Auto-compressed to WebP
+              {t('report.photoHelp')}
             </p>
           </div>
 
           {/* Animal type */}
           <div>
-            <Label className="text-sm font-medium text-foreground">Animal Type</Label>
+            <Label className="text-sm font-medium text-foreground">{t('report.animalType')}</Label>
             <div className="flex gap-3 mt-2">
-              {([['dog', Dog, 'Dog'], ['cat', Cat, 'Cat']] as const).map(([value, Icon, label]) => (
+              {([['dog', Dog, t('report.dog')], ['cat', Cat, t('report.cat')]] as const).map(([value, Icon, label]) => (
                 <button
                   key={value}
                   type="button"
@@ -384,9 +386,9 @@ export default function ReportStray() {
 
           {/* Gender */}
           <div>
-            <Label className="text-sm font-medium text-foreground">Gender</Label>
+            <Label className="text-sm font-medium text-foreground">{t('report.gender')}</Label>
             <div className="flex gap-3 mt-2">
-              {([['male', Mars, 'Male'], ['female', Venus, 'Female']] as const).map(([value, Icon, label]) => (
+              {([['male', Mars, t('report.male')], ['female', Venus, t('report.female')]] as const).map(([value, Icon, label]) => (
                 <button
                   key={value}
                   type="button"
@@ -408,11 +410,11 @@ export default function ReportStray() {
 
           {/* Location */}
           <div>
-            <Label className="text-sm font-medium text-foreground">Location *</Label>
+            <Label className="text-sm font-medium text-foreground">{t('report.location')}</Label>
             <div className="relative mt-2">
               <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
-                placeholder="e.g. Nugegoda Junction"
+                placeholder={t('report.locationPlaceholder')}
                 value={form.location_name}
                 onChange={e => setForm(f => ({ ...f, location_name: e.target.value }))}
                 className="w-full h-12 pl-11 pr-4 rounded-xl border bg-card text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
@@ -426,18 +428,18 @@ export default function ReportStray() {
               className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:underline disabled:opacity-50"
             >
               <Crosshairs className="h-3 w-3" />
-              {isFetchingLocation ? 'Fetching…' : 'Use my current location'}
+              {isFetchingLocation ? t('report.fetchingLocation') : t('report.useCurrentLocation')}
             </button>
           </div>
 
           {/* Description */}
           <div>
             <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium text-foreground">Description</Label>
+              <Label className="text-sm font-medium text-foreground">{t('report.description')}</Label>
               <span className="text-xs text-muted-foreground">{form.description.length}/300</span>
             </div>
             <textarea
-              placeholder="Describe the animal's condition, color, size..."
+              placeholder={t('report.descriptionPlaceholder')}
               value={form.description}
               onChange={e => setForm(f => ({ ...f, description: e.target.value.slice(0, 300) }))}
               maxLength={300}
@@ -448,16 +450,16 @@ export default function ReportStray() {
 
           {/* Name — auto-filled from user context */}
           <div>
-            <Label className="text-sm font-medium text-foreground">Your Name</Label>
+            <Label className="text-sm font-medium text-foreground">{t('report.yourName')}</Label>
             <input
-              placeholder="Your first name"
+              placeholder={t('report.namePlaceholder')}
               value={form.reporter_name}
               onChange={e => setForm(f => ({ ...f, reporter_name: e.target.value }))}
               className="mt-2 w-full h-12 px-4 rounded-xl border bg-card text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
               readOnly={!!user?.name}
             />
             {user?.name && (
-              <p className="text-xs text-muted-foreground mt-1">Auto-filled from your profile</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('report.autoFilled')}</p>
             )}
           </div>
 
@@ -471,8 +473,8 @@ export default function ReportStray() {
           >
             <PawPrint className="h-5 w-5 mr-2" />
             {isSubmitting
-              ? (isEditing ? 'Updating...' : 'Compressing & uploading...')
-              : (isEditing ? 'Update Post' : 'Submit Report')
+              ? (isEditing ? t('report.updating') : t('report.submitting'))
+              : (isEditing ? t('report.update') : t('report.submit'))
             }
           </Button>
         </motion.form>

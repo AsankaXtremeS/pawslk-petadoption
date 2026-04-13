@@ -4,10 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaGlobeAsia as Globe, FaLock as Lock, FaEye as Eye, FaEyeSlash as EyeSlash } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 type Language = 'en' | 'si' | 'ta';
 
-const languages: { code: Language; label: string; nativeLabel: string; flag: string }[] = [
+const languagesList: { code: Language; label: string; nativeLabel: string; flag: string }[] = [
   { code: 'en', label: 'English', nativeLabel: 'English', flag: '🇬🇧' },
   { code: 'si', label: 'Sinhala', nativeLabel: 'සිංහල', flag: '🇱🇰' },
   { code: 'ta', label: 'Tamil', nativeLabel: 'தமிழ்', flag: '🇱🇰' },
@@ -26,84 +27,6 @@ const countryCodes = [
   { code: '+81', country: 'Japan', flag: '🇯🇵' },
 ];
 
-const i18n: Record<Language, {
-  chooseLanguage: string;
-  yourDetails: string;
-  name: string;
-  namePlaceholder: string;
-  mobile: string;
-  mobilePlaceholder: string;
-  password: string;
-  passwordPlaceholder: string;
-  continue: string;
-  back: string;
-  nameRequired: string;
-  mobileRequired: string;
-  mobileInvalid: string;
-  passwordRequired: string;
-  passwordLength: string;
-  alreadyHaveAccount: string;
-  login: string;
-}> = {
-  en: {
-    chooseLanguage: 'Choose your language',
-    yourDetails: 'Your Details',
-    name: 'Full Name',
-    namePlaceholder: 'Enter your name',
-    mobile: 'Mobile Number',
-    mobilePlaceholder: '7XXXXXXXX',
-    password: 'Password',
-    passwordPlaceholder: 'Create a password',
-    continue: 'Create Account',
-    back: 'Back',
-    nameRequired: 'Name is required',
-    mobileRequired: 'Mobile number is required',
-    mobileInvalid: 'Enter a valid 9-digit mobile number (e.g. 76xxxxxxx)',
-    passwordRequired: 'Password is required',
-    passwordLength: 'Password must be at least 6 characters',
-    alreadyHaveAccount: 'Already have an account? ',
-    login: 'Login',
-  },
-  si: {
-    chooseLanguage: 'ඔබේ භාෂාව තෝරන්න',
-    yourDetails: 'ඔබේ විස්තර',
-    name: 'සම්පූර්ණ නම',
-    namePlaceholder: 'ඔබේ නම ඇතුළත් කරන්න',
-    mobile: 'ජංගම දුරකථන අංකය',
-    mobilePlaceholder: '7XXXXXXXX',
-    password: 'මුරපදය',
-    passwordPlaceholder: 'මුරපදයක් සාදන්න',
-    continue: 'ගිණුම සාදන්න',
-    back: 'ආපසු',
-    nameRequired: 'නම අවශ්‍යයි',
-    mobileRequired: 'ජංගම අංකය අවශ්‍යයි',
-    mobileInvalid: 'වලංගු අංක 9ක ජංගම දුරකථන අංකයක් ඇතුළත් කරන්න',
-    passwordRequired: 'මුරපදයක් අවශ්‍යයි',
-    passwordLength: 'මුරපදය අවම වශයෙන් අක්ෂර 6ක් විය යුතුය',
-    alreadyHaveAccount: 'දැනටමත් ගිණුමක් තිබේද? ',
-    login: 'ඇතුල් වන්න',
-  },
-  ta: {
-    chooseLanguage: 'உங்கள் மொழியை தேர்ந்தெடுக்கவும்',
-    yourDetails: 'உங்கள் விவரங்கள்',
-    name: 'முழு பெயர்',
-    namePlaceholder: 'உங்கள் பெயரை உள்ளிடவும்',
-    mobile: 'கைபேசி எண்',
-    mobilePlaceholder: '7XXXXXXXX',
-    password: 'கடவுச்சொல்',
-    passwordPlaceholder: 'கடவுச்சொல்லை உருவாக்கவும்',
-    continue: 'கணக்கை உருவாக்கு',
-    back: 'பின்னால்',
-    nameRequired: 'பெயர் தேவை',
-    mobileRequired: 'கைபேசி எண் தேவை',
-    mobileInvalid: 'சரியான 9-இலக்க கைபேசி எண்ணை உள்ளிடவும்',
-    passwordRequired: 'கடவுச்சொல் தேவை',
-    passwordLength: 'கடவுச்சொல் குறைந்தபட்சம் 6 எழுத்துக்களாக இருக்க வேண்டும்',
-    alreadyHaveAccount: 'ஏற்கனவே ஒரு கணக்கு உள்ளதா? ',
-    login: 'உள்நுழைய',
-  },
-};
-
 const slideVariants = {
   enter: (direction: number) => ({
     x: direction > 0 ? 300 : -300,
@@ -120,6 +43,7 @@ const slideVariants = {
 };
 
 export default function RegisterPage() {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/';
@@ -127,7 +51,6 @@ export default function RegisterPage() {
 
   const [step, setStep] = useState<1 | 2>(1);
   const [direction, setDirection] = useState(1);
-  const [selectedLang, setSelectedLang] = useState<Language | null>(null);
   const [name, setName] = useState('');
   const [countryCode, setCountryCode] = useState('+94');
   const [mobile, setMobile] = useState('');
@@ -139,11 +62,11 @@ export default function RegisterPage() {
   // Auto-select language if passed in query params
   useEffect(() => {
     const lang = searchParams.get('lang') as Language;
-    if (lang && i18n[lang]) {
-      setSelectedLang(lang);
+    if (lang && ['en', 'si', 'ta'].includes(lang)) {
+      i18n.changeLanguage(lang);
       setStep(2);
     }
-  }, [searchParams]);
+  }, [searchParams, i18n]);
 
   // If already logged in, redirect immediately
   if (isRegistered) {
@@ -151,10 +74,8 @@ export default function RegisterPage() {
     return null;
   }
 
-  const t = i18n[selectedLang || 'en'];
-
   const handleLanguageSelect = (lang: Language) => {
-    setSelectedLang(lang);
+    i18n.changeLanguage(lang);
     setDirection(1);
     setStep(2);
   };
@@ -172,7 +93,7 @@ export default function RegisterPage() {
     const newErrors: { name?: string; mobile?: string; password?: string } = {};
 
     if (!name.trim()) {
-      newErrors.name = t.nameRequired;
+      newErrors.name = t('auth.errors.nameRequired');
     }
 
     let cleanMobile = mobile.replace(/[^0-9]/g, '');
@@ -181,15 +102,15 @@ export default function RegisterPage() {
     }
 
     if (!cleanMobile) {
-      newErrors.mobile = t.mobileRequired;
+      newErrors.mobile = t('auth.errors.mobileRequired');
     } else if (!/^[0-9]{9}$/.test(cleanMobile)) {
-      newErrors.mobile = t.mobileInvalid;
+      newErrors.mobile = t('auth.errors.mobileInvalid');
     }
 
     if (!password) {
-      newErrors.password = t.passwordRequired;
+      newErrors.password = t('auth.errors.passwordRequired');
     } else if (password.length < 6) {
-      newErrors.password = t.passwordLength;
+      newErrors.password = t('auth.errors.passwordLength');
     }
 
     setErrors(newErrors);
@@ -197,7 +118,7 @@ export default function RegisterPage() {
   };
 
   const handleSubmit = async () => {
-    if (!validateForm() || !selectedLang) return;
+    if (!validateForm()) return;
 
     setIsSubmitting(true);
 
@@ -212,12 +133,12 @@ export default function RegisterPage() {
         mobile: fullMobile,
         password,
         countryCode,
-        language: selectedLang,
+        language: i18n.language as Language,
       });
       toast.success('Welcome to PawConnect! 🐾');
       navigate(decodeURIComponent(redirectTo), { replace: true });
-    } catch (err: any) {
-      toast.error(err.message || 'Registration failed. Please try again.');
+    } catch (err) {
+      toast.error((err as Error).message || 'Registration failed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -236,7 +157,7 @@ export default function RegisterPage() {
           whileTap={{ scale: 0.95 }}
         >
           <ArrowLeft />
-          <span>{step === 1 ? '' : t.back}</span>
+          <span>{step === 1 ? '' : t('common.back')}</span>
         </motion.button>
 
         <div className="rf-logo">
@@ -274,10 +195,10 @@ export default function RegisterPage() {
               </div>
 
               <div className="rf-lang-grid">
-                {languages.map((lang) => (
+                {languagesList.map((lang) => (
                   <motion.button
                     key={lang.code}
-                    className={`rf-lang-card ${selectedLang === lang.code ? 'selected' : ''}`}
+                    className={`rf-lang-card ${i18n.language === lang.code ? 'selected' : ''}`}
                     onClick={() => handleLanguageSelect(lang.code)}
                     whileHover={{ scale: 1.03, y: -2 }}
                     whileTap={{ scale: 0.97 }}
@@ -306,14 +227,14 @@ export default function RegisterPage() {
                 <div className="rf-step-icon">
                   <PawPrint />
                 </div>
-                <h2 className="rf-step-title">{t.yourDetails}</h2>
+                <h2 className="rf-step-title">{t('auth.yourDetails')}</h2>
                 <p className="rf-step-subtitle" style={{ color: 'hsl(var(--muted-foreground))', fontSize: '0.85rem', marginTop: '-0.25rem' }}>
-                  {t.alreadyHaveAccount}
+                  {t('auth.alreadyHaveAccount')}{' '}
                   <Link 
-                    to={`/login?lang=${selectedLang}${redirectTo !== '/' ? `&redirect=${encodeURIComponent(redirectTo)}` : ''}`}
+                    to={`/login?lang=${i18n.language}${redirectTo !== '/' ? `&redirect=${encodeURIComponent(redirectTo)}` : ''}`}
                     className="text-primary hover:underline font-medium"
                   >
-                    {t.login}
+                    {t('common.login')}
                   </Link>
                 </p>
               </div>
@@ -321,13 +242,13 @@ export default function RegisterPage() {
               <div className="rf-form">
                 {/* Name Input */}
                 <div className="rf-field">
-                  <label className="rf-label" htmlFor="register-name">{t.name}</label>
+                  <label className="rf-label" htmlFor="register-name">{t('auth.name')}</label>
                   <div className={`rf-input-wrapper ${errors.name ? 'error' : ''}`}>
                     <input
                       id="register-name"
                       type="text"
                       className="rf-input"
-                      placeholder={t.namePlaceholder}
+                      placeholder={t('auth.namePlaceholder')}
                       value={name}
                       onChange={(e) => {
                         setName(e.target.value);
@@ -349,7 +270,7 @@ export default function RegisterPage() {
 
                 {/* Mobile Input */}
                 <div className="rf-field">
-                  <label className="rf-label" htmlFor="register-mobile">{t.mobile}</label>
+                  <label className="rf-label" htmlFor="register-mobile">{t('auth.mobile')}</label>
                   <div className={`rf-input-wrapper rf-mobile-input ${errors.mobile ? 'error' : ''}`}>
                     <select
                       className="rf-country-code"
@@ -368,7 +289,7 @@ export default function RegisterPage() {
                       id="register-mobile"
                       type="tel"
                       className="rf-input"
-                      placeholder={t.mobilePlaceholder}
+                      placeholder={t('auth.mobilePlaceholder')}
                       value={mobile}
                       onChange={(e) => {
                         const val = e.target.value.replace(/[^0-9\s]/g, '');
@@ -391,7 +312,7 @@ export default function RegisterPage() {
 
                 {/* Password Input */}
                 <div className="rf-field">
-                  <label className="rf-label" htmlFor="register-password">{t.password}</label>
+                  <label className="rf-label" htmlFor="register-password">{t('auth.password')}</label>
                   <div className={`rf-input-wrapper ${errors.password ? 'error' : ''}`} style={{ display: 'flex', alignItems: 'center' }}>
                     <div style={{ paddingLeft: '1rem', color: 'hsl(var(--muted-foreground))' }}>
                       <Lock className="w-4 h-4" />
@@ -400,7 +321,7 @@ export default function RegisterPage() {
                       id="register-password"
                       type={showPassword ? "text" : "password"}
                       className="rf-input"
-                      placeholder={t.passwordPlaceholder}
+                      placeholder={t('auth.createPasswordPlaceholder')}
                       value={password}
                       onChange={(e) => {
                         setPassword(e.target.value);
@@ -442,7 +363,7 @@ export default function RegisterPage() {
                     <div className="rf-spinner" />
                   ) : (
                     <>
-                      <span>{t.continue}</span>
+                      <span>{t('auth.createAccount')}</span>
                       <ArrowRight />
                     </>
                   )}

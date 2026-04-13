@@ -15,8 +15,10 @@ import {
   FaTimes as X,
   FaSlidersH as SlidersH,
 } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 export default function BrowseAnimals() {
+  const { t } = useTranslation();
   const [type, setType] = useState('all');
   const [gender, setGender] = useState('all');
   const [status, setStatus] = useState('waiting');
@@ -83,12 +85,12 @@ export default function BrowseAnimals() {
       {/* Header */}
       <div className="mb-5">
         <h1 className="text-2xl md:text-3xl font-heading font-bold">
-          {status === 'adopted' ? 'Adopted Animals' : 'Browse Animals'}
+          {status === 'adopted' ? t('browse.adoptedTitle') : t('browse.title')}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
           {status === 'adopted'
-            ? 'These pets found their forever homes 🎉'
-            : 'Find a furry friend waiting for love'}
+            ? t('browse.adoptedSubtitle')
+            : t('browse.subtitle')}
         </p>
       </div>
 
@@ -98,7 +100,7 @@ export default function BrowseAnimals() {
         <div className="browse-search">
           <Search className="browse-search-icon" />
           <input
-            placeholder="Search by location..."
+            placeholder={t('browse.searchPlaceholder')}
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="browse-search-input"
@@ -119,7 +121,7 @@ export default function BrowseAnimals() {
           onClick={() => setShowMobileFilters(!showMobileFilters)}
         >
           <SlidersH className="w-4 h-4" />
-          <span>Filters</span>
+          <span>{t('browse.filters')}</span>
           {activeFilterCount > 0 && (
             <span className="browse-filter-badge">{activeFilterCount}</span>
           )}
@@ -128,12 +130,12 @@ export default function BrowseAnimals() {
 
       {/* ===== DESKTOP FILTER BAR ===== */}
       <div className="browse-desktop-filters hidden md:flex">
-        <FilterSection label="Status">
+        <FilterSection label={t('browse.status')}>
           <SegmentedControl
             options={[
-              { key: 'waiting', label: 'Waiting', icon: <HeartPulse className="w-3.5 h-3.5" /> },
-              { key: 'adopted', label: 'Adopted', icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
-              { key: 'all', label: 'All' },
+              { key: 'waiting', label: t('browse.waiting'), icon: <HeartPulse className="w-3.5 h-3.5" /> },
+              { key: 'adopted', label: t('browse.adopted'), icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
+              { key: 'all', label: t('browse.all') },
             ]}
             value={status}
             onChange={setStatus}
@@ -142,12 +144,12 @@ export default function BrowseAnimals() {
 
         <div className="browse-filter-divider" />
 
-        <FilterSection label="Type">
+        <FilterSection label={t('browse.type')}>
           <SegmentedControl
             options={[
-              { key: 'all', label: 'All', icon: <PawPrint className="w-3.5 h-3.5" /> },
-              { key: 'dog', label: 'Dogs', icon: <Dog className="w-3.5 h-3.5" /> },
-              { key: 'cat', label: 'Cats', icon: <Cat className="w-3.5 h-3.5" /> },
+              { key: 'all', label: t('browse.all'), icon: <PawPrint className="w-3.5 h-3.5" /> },
+              { key: 'dog', label: t('browse.dogs'), icon: <Dog className="w-3.5 h-3.5" /> },
+              { key: 'cat', label: t('browse.cats'), icon: <Cat className="w-3.5 h-3.5" /> },
             ]}
             value={type}
             onChange={setType}
@@ -156,12 +158,12 @@ export default function BrowseAnimals() {
 
         <div className="browse-filter-divider" />
 
-        <FilterSection label="Gender">
+        <FilterSection label={t('browse.gender')}>
           <SegmentedControl
             options={[
-              { key: 'all', label: 'Any' },
-              { key: 'male', label: 'Male', icon: <Mars className="w-3.5 h-3.5" /> },
-              { key: 'female', label: 'Female', icon: <Venus className="w-3.5 h-3.5" /> },
+              { key: 'all', label: t('browse.any') },
+              { key: 'male', label: t('browse.male'), icon: <Mars className="w-3.5 h-3.5" /> },
+              { key: 'female', label: t('browse.female'), icon: <Venus className="w-3.5 h-3.5" /> },
             ]}
             value={gender}
             onChange={setGender}
@@ -171,7 +173,7 @@ export default function BrowseAnimals() {
         {activeFilterCount > 0 && (
           <button className="browse-clear-all" onClick={clearAllFilters}>
             <X className="w-3 h-3" />
-            Clear
+            {t('browse.clear')}
           </button>
         )}
       </div>
@@ -187,36 +189,36 @@ export default function BrowseAnimals() {
             transition={{ duration: 0.25, ease: 'easeInOut' }}
           >
             <div className="browse-mobile-filters-inner">
-              <FilterSection label="Status">
+              <FilterSection label={t('browse.status')}>
                 <SegmentedControl
                   options={[
-                    { key: 'waiting', label: 'Waiting', icon: <HeartPulse className="w-3.5 h-3.5" /> },
-                    { key: 'adopted', label: 'Adopted', icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
-                    { key: 'all', label: 'All' },
+                    { key: 'waiting', label: t('browse.waiting'), icon: <HeartPulse className="w-3.5 h-3.5" /> },
+                    { key: 'adopted', label: t('browse.adopted'), icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
+                    { key: 'all', label: t('browse.all') },
                   ]}
                   value={status}
                   onChange={setStatus}
                 />
               </FilterSection>
 
-              <FilterSection label="Animal type">
+              <FilterSection label={t('browse.type')}>
                 <SegmentedControl
                   options={[
-                    { key: 'all', label: 'All', icon: <PawPrint className="w-3.5 h-3.5" /> },
-                    { key: 'dog', label: 'Dogs', icon: <Dog className="w-3.5 h-3.5" /> },
-                    { key: 'cat', label: 'Cats', icon: <Cat className="w-3.5 h-3.5" /> },
+                    { key: 'all', label: t('browse.all'), icon: <PawPrint className="w-3.5 h-3.5" /> },
+                    { key: 'dog', label: t('browse.dogs'), icon: <Dog className="w-3.5 h-3.5" /> },
+                    { key: 'cat', label: t('browse.cats'), icon: <Cat className="w-3.5 h-3.5" /> },
                   ]}
                   value={type}
                   onChange={setType}
                 />
               </FilterSection>
 
-              <FilterSection label="Gender">
+              <FilterSection label={t('browse.gender')}>
                 <SegmentedControl
                   options={[
-                    { key: 'all', label: 'Any' },
-                    { key: 'male', label: 'Male', icon: <Mars className="w-3.5 h-3.5" /> },
-                    { key: 'female', label: 'Female', icon: <Venus className="w-3.5 h-3.5" /> },
+                    { key: 'all', label: t('browse.any') },
+                    { key: 'male', label: t('browse.male'), icon: <Mars className="w-3.5 h-3.5" /> },
+                    { key: 'female', label: t('browse.female'), icon: <Venus className="w-3.5 h-3.5" /> },
                   ]}
                   value={gender}
                   onChange={setGender}
@@ -226,7 +228,7 @@ export default function BrowseAnimals() {
               {activeFilterCount > 0 && (
                 <button className="browse-clear-all mobile" onClick={clearAllFilters}>
                   <X className="w-3 h-3" />
-                  Clear all filters
+                  {t('browse.clearAll')}
                 </button>
               )}
             </div>
@@ -239,19 +241,19 @@ export default function BrowseAnimals() {
         <div className="browse-active-tags md:hidden">
           {status !== 'waiting' && (
             <span className="browse-tag">
-              {status === 'adopted' ? 'Adopted' : 'All Status'}
+              {status === 'adopted' ? t('browse.adopted') : t('browse.all')}
               <button onClick={() => setStatus('waiting')}><X className="w-2.5 h-2.5" /></button>
             </span>
           )}
           {type !== 'all' && (
             <span className="browse-tag">
-              {type === 'dog' ? 'Dogs' : 'Cats'}
+              {type === 'dog' ? t('browse.dogs') : t('browse.cats')}
               <button onClick={() => setType('all')}><X className="w-2.5 h-2.5" /></button>
             </span>
           )}
           {gender !== 'all' && (
             <span className="browse-tag">
-              {gender === 'male' ? 'Male' : 'Female'}
+              {gender === 'male' ? t('browse.male') : t('browse.female')}
               <button onClick={() => setGender('all')}><X className="w-2.5 h-2.5" /></button>
             </span>
           )}
@@ -262,7 +264,7 @@ export default function BrowseAnimals() {
       {!isLoading && animals && (
         <div className="browse-results-bar">
           <p className="text-xs text-muted-foreground">
-            {animals.length} {animals.length === 1 ? 'animal' : 'animals'} found
+            {t('browse.found', { count: animals.length })}
           </p>
         </div>
       )}
@@ -290,7 +292,7 @@ export default function BrowseAnimals() {
       ) : (
         <EmptyState
           message={status === 'adopted'
-            ? 'No adopted animals yet'
+            ? t('browse.noAdoptedYet')
             : undefined}
         />
       )}

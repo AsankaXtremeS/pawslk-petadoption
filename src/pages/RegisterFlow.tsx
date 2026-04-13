@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaGlobeAsia as Globe } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 type Language = 'en' | 'si' | 'ta';
 
 interface RegisterFlowProps {
-  onComplete: (userData: { name: string; mobile: string; countryCode: string; language: Language }) => void;
+  onComplete: (userData: { name: string; mobile: string; countryCode: string; language: Language; password: string }) => void;
   onBack: () => void;
 }
 
-const languages: { code: Language; label: string; nativeLabel: string; flag: string }[] = [
+const languagesList: { code: Language; label: string; nativeLabel: string; flag: string }[] = [
   { code: 'en', label: 'English', nativeLabel: 'English', flag: '🇬🇧' },
   { code: 'si', label: 'Sinhala', nativeLabel: 'සිංහල', flag: '🇱🇰' },
   { code: 'ta', label: 'Tamil', nativeLabel: 'தமிழ்', flag: '🇱🇰' },
@@ -28,60 +29,6 @@ const countryCodes = [
   { code: '+81', country: 'Japan', flag: '🇯🇵' },
 ];
 
-const i18n: Record<Language, {
-  chooseLanguage: string;
-  yourDetails: string;
-  name: string;
-  namePlaceholder: string;
-  mobile: string;
-  mobilePlaceholder: string;
-  continue: string;
-  back: string;
-  nameRequired: string;
-  mobileRequired: string;
-  mobileInvalid: string;
-}> = {
-  en: {
-    chooseLanguage: 'Choose your language',
-    yourDetails: 'Your Details',
-    name: 'Full Name',
-    namePlaceholder: 'Enter your name',
-    mobile: 'Mobile Number',
-    mobilePlaceholder: '7X XXX XXXX',
-    continue: 'Continue',
-    back: 'Back',
-    nameRequired: 'Name is required',
-    mobileRequired: 'Mobile number is required',
-    mobileInvalid: 'Enter a valid mobile number',
-  },
-  si: {
-    chooseLanguage: 'ඔබේ භාෂාව තෝරන්න',
-    yourDetails: 'ඔබේ විස්තර',
-    name: 'සම්පූර්ණ නම',
-    namePlaceholder: 'ඔබේ නම ඇතුළත් කරන්න',
-    mobile: 'ජංගම දුරකථන අංකය',
-    mobilePlaceholder: '7X XXX XXXX',
-    continue: 'ඉදිරියට',
-    back: 'ආපසු',
-    nameRequired: 'නම අවශ්‍යයි',
-    mobileRequired: 'ජංගම අංකය අවශ්‍යයි',
-    mobileInvalid: 'වලංගු ජංගම අංකයක් ඇතුළත් කරන්න',
-  },
-  ta: {
-    chooseLanguage: 'உங்கள் மொழியை தேர்ந்தெடுக்கவும்',
-    yourDetails: 'உங்கள் விவரங்கள்',
-    name: 'முழு பெயர்',
-    namePlaceholder: 'உங்கள் பெயரை உள்ளிடவும்',
-    mobile: 'கைபேசி எண்',
-    mobilePlaceholder: '7X XXX XXXX',
-    continue: 'தொடர்க',
-    back: 'பின்னால்',
-    nameRequired: 'பெயர் தேவை',
-    mobileRequired: 'கைபேசி எண் தேவை',
-    mobileInvalid: 'சரியான கைபேசி எண்ணை உள்ளிடவும்',
-  },
-};
-
 const slideVariants = {
   enter: (direction: number) => ({
     x: direction > 0 ? 300 : -300,
@@ -98,19 +45,18 @@ const slideVariants = {
 };
 
 export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) {
+  const { t, i18n } = useTranslation();
   const [step, setStep] = useState<1 | 2>(1);
   const [direction, setDirection] = useState(1);
-  const [selectedLang, setSelectedLang] = useState<Language | null>(null);
   const [name, setName] = useState('');
   const [countryCode, setCountryCode] = useState('+94');
   const [mobile, setMobile] = useState('');
-  const [errors, setErrors] = useState<{ name?: string; mobile?: string }>({});
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<{ name?: string; mobile?: string; password?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const t = i18n[selectedLang || 'en'];
-
   const handleLanguageSelect = (lang: Language) => {
-    setSelectedLang(lang);
+    i18n.changeLanguage(lang);
     setDirection(1);
     setStep(2);
   };
@@ -125,16 +71,22 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
   };
 
   const validateForm = (): boolean => {
-    const newErrors: { name?: string; mobile?: string } = {};
+    const newErrors: { name?: string; mobile?: string; password?: string } = {};
     
     if (!name.trim()) {
-      newErrors.name = t.nameRequired;
+      newErrors.name = t('auth.errors.nameRequired');
     }
     
     if (!mobile.trim()) {
-      newErrors.mobile = t.mobileRequired;
+      newErrors.mobile = t('auth.errors.mobileRequired');
     } else if (!/^[0-9]{7,15}$/.test(mobile.replace(/\s/g, ''))) {
-      newErrors.mobile = t.mobileInvalid;
+      newErrors.mobile = t('auth.errors.mobileInvalid');
+    }
+
+    if (!password) {
+      newErrors.password = t('auth.errors.passwordRequired') || 'Password is required';
+    } else if (password.length < 6) {
+      newErrors.password = t('auth.errors.passwordTooShort') || 'Min 6 characters';
     }
     
     setErrors(newErrors);
@@ -142,7 +94,7 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
   };
 
   const handleSubmit = async () => {
-    if (!validateForm() || !selectedLang) return;
+    if (!validateForm()) return;
     
     setIsSubmitting(true);
     
@@ -155,7 +107,8 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
       name: name.trim(),
       mobile: fullMobile,
       countryCode,
-      language: selectedLang,
+      language: i18n.language as Language,
+      password: password,
     });
     
     setIsSubmitting(false);
@@ -175,7 +128,7 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
           whileTap={{ scale: 0.95 }}
         >
           <ArrowLeft />
-          <span>{step === 1 ? '' : t.back}</span>
+          <span>{step === 1 ? '' : t('common.back')}</span>
         </motion.button>
 
         <div className="rf-logo">
@@ -209,14 +162,14 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
                 <div className="rf-step-icon">
                   <Globe />
                 </div>
-                <h2 className="rf-step-title">{t.chooseLanguage}</h2>
+                <h2 className="rf-step-title">{t('auth.chooseLanguage')}</h2>
               </div>
 
               <div className="rf-lang-grid">
-                {languages.map((lang) => (
+                {languagesList.map((lang) => (
                   <motion.button
                     key={lang.code}
-                    className={`rf-lang-card ${selectedLang === lang.code ? 'selected' : ''}`}
+                    className={`rf-lang-card ${i18n.language === lang.code ? 'selected' : ''}`}
                     onClick={() => handleLanguageSelect(lang.code)}
                     whileHover={{ scale: 1.03, y: -2 }}
                     whileTap={{ scale: 0.97 }}
@@ -245,19 +198,19 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
                 <div className="rf-step-icon">
                   <PawPrint />
                 </div>
-                <h2 className="rf-step-title">{t.yourDetails}</h2>
+                <h2 className="rf-step-title">{t('auth.yourDetails')}</h2>
               </div>
 
               <div className="rf-form">
                 {/* Name Input */}
                 <div className="rf-field">
-                  <label className="rf-label" htmlFor="register-name">{t.name}</label>
+                  <label className="rf-label" htmlFor="register-name">{t('auth.name')}</label>
                   <div className={`rf-input-wrapper ${errors.name ? 'error' : ''}`}>
                     <input
                       id="register-name"
                       type="text"
                       className="rf-input"
-                      placeholder={t.namePlaceholder}
+                      placeholder={t('auth.namePlaceholder')}
                       value={name}
                       onChange={(e) => {
                         setName(e.target.value);
@@ -279,7 +232,7 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
 
                 {/* Mobile Input */}
                 <div className="rf-field">
-                  <label className="rf-label" htmlFor="register-mobile">{t.mobile}</label>
+                  <label className="rf-label" htmlFor="register-mobile">{t('auth.mobile')}</label>
                   <div className={`rf-input-wrapper rf-mobile-input ${errors.mobile ? 'error' : ''}`}>
                     <select
                       className="rf-country-code"
@@ -298,7 +251,7 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
                       id="register-mobile"
                       type="tel"
                       className="rf-input"
-                      placeholder={t.mobilePlaceholder}
+                      placeholder={t('auth.mobilePlaceholder')}
                       value={mobile}
                       onChange={(e) => {
                         const val = e.target.value.replace(/[^0-9\s]/g, '');
@@ -319,6 +272,34 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
                   )}
                 </div>
 
+                {/* Password Input */}
+                <div className="rf-field">
+                  <label className="rf-label" htmlFor="register-password">{t('auth.password') || 'Password'}</label>
+                  <div className={`rf-input-wrapper ${errors.password ? 'error' : ''}`}>
+                    <input
+                      id="register-password"
+                      type="password"
+                      className="rf-input"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        if (errors.password) setErrors(prev => ({ ...prev, password: undefined }));
+                      }}
+                      autoComplete="new-password"
+                    />
+                  </div>
+                  {errors.password && (
+                    <motion.p
+                      className="rf-error"
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                    >
+                      {errors.password}
+                    </motion.p>
+                  )}
+                </div>
+
                 {/* Submit Button */}
                 <motion.button
                   className="rf-submit-btn"
@@ -331,7 +312,7 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
                     <div className="rf-spinner" />
                   ) : (
                     <>
-                      <span>{t.continue}</span>
+                      <span>{t('auth.createAccount')}</span>
                       <ArrowRight />
                     </>
                   )}

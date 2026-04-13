@@ -25,6 +25,7 @@ import { useUserAnimals, useDeleteAnimal, type Animal } from '@/hooks/useAnimals
 import { parsePhotoUrls } from '@/utils/imageCompression';
 import { friendlyError } from '@/utils/errors';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -57,6 +58,7 @@ const languages = [
 ];
 
 function ProfileListingCard({ animal, onDelete }: { animal: Animal; onDelete: (id: string) => void }) {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const photoUrls = parsePhotoUrls(animal.photo_url);
   const coverUrl = photoUrls[0];
@@ -85,7 +87,7 @@ function ProfileListingCard({ animal, onDelete }: { animal: Animal; onDelete: (i
         {/* Status badge */}
         <div className={`absolute bottom-0.5 left-0.5 inline-flex items-center gap-[2px] px-1.5 py-[1px] rounded-md text-[9px] font-bold ${animal.is_adopted ? 'bg-success text-success-foreground' : 'bg-waiting text-waiting-foreground'}`}>
           {animal.is_adopted ? <CheckCircle className="w-[7px] h-[7px]" /> : <Heart className="w-[7px] h-[7px]" />}
-          <span>{animal.is_adopted ? 'Adopted' : 'Waiting'}</span>
+          <span>{animal.is_adopted ? t('browse.adopted') : t('browse.waiting')}</span>
         </div>
       </div>
 
@@ -93,10 +95,10 @@ function ProfileListingCard({ animal, onDelete }: { animal: Animal; onDelete: (i
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 text-sm font-bold truncate">
           <TypeIcon className="w-3.5 h-3.5 text-primary/60 flex-shrink-0" />
-          <span className="capitalize truncate">{animal.type} in {animal.location_name}</span>
+          <span className="capitalize truncate">{animal.type === 'dog' ? t('report.dog') : t('report.cat')} {t('common.at')} {animal.location_name}</span>
         </div>
         <p className="text-[11px] text-muted-foreground font-medium mt-0.5">
-          {new Date(animal.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+          {new Date(animal.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric', year: 'numeric' })}
         </p>
       </div>
 
@@ -105,7 +107,7 @@ function ProfileListingCard({ animal, onDelete }: { animal: Animal; onDelete: (i
         <button
           className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
           onClick={() => navigate(`/animals/${animal.id}`)}
-          title="View"
+          title={t('common.view')}
         >
           <Eye className="w-3 h-3" />
         </button>
@@ -113,14 +115,14 @@ function ProfileListingCard({ animal, onDelete }: { animal: Animal; onDelete: (i
           <button
             className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
             onClick={() => navigate(`/report?edit=${animal.id}`)}
-            title="Edit"
+            title={t('common.edit')}
           >
             <Edit className="w-3 h-3" />
           </button>
         )}
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <button className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all" title="Delete">
+            <button className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all" title={t('common.delete')}>
               <Trash className="w-3 h-3" />
             </button>
           </AlertDialogTrigger>
@@ -128,19 +130,19 @@ function ProfileListingCard({ animal, onDelete }: { animal: Animal; onDelete: (i
             <AlertDialogHeader>
               <AlertDialogTitle className="font-heading inline-flex items-center gap-2">
                 <AlertTriangle className="h-5 w-5 text-destructive" />
-                Delete Listing
+                {t('profile.listings.deleteTitle')}
               </AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to permanently delete this {animal.type} listing from {animal.location_name}? This action cannot be undone.
+                {t('profile.listings.deleteDesc', { type: animal.type === 'dog' ? t('report.dog') : t('report.cat'), location: animal.location_name })}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => onDelete(animal.id)}
                 className="rounded-xl bg-destructive hover:bg-destructive/90 text-destructive-foreground"
               >
-                Delete
+                {t('profile.actions.delete')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -151,6 +153,7 @@ function ProfileListingCard({ animal, onDelete }: { animal: Animal; onDelete: (i
 }
 
 export default function Profile() {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { user, updateUser, deleteAccount, clearUser, updatePassword } = useUser();
   const { data: userAnimals, isLoading: animalsLoading } = useUserAnimals(user?.id);
@@ -190,14 +193,14 @@ export default function Profile() {
       clean = clean.substring(1);
     }
     
-    if (!clean) { toast.error('Phone number is required'); return; }
-    if (!/^[0-9]{9}$/.test(clean)) { toast.error('Enter a valid 9-digit phone number'); return; }
+    if (!clean) { toast.error(t('profile.phone.required')); return; }
+    if (!/^[0-9]{9}$/.test(clean)) { toast.error(t('profile.phone.invalid')); return; }
 
     setPhoneSaving(true);
     try {
       const fullMobile = newCountryCode.replace('+', '') + clean;
       await updateUser({ mobile: fullMobile, countryCode: newCountryCode });
-      toast.success('Phone number updated!');
+      toast.success(t('profile.success.phoneUpdated'));
       setEditingPhone(false);
       setNewMobile('');
     } catch (err) {
@@ -211,8 +214,9 @@ export default function Profile() {
     if (lang === user.language) return;
     setLangSaving(true);
     try {
+      await i18n.changeLanguage(lang);
       await updateUser({ language: lang });
-      toast.success('Language updated!');
+      toast.success(t('profile.language.updated'));
       setEditingLang(false);
     } catch (err) {
       toast.error(friendlyError(err, 'Failed to update language.'));
@@ -222,18 +226,18 @@ export default function Profile() {
   };
 
   const handlePasswordSave = async () => {
-    if (!currentPassword) { toast.error('Current password is required'); return; }
-    if (newPassword.length < 6) { toast.error('New password must be at least 6 characters'); return; }
+    if (!currentPassword) { toast.error(t('profile.password.required')); return; }
+    if (newPassword.length < 6) { toast.error(t('profile.password.length')); return; }
     
     setPasswordSaving(true);
     try {
       await updatePassword(currentPassword, newPassword);
-      toast.success('Password updated successfully!');
+      toast.success(t('profile.password.updated'));
       setEditingPassword(false);
       setCurrentPassword('');
       setNewPassword('');
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to update password.');
+    } catch (err) {
+      toast.error((err as Error).message || 'Failed to update password.');
     } finally {
       setPasswordSaving(false);
     }
@@ -252,7 +256,7 @@ export default function Profile() {
     setDeletingAccount(true);
     try {
       await deleteAccount();
-      toast.success('Account deleted. We\'re sorry to see you go.');
+      toast.success(t('profile.success.accountDeleted'));
       navigate('/', { replace: true });
     } catch (err) {
       toast.error(friendlyError(err, 'Failed to delete account.'));
@@ -295,17 +299,17 @@ export default function Profile() {
         >
           <div className="flex-1 flex flex-col items-center gap-0.5">
             <span className="text-2xl font-extrabold">{userAnimals?.length || 0}</span>
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Total</span>
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{t('profile.stats.total')}</span>
           </div>
           <div className="w-px h-8 bg-border" />
           <div className="flex-1 flex flex-col items-center gap-0.5">
             <span className="text-2xl font-extrabold text-orange-500">{waitingCount}</span>
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Waiting</span>
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{t('profile.stats.waiting')}</span>
           </div>
           <div className="w-px h-8 bg-border" />
           <div className="flex-1 flex flex-col items-center gap-0.5">
             <span className="text-2xl font-extrabold text-emerald-500">{adoptedCount}</span>
-            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Adopted</span>
+            <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{t('profile.stats.adopted')}</span>
           </div>
         </motion.div>
 
@@ -319,7 +323,7 @@ export default function Profile() {
                 <Phone className="w-[18px] h-[18px]" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-bold">Phone Number</h3>
+                <h3 className="text-sm font-bold">{t('profile.phone.title')}</h3>
                 <p className="text-xs text-muted-foreground truncate mt-0.5">{formatDisplayMobile(user.mobile)}</p>
               </div>
               <button
@@ -355,7 +359,7 @@ export default function Profile() {
                       <input
                         type="tel"
                         className="rf-input"
-                        placeholder="7X XXX XXXX"
+                        placeholder={t('profile.phone.placeholder')}
                         value={newMobile}
                         onChange={(e) => setNewMobile(e.target.value.replace(/[^0-9\s]/g, ''))}
                         autoComplete="tel"
@@ -366,7 +370,7 @@ export default function Profile() {
                       onClick={handlePhoneSave}
                       disabled={phoneSaving}
                     >
-                      {phoneSaving ? 'Saving...' : 'Save'}
+                      {phoneSaving ? t('profile.actions.saving') : t('profile.actions.save')}
                     </button>
                   </div>
                 </motion.div>
@@ -381,7 +385,7 @@ export default function Profile() {
                 <Globe className="w-[18px] h-[18px]" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-bold">Language</h3>
+                <h3 className="text-sm font-bold">{t('profile.language.title')}</h3>
                 <p className="text-xs text-muted-foreground mt-0.5">{currentLang.flag} {currentLang.nativeLabel}</p>
               </div>
               <button
@@ -431,8 +435,8 @@ export default function Profile() {
                 <Lock className="w-[18px] h-[18px]" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-bold">Password</h3>
-                <p className="text-xs text-muted-foreground mt-0.5">Update your password</p>
+                <h3 className="text-sm font-bold">{t('profile.password.title')}</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">{t('profile.password.subtitle')}</p>
               </div>
               <button
                 className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all flex-shrink-0"
@@ -457,12 +461,12 @@ export default function Profile() {
                 >
                   <div className="p-4 flex flex-col gap-3">
                     <div className="rf-field">
-                      <label className="text-xs font-bold text-muted-foreground mb-1 block">Current Password</label>
+                      <label className="text-xs font-bold text-muted-foreground mb-1 block">{t('profile.password.current')}</label>
                       <div className="rf-input-wrapper flex items-center">
                         <input
                           type={showCurrentPassword ? "text" : "password"}
                           className="rf-input w-full bg-transparent border-none focus:outline-none"
-                          placeholder="Enter current password"
+                          placeholder={t('profile.password.currentPlaceholder')}
                           value={currentPassword}
                           onChange={(e) => setCurrentPassword(e.target.value)}
                           style={{ paddingLeft: '0.75rem' }}
@@ -477,12 +481,12 @@ export default function Profile() {
                       </div>
                     </div>
                     <div className="rf-field">
-                      <label className="text-xs font-bold text-muted-foreground mb-1 block border-t pt-2">New Password</label>
+                      <label className="text-xs font-bold text-muted-foreground mb-1 block border-t pt-2">{t('profile.password.new')}</label>
                       <div className="rf-input-wrapper flex items-center">
                         <input
                           type={showNewPassword ? "text" : "password"}
                           className="rf-input w-full bg-transparent border-none focus:outline-none"
-                          placeholder="At least 6 characters"
+                          placeholder={t('profile.password.newPlaceholder')}
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
                           style={{ paddingLeft: '0.75rem' }}
@@ -502,7 +506,7 @@ export default function Profile() {
                       onClick={handlePasswordSave}
                       disabled={passwordSaving}
                     >
-                      {passwordSaving ? 'Updating...' : 'Update Password'}
+                      {passwordSaving ? t('profile.actions.updating') : t('profile.actions.update')}
                     </button>
                   </div>
                 </motion.div>
@@ -517,12 +521,12 @@ export default function Profile() {
                 <ListIcon className="w-[18px] h-[18px]" />
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-bold">My Listings</h3>
-                <p className="text-xs text-muted-foreground mt-0.5">{userAnimals?.length || 0} posts</p>
+                <h3 className="text-sm font-bold">{t('profile.listings.title')}</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">{t('profile.listings.posts', { count: userAnimals?.length || 0 })}</p>
               </div>
               <Link to="/report" className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-bold no-underline hover:bg-primary/15 transition-all flex-shrink-0">
                 <PawPrint className="w-3 h-3" />
-                <span>Add New</span>
+                <span>{t('profile.listings.addNew')}</span>
               </Link>
             </div>
 
@@ -546,9 +550,9 @@ export default function Profile() {
               ) : (
                 <div className="flex flex-col items-center gap-2 py-6 text-center">
                   <PawPrint className="w-8 h-8 text-muted-foreground/30" />
-                  <p className="text-sm text-muted-foreground font-medium">No listings yet</p>
+                  <p className="text-sm text-muted-foreground font-medium">{t('profile.listings.noListings')}</p>
                   <Link to="/report" className="text-xs font-bold text-primary underline underline-offset-2">
-                    Report a stray
+                    {t('profile.listings.reportLink')}
                   </Link>
                 </div>
               )}
@@ -562,7 +566,7 @@ export default function Profile() {
               onClick={clearUser}
             >
               <LogOut className="w-4 h-4" />
-              <span>Log Out</span>
+              <span>{t('profile.actions.logout')}</span>
             </button>
           </motion.div>
 
@@ -575,10 +579,10 @@ export default function Profile() {
           >
             <h4 className="flex items-center gap-2 text-sm font-extrabold text-destructive mb-2">
               <AlertTriangle className="w-4 h-4" />
-              <span>Danger Zone</span>
+              <span>{t('profile.dangerZone.title')}</span>
             </h4>
             <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-              Permanently delete your account and all your animal listings. This action cannot be undone.
+              {t('profile.dangerZone.desc')}
             </p>
 
             <AlertDialog>
@@ -588,29 +592,26 @@ export default function Profile() {
                   disabled={deletingAccount}
                 >
                   <Trash className="w-3.5 h-3.5" />
-                  <span>{deletingAccount ? 'Deleting...' : 'Delete Account'}</span>
+                  <span>{deletingAccount ? t('profile.actions.deleting') : t('profile.actions.deleteAccount')}</span>
                 </button>
               </AlertDialogTrigger>
               <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
                 <AlertDialogHeader>
                   <AlertDialogTitle className="font-heading inline-flex items-center gap-2 text-destructive">
                     <AlertTriangle className="h-5 w-5" />
-                    Delete Account Permanently
+                    {t('profile.dangerZone.dialogTitle')}
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    This will permanently delete your account, all your animal listings and their photos.
-                    <strong> This cannot be undone.</strong>
-                    <br /><br />
-                    Are you absolutely sure?
+                    {t('profile.dangerZone.dialogDesc')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+                  <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleDeleteAccount}
                     className="rounded-xl bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                   >
-                    Yes, Delete Everything
+                    {t('profile.dangerZone.confirm')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>

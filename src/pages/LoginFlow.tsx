@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaPhone as Phone } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 const countryCodes = [
   { code: '+94', country: 'Sri Lanka', flag: '🇱🇰' },
@@ -16,25 +17,31 @@ const countryCodes = [
 ];
 
 interface LoginFlowProps {
-  onComplete: (mobile: string) => void;
+  onComplete: (mobile: string, password: string) => void;
   onBack: () => void;
   onRegister: () => void;
 }
 
 export default function LoginFlow({ onComplete, onBack, onRegister }: LoginFlowProps) {
+  const { t } = useTranslation();
   const [countryCode, setCountryCode] = useState('+94');
   const [mobile, setMobile] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
     const clean = mobile.replace(/\s/g, '');
     if (!clean) {
-      setError('Mobile number is required');
+      setError(t('auth.errors.mobileRequired'));
       return;
     }
     if (!/^[0-9]{7,15}$/.test(clean)) {
-      setError('Enter a valid mobile number');
+      setError(t('auth.errors.mobileInvalid'));
+      return;
+    }
+    if (!password) {
+      setError(t('auth.errors.passwordRequired') || 'Password is required');
       return;
     }
 
@@ -43,7 +50,7 @@ export default function LoginFlow({ onComplete, onBack, onRegister }: LoginFlowP
 
     // Build full number without the +  (e.g., "94760589218")
     const fullMobile = countryCode.replace('+', '') + clean;
-    await onComplete(fullMobile);
+    await onComplete(fullMobile, password);
 
     setIsSubmitting(false);
   };
@@ -83,16 +90,16 @@ export default function LoginFlow({ onComplete, onBack, onRegister }: LoginFlowP
             <div className="rf-step-icon">
               <Phone />
             </div>
-            <h2 className="rf-step-title">Welcome back</h2>
+            <h2 className="rf-step-title">{t('auth.welcomeBack')}</h2>
             <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '0.9rem', marginTop: '-0.5rem' }}>
-              Enter your mobile number to log in
+              {t('auth.loginSubtitle')}
             </p>
           </div>
 
           <div className="rf-form">
             {/* Mobile Input */}
             <div className="rf-field">
-              <label className="rf-label" htmlFor="login-mobile">Mobile Number</label>
+              <label className="rf-label" htmlFor="login-mobile">{t('auth.mobile')}</label>
               <div className={`rf-input-wrapper rf-mobile-input ${error ? 'error' : ''}`}>
                 <select
                   className="rf-country-code"
@@ -135,6 +142,28 @@ export default function LoginFlow({ onComplete, onBack, onRegister }: LoginFlowP
               )}
             </div>
 
+            {/* Password Input */}
+            <div className="rf-field" style={{ marginTop: '1rem' }}>
+              <label className="rf-label" htmlFor="login-password">{t('auth.password') || 'Password'}</label>
+              <div className={`rf-input-wrapper ${error && !password ? 'error' : ''}`}>
+                <input
+                  id="login-password"
+                  type="password"
+                  className="rf-input"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (error) setError('');
+                  }}
+                  autoComplete="current-password"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSubmit();
+                  }}
+                />
+              </div>
+            </div>
+
             {/* Submit Button */}
             <motion.button
               className="rf-submit-btn"
@@ -147,7 +176,7 @@ export default function LoginFlow({ onComplete, onBack, onRegister }: LoginFlowP
                 <div className="rf-spinner" />
               ) : (
                 <>
-                  <span>Log In</span>
+                  <span>{t('common.login')}</span>
                   <ArrowRight />
                 </>
               )}
@@ -155,9 +184,9 @@ export default function LoginFlow({ onComplete, onBack, onRegister }: LoginFlowP
 
             {/* Register link */}
             <p className="gs-login-link" style={{ textAlign: 'center', marginTop: '0.5rem' }}>
-              Don't have an account?{' '}
+              {t('auth.noAccount')}{' '}
               <button onClick={onRegister} className="gs-login-btn">
-                Sign up
+                {t('common.signup')}
               </button>
             </p>
           </div>
