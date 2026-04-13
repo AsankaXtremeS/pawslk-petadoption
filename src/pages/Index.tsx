@@ -124,8 +124,8 @@ export default function Index() {
           </div>
         </div>
 
-        {/* Mobile Floating Statistics Bar (Glassmorphism) - Floating above Hero */}
-        <div className="md:hidden absolute bottom-6 left-4 right-4 z-20">
+        {/* Mobile Floating Statistics Bar (Glassmorphism) - Floating above Nav */}
+        <div className="md:hidden fixed bottom-[95px] left-4 right-4 z-40">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
