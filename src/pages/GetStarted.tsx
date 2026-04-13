@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { FaPaw as PawPrint } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 interface GetStartedProps {
   onGetStarted: () => void;
@@ -7,6 +8,8 @@ interface GetStartedProps {
 }
 
 export default function GetStarted({ onGetStarted, onLogin }: GetStartedProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="get-started-page">
       {/* Floating decorative paw prints */}
@@ -44,12 +47,12 @@ export default function GetStarted({ onGetStarted, onLogin }: GetStartedProps) {
           transition={{ duration: 0.6, delay: 0.3 }}
         >
           <h1 className="gs-title">
-            Every paw
+            {t('auth.getStartedTitle')}
             <br />
-            <span className="gs-title-accent">deserves a home.</span>
+            <span className="gs-title-accent">{t('auth.getStartedAccent')}</span>
           </h1>
           <p className="gs-subtitle">
-            Report, rescue, and adopt stray animals across Sri Lanka.
+            {t('auth.getStartedSubtitle')}
           </p>
         </motion.div>
 
@@ -68,7 +71,7 @@ export default function GetStarted({ onGetStarted, onLogin }: GetStartedProps) {
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </div>
-          <span>Get Started</span>
+          <span>{t('auth.getStartedBtn')}</span>
         </motion.button>
 
         {/* Login link */}
@@ -78,9 +81,9 @@ export default function GetStarted({ onGetStarted, onLogin }: GetStartedProps) {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.65 }}
         >
-          Already have an account?{' '}
+          {t('auth.alreadyHaveAccount')}{' '}
           <button onClick={onLogin} className="gs-login-btn">
-            Log in
+            {t('common.login')}
           </button>
         </motion.p>
       </div>

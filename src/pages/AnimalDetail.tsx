@@ -8,6 +8,7 @@ import confetti from 'canvas-confetti';
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { parsePhotoUrls } from '@/utils/imageCompression';
+import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +22,7 @@ import {
 } from '@/components/ui/alert-dialog';
 
 export default function AnimalDetail() {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { data: animal, isLoading } = useAnimal(id!);
@@ -83,13 +85,13 @@ export default function AnimalDetail() {
 
   const handleAdopt = async () => {
     if (!user) {
-      toast.error('You must be logged in to do this.');
+      toast.error(t('detail.loginRequired'));
       return;
     }
     try {
       await markAdopted.mutateAsync({ id: id!, userId: user.id, userToken: user.userToken });
       setJustAdopted(true);
-      toast.success('This animal has been marked as adopted! Thank you!');
+      toast.success(t('detail.adoptedSuccess'));
       confetti({
         particleCount: 150,
         spread: 80,
@@ -97,13 +99,17 @@ export default function AnimalDetail() {
         colors: ['#a855f7', '#f97316', '#4ade80', '#3b82f6'],
       });
     } catch {
-      toast.error('Something went wrong. Only the post creator can change status.');
+      toast.error(t('detail.genericError'));
     }
   };
 
   const formatPhone = (num: string | null) => {
     if (!num) return null;
     return num.startsWith('+') ? num : `+${num}`;
+  };
+
+  const getLocalDate = (date: string) => {
+    return new Date(date).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'long', day: 'numeric', year: 'numeric' });
   };
 
   if (isLoading) {
@@ -124,8 +130,8 @@ export default function AnimalDetail() {
         <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
           <Search className="h-7 w-7 text-muted-foreground" />
         </div>
-        <h2 className="font-heading text-xl font-bold">Animal not found</h2>
-        <p className="text-sm text-muted-foreground mt-2">It might have been removed or the link is incorrect.</p>
+        <h2 className="font-heading text-xl font-bold">{t('detail.notFound')}</h2>
+        <p className="text-sm text-muted-foreground mt-2">{t('detail.notFoundDesc')}</p>
       </div>
     );
   }
@@ -150,7 +156,7 @@ export default function AnimalDetail() {
                 <motion.img
                   key={currentSlide}
                   src={photoUrls[currentSlide]}
-                  alt={`${animal.type} at ${animal.location_name} - Photo ${currentSlide + 1}`}
+                  alt={`${animal.type === 'dog' ? t('report.dog') : t('report.cat')} ${t('common.at')} ${animal.location_name} - ${t('detail.photo')} ${currentSlide + 1}`}
                   className="absolute inset-0 w-full h-full object-cover"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -191,7 +197,7 @@ export default function AnimalDetail() {
                           : 'w-2 h-2 bg-white/50 hover:bg-white/80'
                         }
                       `}
-                      aria-label={`Go to photo ${index + 1}`}
+                      aria-label={`${t('detail.photo')} ${index + 1}`}
                     />
                   ))}
                 </div>
@@ -201,7 +207,7 @@ export default function AnimalDetail() {
               {hasMultiplePhotos && (
                 <div className="absolute top-4 left-14 md:left-4 z-10">
                   <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-black/40 text-white backdrop-blur-sm">
-                    {currentSlide + 1} / {photoUrls.length}
+                    {t('detail.photoCounter', { current: currentSlide + 1, total: photoUrls.length })}
                   </span>
                 </div>
               )}
@@ -225,12 +231,12 @@ export default function AnimalDetail() {
             {isAdopted ? (
               <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold bg-success text-success-foreground shadow-md">
                 <CheckCircle2 className="h-4 w-4" />
-                Adopted
+                {t('browse.adopted')}
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold bg-white/90 text-orange-600 shadow-md backdrop-blur-sm">
                 <Heart className="h-4 w-4" />
-                Waiting
+                {t('browse.waiting')}
               </span>
             )}
           </div>
@@ -239,7 +245,7 @@ export default function AnimalDetail() {
           {isOwner && (
             <div className="absolute bottom-3 right-4 z-20">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground shadow-md">
-                Your Post
+                {t('detail.yourPost')}
               </span>
             </div>
           )}
@@ -260,16 +266,16 @@ export default function AnimalDetail() {
           </div>
           <div>
             <h1 className="font-heading text-2xl font-bold capitalize">
-              {animal.type} in {animal.location_name}
+              {animal.type === 'dog' ? t('report.dog') : t('report.cat')} {t('common.at')} {animal.location_name}
             </h1>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground mt-1">
               <span className="inline-flex items-center gap-1">
                 {animal.gender === 'male' ? <Mars className="w-3.5 h-3.5" /> : <Venus className="w-3.5 h-3.5" />}
-                <span className="capitalize">{animal.gender}</span>
+                <span className="capitalize">{animal.gender === 'male' ? t('report.male') : t('report.female')}</span>
               </span>
               <span className="inline-flex items-center gap-1">
                 <Calendar className="w-3.5 h-3.5" />
-                {new Date(animal.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                {getLocalDate(animal.created_at)}
               </span>
             </div>
           </div>
@@ -289,7 +295,7 @@ export default function AnimalDetail() {
           {animal.reporter_name && (
             <div className="flex items-center gap-2.5 p-3 rounded-xl bg-muted/50">
               <User className="w-4 h-4 text-primary/60 shrink-0" />
-              <span className="text-sm truncate">By {animal.reporter_name.split(' ')[0]}</span>
+              <span className="text-sm truncate">{t('common.by')} {animal.reporter_name.split(' ')[0]}</span>
             </div>
           )}
         </div>
@@ -301,7 +307,7 @@ export default function AnimalDetail() {
               <PhoneIcon className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <p className="text-xs text-muted-foreground font-medium">Contact to adopt</p>
+              <p className="text-xs text-muted-foreground font-medium">{t('detail.contactToAdopt')}</p>
               <p className="text-sm font-bold text-foreground">{formatPhone(animal.contact_number)}</p>
             </div>
           </div>
@@ -317,30 +323,30 @@ export default function AnimalDetail() {
               onClick={() => navigate(`/report?edit=${animal.id}`)}
             >
               <Edit className="h-4 w-4 mr-2" />
-              Edit Post
+              {t('profile.listings.edit')}
             </Button>
 
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="success" size="lg" className="w-full text-base">
                   <CheckCircle2 className="h-5 w-5 mr-2" />
-                  Mark as Adopted
+                  {t('detail.markAsAdopted')}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
                 <AlertDialogHeader>
                   <AlertDialogTitle className="font-heading inline-flex items-center gap-2">
                     <CircleCheck className="h-5 w-5 text-success" />
-                    Confirm Adoption
+                    {t('detail.confirmAdoption')}
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    Are you sure this animal has been adopted? This will move the post to the adopted section and remove it from the main view.
+                    {t('detail.confirmDesc')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+                  <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
                   <AlertDialogAction onClick={handleAdopt} disabled={markAdopted.isPending} className="rounded-xl bg-success hover:bg-success/90">
-                    {markAdopted.isPending ? 'Updating...' : 'Yes, Mark as Adopted!'}
+                    {markAdopted.isPending ? t('profile.actions.updating') : t('detail.yesMark')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -352,7 +358,7 @@ export default function AnimalDetail() {
         {!isOwner && !isAdopted && animal.contact_number && (
           <div className="bg-muted/50 rounded-2xl p-4 text-center">
             <p className="text-sm text-muted-foreground">
-              Interested in adopting? Contact the reporter using the phone number above.
+              {t('detail.interested')}
             </p>
           </div>
         )}
@@ -366,11 +372,11 @@ export default function AnimalDetail() {
           >
             <p className="text-lg font-heading font-semibold text-success inline-flex items-center justify-center gap-2">
               <CircleCheck className="h-5 w-5" />
-              This animal has been adopted!
+              {t('detail.animalAdopted')}
             </p>
             {animal.adopted_at && (
               <p className="text-sm text-muted-foreground mt-1">
-                Adopted on {new Date(animal.adopted_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                {t('detail.adoptedOn', { date: getLocalDate(animal.adopted_at) })}
               </p>
             )}
           </motion.div>

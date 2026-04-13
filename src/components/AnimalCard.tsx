@@ -2,15 +2,16 @@ import { Link } from 'react-router-dom';
 import type { Animal } from '@/hooks/useAnimals';
 import { FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaHeart as Heart, FaMapMarkerAlt as MapPin, FaPhoneAlt as PhoneIcon } from 'react-icons/fa';
 import { getPrimaryPhotoUrl } from '@/utils/imageCompression';
+import { useTranslation } from 'react-i18next';
 
 export default function AnimalCard({ animal }: { animal: Animal }) {
+  const { t, i18n } = useTranslation();
   const isAdopted = animal.is_adopted;
   const primaryPhoto = getPrimaryPhotoUrl(animal.photo_url);
 
   // Format contact number for display (e.g., "94760589218" → "+94 760 589 218")
   const formatPhone = (num: string | null) => {
     if (!num) return null;
-    // If it starts with country code digits, add + prefix
     const withPlus = num.startsWith('+') ? num : `+${num}`;
     return withPlus;
   };
@@ -27,7 +28,7 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
           {primaryPhoto ? (
             <img
               src={primaryPhoto}
-              alt={`${animal.type} at ${animal.location_name}`}
+              alt={`${animal.type === 'dog' ? t('report.dog') : t('report.cat')} ${t('common.at')} ${animal.location_name}`}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               loading="lazy"
             />
@@ -45,12 +46,12 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
             {isAdopted ? (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-success text-success-foreground shadow-sm">
                 <CheckCircle2 className="h-3 w-3" />
-                Adopted
+                {t('browse.adopted')}
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-orange-600 shadow-sm backdrop-blur-sm">
                 <Heart className="h-3 w-3" />
-                Waiting
+                {t('browse.waiting')}
               </span>
             )}
           </div>
@@ -68,7 +69,7 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
 
         {/* Info */}
         <div className="p-4 space-y-1.5">
-          <div className="flex items-center gap-1.5 text-sm text-foreground font-medium">
+          <div className="flex items-center gap-1.5 text-sm text-foreground font-bold truncate">
             <MapPin className="w-3.5 h-3.5 text-primary/60 shrink-0" />
             <span className="truncate">{animal.location_name}</span>
           </div>
@@ -88,11 +89,11 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
           )}
 
           <div className="flex items-center justify-between pt-1">
-            <span className="text-[11px] text-muted-foreground capitalize">
-              {animal.gender} • {animal.type}
+            <span className="text-[11px] text-muted-foreground font-medium">
+              {animal.gender === 'male' ? t('report.male') : t('report.female')} • {animal.type === 'dog' ? t('report.dog') : t('report.cat')}
             </span>
             <span className="text-[11px] text-muted-foreground">
-              {new Date(animal.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              {new Date(animal.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric' })}
             </span>
           </div>
         </div>

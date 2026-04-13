@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaPhone as Phone, FaLock as Lock, FaEye as Eye, FaEyeSlash as EyeSlash } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const countryCodes = [
   { code: '+94', country: 'Sri Lanka', flag: '🇱🇰' },
@@ -18,70 +19,12 @@ const countryCodes = [
   { code: '+81', country: 'Japan', flag: '🇯🇵' },
 ];
 
-type Language = 'en' | 'si' | 'ta';
-
-const i18n: Record<Language, {
-  welcomeBack: string;
-  subtitle: string;
-  mobile: string;
-  password: string;
-  passwordPlaceholder: string;
-  login: string;
-  noAccount: string;
-  signup: string;
-  mobileRequired: string;
-  mobileInvalid: string;
-  passwordRequired: string;
-}> = {
-  en: {
-    welcomeBack: 'Welcome back',
-    subtitle: 'Enter your mobile number to log in',
-    mobile: 'Mobile Number',
-    password: 'Password',
-    passwordPlaceholder: 'Enter your password',
-    login: 'Log In',
-    noAccount: "Don't have an account? ",
-    signup: 'Sign up',
-    mobileRequired: 'Mobile number is required',
-    mobileInvalid: 'Enter a valid 9-digit mobile number (e.g. 76xxxxxxx)',
-    passwordRequired: 'Password is required',
-  },
-  si: {
-    welcomeBack: 'නැවත සාදරයෙන් පිළිගනිමු',
-    subtitle: 'ඇතුල් වීමට ඔබේ ජංගම දුරකථන අංකය ඇතුළත් කරන්න',
-    mobile: 'ජංගම දුරකථන අංකය',
-    password: 'මුරපදය',
-    passwordPlaceholder: 'ඔබේ මුරපදය ඇතුළත් කරන්න',
-    login: 'ඇතුල් වන්න',
-    noAccount: 'ගිණුමක් නොමැතිද? ',
-    signup: 'ලියාපදිංචි වන්න',
-    mobileRequired: 'ජංගම අංකය අවශ්‍යයි',
-    mobileInvalid: 'වලංගු දුරකථන දුරකථන අංකයක් ඇතුළත් කරන්න',
-    passwordRequired: 'මුරපදයක් අවශ්‍යයි',
-  },
-  ta: {
-    welcomeBack: 'மீண்டும் வருக',
-    subtitle: 'உள்நுழைய உங்கள் கைபேசி எண்ணை உள்ளிடவும்',
-    mobile: 'கைபேசி எண்',
-    password: 'கடவுச்சொல்',
-    passwordPlaceholder: 'உங்கள் கடவுச்சொல்லை உள்ளிடவும்',
-    login: 'உள்நுழைய',
-    noAccount: 'கணக்கு இல்லையா? ',
-    signup: 'பதிவு செய்யவும்',
-    mobileRequired: 'கைபேசி எண் தேவை',
-    mobileInvalid: 'சரியான கைபேசி எண்ணை உள்ளிடவும்',
-    passwordRequired: 'கடவுச்சொல் தேவை',
-  },
-};
-
 export default function LoginPage() {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/';
-  const langParam = searchParams.get('lang') as Language;
-  const currentLang: Language = (langParam && i18n[langParam]) ? langParam : 'en';
-  const t = i18n[currentLang];
-
+  
   const { loginByMobile, isRegistered } = useUser();
 
   const [countryCode, setCountryCode] = useState('+94');
@@ -106,15 +49,15 @@ export default function LoginPage() {
     }
     
     if (!clean) {
-      setError(t.mobileRequired);
+      setError(t('auth.errors.mobileRequired'));
       return;
     }
     if (!/^[0-9]{9}$/.test(clean)) {
-      setError(t.mobileInvalid);
+      setError(t('auth.errors.mobileInvalid'));
       return;
     }
     if (!password) {
-      setError(t.passwordRequired);
+      setError(t('auth.errors.passwordRequired'));
       return;
     }
 
@@ -127,8 +70,9 @@ export default function LoginPage() {
       toast.success('Welcome back! 🐾');
       navigate(decodeURIComponent(redirectTo), { replace: true });
     } catch (err: any) {
-      setError(err.message || 'Login failed. Please check your number.');
-      toast.error(err.message || 'Login failed. Please check your number.');
+      const msg = err.message || t('auth.errors.loginFailed');
+      setError(msg);
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -169,16 +113,16 @@ export default function LoginPage() {
             <div className="rf-step-icon">
               <Phone />
             </div>
-            <h2 className="rf-step-title">{t.welcomeBack}</h2>
+            <h2 className="rf-step-title">{t('auth.welcomeBack')}</h2>
             <p style={{ color: 'hsl(var(--muted-foreground))', fontSize: '0.85rem', marginTop: '-0.25rem' }}>
-              {t.subtitle}
+              {t('auth.loginSubtitle')}
             </p>
           </div>
 
           <div className="rf-form">
             {/* Mobile Input */}
             <div className="rf-field">
-              <label className="rf-label" htmlFor="login-mobile">{t.mobile}</label>
+              <label className="rf-label" htmlFor="login-mobile">{t('auth.mobile')}</label>
               <div className={`rf-input-wrapper rf-mobile-input ${error ? 'error' : ''}`}>
                 <select
                   className="rf-country-code"
@@ -223,8 +167,8 @@ export default function LoginPage() {
 
             {/* Password Input */}
             <div className="rf-field">
-              <label className="rf-label" htmlFor="login-password">{t.password}</label>
-              <div className={`rf-input-wrapper ${error === t.passwordRequired || error === 'Invalid password' ? 'error' : ''}`} style={{ display: 'flex', alignItems: 'center' }}>
+              <label className="rf-label" htmlFor="login-password">{t('auth.password')}</label>
+              <div className={`rf-input-wrapper ${error === t('auth.errors.passwordRequired') || error === 'Invalid password' ? 'error' : ''}`} style={{ display: 'flex', alignItems: 'center' }}>
                 <div style={{ paddingLeft: '1rem', color: 'hsl(var(--muted-foreground))' }}>
                   <Lock className="w-4 h-4" />
                 </div>
@@ -232,7 +176,7 @@ export default function LoginPage() {
                   id="login-password"
                   type={showPassword ? "text" : "password"}
                   className="rf-input"
-                  placeholder={t.passwordPlaceholder}
+                  placeholder={t('auth.passwordPlaceholder')}
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
@@ -268,7 +212,7 @@ export default function LoginPage() {
                 <div className="rf-spinner" />
               ) : (
                 <>
-                  <span>{t.login}</span>
+                  <span>{t('common.login')}</span>
                   <ArrowRight />
                 </>
               )}
@@ -276,12 +220,12 @@ export default function LoginPage() {
 
             {/* Register link */}
             <p className="gs-login-link" style={{ textAlign: 'center', marginTop: '0.5rem' }}>
-              {t.noAccount}{' '}
+              {t('auth.noAccount')}{' '}
               <Link
-                to={`/register?lang=${currentLang}${redirectTo !== '/' ? `&redirect=${encodeURIComponent(redirectTo)}` : ''}`}
+                to={`/register?lang=${i18n.language}${redirectTo !== '/' ? `&redirect=${encodeURIComponent(redirectTo)}` : ''}`}
                 className="gs-login-btn"
               >
-                {t.signup}
+                {t('common.signup')}
               </Link>
             </p>
           </div>

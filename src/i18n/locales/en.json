@@ -1,0 +1,244 @@
+{
+  "common": {
+    "back": "Back",
+    "continue": "Continue",
+    "login": "Log In",
+    "signup": "Sign Up",
+    "logout": "Log Out",
+    "profile": "Profile",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "error": "Error",
+    "success": "Success",
+    "at": "in",
+    "by": "By",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "nav": {
+    "home": "Home",
+    "browse": "Browse",
+    "addNew": "Add New",
+    "stats": "Stats"
+  },
+  "footer": {
+    "tagline": "Helping Sri Lanka's stray animals find loving homes."
+  },
+  "auth": {
+    "welcomeBack": "Welcome back",
+    "loginSubtitle": "Enter your mobile number to log in",
+    "chooseLanguage": "Choose your language",
+    "yourDetails": "Your Details",
+    "name": "Full Name",
+    "namePlaceholder": "Enter your name",
+    "mobile": "Mobile Number",
+    "mobilePlaceholder": "7XXXXXXXX",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "createPasswordPlaceholder": "Create a password",
+    "createAccount": "Create Account",
+    "noAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "errors": {
+      "mobileRequired": "Mobile number is required",
+      "mobileInvalid": "Enter a valid 9-digit mobile number (e.g. 76xxxxxxx)",
+      "passwordRequired": "Password is required",
+      "passwordLength": "Password must be at least 6 characters",
+      "loginFailed": "Login failed. Please check your number.",
+      "nameRequired": "Full name is required"
+    },
+    "getStartedTitle": "Every paw",
+    "getStartedAccent": "deserves a home.",
+    "getStartedSubtitle": "Report, rescue, and adopt stray animals across Sri Lanka.",
+    "getStartedBtn": "Get Started"
+  },
+  "home": {
+    "heroBadge": "Rescuing Sri Lanka's Strays",
+    "heroTitle": "Every Life",
+    "heroTitleGradient": "Deserves a Home",
+    "heroSubtitle": "Report, rescue, and adopt stray dogs and cats across Sri Lanka. Your action changes a life.",
+    "animalsBtn": "Animals",
+    "addNewBtn": "Add New",
+    "stats": {
+      "saved": "Saved",
+      "waiting": "Waiting",
+      "rescuers": "Rescuers"
+    },
+    "recent": {
+      "title": "Recently Reported",
+      "subtitle": "These furry friends need your help",
+      "viewAll": "View all",
+      "empty": "No animals reported yet"
+    }
+  },
+  "browse": {
+    "title": "Browse Animals",
+    "adoptedTitle": "Adopted Animals",
+    "subtitle": "Find a furry friend waiting for love",
+    "adoptedSubtitle": "These pets found their forever homes 🎉",
+    "searchPlaceholder": "Search by location...",
+    "filters": "Filters",
+    "status": "Status",
+    "type": "Type",
+    "gender": "Gender",
+    "clear": "Clear",
+    "clearAll": "Clear all filters",
+    "found": "{{count}} animals found",
+    "found_one": "1 animal found",
+    "waiting": "Waiting",
+    "adopted": "Adopted",
+    "all": "All",
+    "dogs": "Dogs",
+    "cats": "Cats",
+    "any": "Any",
+    "male": "Male",
+    "female": "Female"
+  },
+  "report": {
+    "title": "Report a Stray",
+    "editTitle": "Edit Post",
+    "subtitle": "Help us rescue a furry friend in need",
+    "editSubtitle": "Update the details of your post",
+    "photos": "Photos",
+    "photoHelp": "Upload up to 3 photos • JPG, PNG up to 5MB each • Auto-compressed to WebP",
+    "coverPhoto": "Cover photo",
+    "cover": "Cover",
+    "photoSlot": "Photo {{count}}",
+    "animalType": "Animal Type",
+    "dog": "Dog",
+    "cat": "Cat",
+    "gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "location": "Location *",
+    "locationPlaceholder": "e.g. Nugegoda Junction",
+    "useCurrentLocation": "Use my current location",
+    "fetchingLocation": "Fetching…",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the animal's condition, color, size...",
+    "yourName": "Your Name",
+    "namePlaceholder": "Your first name",
+    "autoFilled": "Auto-filled from your profile",
+    "submit": "Submit Report",
+    "update": "Update Post",
+    "submitting": "Compressing & uploading...",
+    "updating": "Updating...",
+    "errors": {
+      "locationRequired": "Please enter a location name",
+      "photoRequired": "Please upload at least one photo",
+      "sizeLimit": "Image too large. Maximum size is 5MB.",
+      "editOwnOnly": "You can only edit your own posts.",
+      "genericError": "Something went wrong. Please try again."
+    },
+    "success": {
+      "reported": "Thank you! You may have just saved a life.",
+      "updated": "Post updated successfully!",
+      "locationFound": "Location found and suggested."
+    }
+  },
+  "dashboard": {
+    "title": "Impact Dashboard",
+    "subtitle": "See the difference we're making together",
+    "total": "Total",
+    "adopted": "Adopted",
+    "waiting": "Waiting",
+    "rate": "Rate",
+    "last6Months": "Last 6 Months",
+    "dogsVsCats": "Dogs vs Cats",
+    "recentlyAdopted": "Recently Adopted",
+    "topLocations": "Top Locations",
+    "noData": "No data yet",
+    "noAdoptions": "No adoptions yet",
+    "noLocations": "No locations yet",
+    "cats": "Cats"
+  },
+  "profile": {
+    "title": "Profile",
+    "stats": {
+      "total": "Total",
+      "waiting": "Waiting",
+      "adopted": "Adopted"
+    },
+    "phone": {
+      "title": "Phone Number",
+      "placeholder": "7X XXX XXXX",
+      "required": "Phone number is required",
+      "invalid": "Enter a valid 9-digit phone number"
+    },
+    "language": {
+      "title": "Language",
+      "updated": "Language updated!"
+    },
+    "password": {
+      "title": "Password",
+      "subtitle": "Update your password",
+      "current": "Current Password",
+      "currentPlaceholder": "Enter current password",
+      "new": "New Password",
+      "newPlaceholder": "At least 6 characters",
+      "required": "Current password is required",
+      "length": "New password must be at least 6 characters",
+      "updated": "Password updated successfully!"
+    },
+    "listings": {
+      "title": "My Listings",
+      "posts": "{{count}} posts",
+      "posts_one": "1 post",
+      "addNew": "Add New",
+      "noListings": "No listings yet",
+      "reportLink": "Report a stray",
+      "deleteTitle": "Delete Listing",
+      "deleteDesc": "Are you sure you want to permanently delete this {{type}} listing from {{location}}? This action cannot be undone."
+    },
+    "actions": {
+      "save": "Save",
+      "saving": "Saving...",
+      "update": "Update Password",
+      "updating": "Updating...",
+      "logout": "Log Out",
+      "deleteAccount": "Delete Account",
+      "deleting": "Deleting...",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "dangerZone": {
+      "title": "Danger Zone",
+      "desc": "Permanently delete your account and all your animal listings. This action cannot be undone.",
+      "dialogTitle": "Delete Account Permanently",
+      "dialogDesc": "This will permanently delete your account, all your animal listings and their photos. This cannot be undone. Are you absolutely sure?",
+      "confirm": "Yes, Delete Everything"
+    },
+    "success": {
+      "phoneUpdated": "Phone number updated!",
+      "accountDeleted": "Account deleted. We're sorry to see you go."
+    }
+  },
+  "detail": {
+    "loginRequired": "You must be logged in to do this.",
+    "adoptedSuccess": "This animal has been marked as adopted! Thank you!",
+    "genericError": "Something went wrong. Only the post creator can change status.",
+    "notFound": "Animal not found",
+    "notFoundDesc": "It might have been removed or the link is incorrect.",
+    "photoCounter": "Photo {{current}} / {{total}}",
+    "yourPost": "Your Post",
+    "contactToAdopt": "Contact to adopt",
+    "markAsAdopted": "Mark as Adopted",
+    "confirmAdoption": "Confirm Adoption",
+    "confirmDesc": "Are you sure this animal has been adopted? This will move the post into the adopted section and remove it from the main view.",
+    "yesMark": "Yes, Mark as Adopted!",
+    "interested": "Interested in adopting? Contact the reporter using the phone number above.",
+    "animalAdopted": "This animal has been adopted!",
+    "adoptedOn": "Adopted on {{date}}"
+  },
+  "notFound": {
+    "title": "404",
+    "desc": "Oops! This page wandered off. Let's get you back home.",
+    "backHome": "Back to Home"
+  },
+  "emptyState": {
+    "defaultMessage": "No animals found",
+    "subtitle": "Check back later or report a stray to help a furry friend in need."
+  }
+}

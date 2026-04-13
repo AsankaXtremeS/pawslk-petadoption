@@ -6,8 +6,10 @@ import AnimatedCounter from '@/components/AnimatedCounter';
 import EmptyState from '@/components/EmptyState';
 import { motion } from 'framer-motion';
 import { FaArrowRight as ArrowRight, FaHeart as HeartPulse, FaPaw as PawPrint, FaUsers as Users, FaPlus as Plus } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 export default function Index() {
+  const { t } = useTranslation();
   const { data: animals, isLoading } = useWaitingAnimals();
   const { data: stats } = useAnimalStats();
   const recentAnimals = animals?.slice(0, 6) || [];
@@ -44,30 +46,30 @@ export default function Index() {
                 className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-6"
               >
                 <PawPrint className="h-3 w-3" />
-                Rescuing Sri Lanka's Strays
+                {t('home.heroBadge')}
               </motion.div>
 
               <h1 className="text-4xl md:text-5xl lg:text-7xl font-heading font-bold leading-[1.1] mb-5">
-                Every Life
+                {t('home.heroTitle')}
                 <br />
-                <span className="text-gradient">Deserves a Home</span>
+                <span className="text-gradient">{t('home.heroTitleGradient')}</span>
               </h1>
 
               <p className="text-base md:text-lg text-muted-foreground mx-auto md:mx-0 mb-8 leading-relaxed">
-                Report, rescue, and adopt stray dogs and cats across Sri Lanka. Your action changes a life.
+                {t('home.heroSubtitle')}
               </p>
 
               <div className="flex flex-row gap-3 md:gap-4 justify-center md:justify-start items-center w-full">
                 <Link to="/animals" className="flex-1 sm:flex-none">
                   <Button variant="hero" size="lg" className="w-full sm:w-auto px-4 md:px-8 py-6 md:py-7 text-sm md:text-base">
                     <PawPrint className="mr-1.5 h-4 w-4 md:h-5 md:w-5" />
-                    Animals
+                    {t('home.animalsBtn')}
                   </Button>
                 </Link>
                 <Link to="/report" className="flex-1 sm:flex-none">
                   <Button variant="hero-outline" size="lg" className="w-full sm:w-auto px-4 md:px-8 py-6 md:py-7 text-sm md:text-base">
                     <Plus className="mr-1.5 h-4 w-4 md:h-5 md:w-5" />
-                    Add New
+                    {t('home.addNewBtn')}
                   </Button>
                 </Link>
               </div>
@@ -97,7 +99,7 @@ export default function Index() {
               <div className="bg-white rounded-2xl md:rounded-2xl border shadow-sm flex-1 md:flex-none md:w-[260px] z-10 transition-colors">
                 <AnimatedCounter
                   end={stats?.adopted || 0}
-                  label="Saved"
+                  label={t('home.stats.saved')}
                   icon={<PawPrint className="h-5 w-5" />}
                   iconColorClass=" text-orange-600"
                 />
@@ -105,7 +107,7 @@ export default function Index() {
               <div className="bg-white rounded-xl md:rounded-2xl border shadow-sm flex-1 md:flex-none md:w-[260px] z-20 transition-colors">
                 <AnimatedCounter
                   end={stats?.waiting || 0}
-                  label="Waiting"
+                  label={t('home.stats.waiting')}
                   icon={<HeartPulse className="h-5 w-5" />}
                   iconColorClass=" text-emerald-600"
                 />
@@ -113,7 +115,7 @@ export default function Index() {
               <div className="bg-white rounded-xl md:rounded-2xl border shadow-sm flex-1 md:flex-none md:w-[260px] z-30 transition-colors">
                 <AnimatedCounter
                   end={stats?.total || 0}
-                  label="Rescuers"
+                  label={t('home.stats.rescuers')}
                   icon={<Users className="h-5 w-5" />}
                   iconColorClass=" text-blue-600"
                 />
@@ -128,12 +130,12 @@ export default function Index() {
       <section className="px-4 md:px-0 md:container pb-12 pt-6 md:pt-16">
         <div className="flex items-end justify-between mb-6">
           <div>
-            <h2 className="text-2xl md:text-3xl font-heading font-bold">Recently Reported</h2>
-            <p className="text-sm text-muted-foreground mt-1">These furry friends need your help</p>
+            <h2 className="text-2xl md:text-3xl font-heading font-bold">{t('home.recent.title')}</h2>
+            <p className="text-sm text-muted-foreground mt-1">{t('home.recent.subtitle')}</p>
           </div>
           {recentAnimals.length > 0 && (
             <Link to="/animals" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
-              View all
+              {t('home.recent.viewAll')}
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           )}
@@ -164,14 +166,14 @@ export default function Index() {
             <div className="sm:hidden text-center mt-6">
               <Link to="/animals">
                 <Button variant="hero-outline" size="lg" className="w-full">
-                  View All Animals
+                  {t('home.recent.viewAll')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
             </div>
           </>
         ) : (
-          <EmptyState message="No animals reported yet" />
+          <EmptyState message={t('home.recent.empty')} />
         )}
       </section>
 
