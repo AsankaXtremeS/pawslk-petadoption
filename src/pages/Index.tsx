@@ -85,12 +85,12 @@ export default function Index() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className="w-[85%] sm:w-2/3 md:w-auto md:flex-shrink-0 flex justify-center py-4 sm:py-3 md:py-0"
+              className="w-full max-w-[520px] sm:w-2/3 md:w-auto md:flex-shrink-0 flex justify-center py-4 sm:py-3 md:py-0"
             >
               <img 
                 src="/Hero.png" 
                 alt="Happy stray pet" 
-                className="object-contain max-h-[320px] sm:max-h-[300px] md:max-h-[350px] lg:max-h-[450px] animate-float drop-shadow-2xl"
+                className="object-contain w-full max-h-[420px] sm:max-h-[420px] md:max-h-[450px] lg:max-h-[520px] animate-float drop-shadow-2xl"
               />
             </motion.div>
 
@@ -135,7 +135,7 @@ export default function Index() {
           className="md:hidden fixed bottom-[95px] left-4 right-4 z-40"
         >
           <div 
-            className="flex items-center justify-around py-2.5 px-4 rounded-full bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl overflow-hidden"
+            className="flex items-center justify-around py-2.5 px-4 rounded-full bg-white/80 backdrop-blur-xl border border-white/70 shadow-2xl overflow-hidden"
           >
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-600 shrink-0">
