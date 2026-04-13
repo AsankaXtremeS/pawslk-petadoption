@@ -4,7 +4,7 @@ import { useWaitingAnimals, useAnimalStats } from '@/hooks/useAnimals';
 import AnimalCard from '@/components/AnimalCard';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import EmptyState from '@/components/EmptyState';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { FaArrowRight as ArrowRight, FaHeart as HeartPulse, FaPaw as PawPrint, FaUsers as Users, FaPlus as Plus } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
@@ -13,6 +13,10 @@ export default function Index() {
   const { data: animals, isLoading } = useWaitingAnimals();
   const { data: stats } = useAnimalStats();
   const recentAnimals = animals?.slice(0, 6) || [];
+  const { scrollY } = useScroll();
+  const opacity = useTransform(scrollY, [0, 60], [1, 0]);
+  const pointerEvents = useTransform(scrollY, [0, 60], ["auto", "none"] as any);
+  const y = useTransform(scrollY, [0, 60], [0, 10]);
 
   return (
     <div>
@@ -125,11 +129,11 @@ export default function Index() {
         </div>
 
         {/* Mobile Floating Statistics Bar (Glassmorphism) - Floating above Nav */}
-        <div className="md:hidden fixed bottom-[95px] left-4 right-4 z-40">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+        <motion.div 
+          style={{ opacity, pointerEvents, y }}
+          className="md:hidden fixed bottom-[95px] left-4 right-4 z-40"
+        >
+          <div 
             className="flex items-center justify-around py-2.5 px-4 rounded-full bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl overflow-hidden"
           >
             <div className="flex items-center gap-2">
@@ -165,8 +169,8 @@ export default function Index() {
                 <span className="text-[8px] uppercase tracking-tighter font-bold text-muted-foreground/80 leading-none">{t('home.stats.rescuers').split(' ')[0]}</span>
               </div>
             </div>
-          </motion.div>
-        </div>
+          </div>
+        </motion.div>
       </section>
 
       {/* Recent Animals (Waiting only) */}
