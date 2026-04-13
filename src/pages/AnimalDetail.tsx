@@ -323,7 +323,7 @@ export default function AnimalDetail() {
               onClick={() => navigate(`/report?edit=${animal.id}`)}
             >
               <Edit className="h-4 w-4 mr-2" />
-              {t('profile.listings.edit')}
+              {t('common.edit')}
             </Button>
 
             <AlertDialog>
