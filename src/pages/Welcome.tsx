@@ -24,8 +24,8 @@ export default function Welcome() {
     try {
       await registerUser(userData);
       toast.success('Welcome to PawConnect! 🐾');
-    } catch (err: any) {
-      toast.error(err.message || 'Registration failed. Please try again.');
+    } catch (err) {
+      toast.error((err as Error).message || 'Registration failed. Please try again.');
     }
   };
 
@@ -33,8 +33,8 @@ export default function Welcome() {
     try {
       await loginByMobile(mobile);
       toast.success('Welcome back! 🐾');
-    } catch (err: any) {
-      toast.error(err.message || 'Login failed. Please check your number.');
+    } catch (err) {
+      toast.error((err as Error).message || 'Login failed. Please check your number.');
     }
   };
 

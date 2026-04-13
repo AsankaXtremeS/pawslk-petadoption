@@ -13,6 +13,9 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import { UserProvider } from "@/contexts/UserContext";
 import { Analytics } from "@vercel/analytics/react";
@@ -56,6 +59,11 @@ function AppContent() {
                     </ProtectedRoute>
                   }
                 />
+                
+                {/* Information Pages */}
+                <Route path="/about" element={<AboutUs />} />
+                <Route path="/contact" element={<ContactUs />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
 
                 {/* Catch-all */}
                 <Route path="*" element={<NotFound />} />

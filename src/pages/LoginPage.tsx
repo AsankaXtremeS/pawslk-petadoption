@@ -69,8 +69,8 @@ export default function LoginPage() {
       await loginByMobile(fullMobile, password);
       toast.success('Welcome back! 🐾');
       navigate(decodeURIComponent(redirectTo), { replace: true });
-    } catch (err: any) {
-      const msg = err.message || t('auth.errors.loginFailed');
+    } catch (err) {
+      const msg = (err as Error).message || t('auth.errors.loginFailed');
       setError(msg);
       toast.error(msg);
     } finally {

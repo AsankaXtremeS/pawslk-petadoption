@@ -4,6 +4,7 @@ import { FaHome as Home, FaPaw as PawPrint, FaPlus as Plus, FaTachometerAlt as G
 import { useUser } from '@/contexts/UserContext';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
+import { FaPhoneAlt as Phone, FaEnvelope as Email, FaMapMarkerAlt as MapMarker } from 'react-icons/fa';
 
 const navItems = [
   { to: '/', labelKey: 'nav.home', Icon: Home },
@@ -150,13 +151,89 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* Footer — desktop only */}
-      <footer className="hidden md:block border-t py-8 bg-muted/30">
-        <div className="container text-center text-sm text-muted-foreground space-y-2">
-          <div className="flex items-center justify-center gap-2">
-            <PawPrint className="h-5 w-5 text-primary" />
-            <span className="font-heading text-base font-semibold text-foreground">PawConnect</span>
+      <footer className="hidden md:block bg-muted/30 border-t pt-10 pb-8">
+        <div className="container max-w-7xl">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            {/* Branding Column */}
+            <div className="space-y-4">
+              <Link to="/" className="flex items-center gap-2 group w-fit">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center transition-colors group-hover:bg-primary/20">
+                  <PawPrint className="h-4.5 w-4.5 text-primary" />
+                </div>
+                <span className="font-heading text-lg font-bold text-foreground">PawConnect</span>
+              </Link>
+              <p className="text-[13px] text-muted-foreground leading-relaxed max-w-xs">
+                Empowering communities across Sri Lanka to rescue, report, and adopt stray animals. Together, we can find every pet a home.
+              </p>
+            </div>
+
+            {/* Navigation Column */}
+            <div className="space-y-4">
+              <h4 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Platform</h4>
+              <ul className="space-y-2">
+                {navItems.map(item => (
+                  <li key={item.to}>
+                    <Link to={item.to} className="text-[13px] text-muted-foreground hover:text-primary transition-colors flex items-center gap-2">
+                      <item.Icon className="h-3 w-3" />
+                      {t(item.labelKey)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Information Column */}
+            <div className="space-y-4">
+              <h4 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Resources</h4>
+              <ul className="space-y-2">
+                <li>
+                  <Link to="/about" className="text-[13px] text-muted-foreground hover:text-primary transition-colors">About Us</Link>
+                </li>
+                <li>
+                  <Link to="/contact" className="text-[13px] text-muted-foreground hover:text-primary transition-colors">Contact Us</Link>
+                </li>
+                <li>
+                  <Link to="/privacy" className="text-[13px] text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Contact Column */}
+            <div className="space-y-4">
+              <h4 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Contact</h4>
+              <ul className="space-y-2 text-[13px] text-muted-foreground">
+                <li className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-lg bg-primary/5 flex items-center justify-center text-primary shrink-0">
+                    <MapMarker className="h-3.5 w-3.5" />
+                  </div>
+                  <span>Galle, Sri Lanka</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-lg bg-primary/5 flex items-center justify-center text-primary shrink-0">
+                    <Email className="h-3.5 w-3.5" />
+                  </div>
+                  <span className="break-all">assankasampath@gmail.com</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-lg bg-primary/5 flex items-center justify-center text-primary shrink-0">
+                    <Phone className="h-3.5 w-3.5" />
+                  </div>
+                  <span>0760589218</span>
+                </li>
+              </ul>
+            </div>
           </div>
-          <p>{t('footer.tagline')}</p>
+
+          {/* Bottom Copyright Section */}
+          <div className="pt-6 border-t flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-muted-foreground font-medium">
+            <div className="flex items-center gap-2">
+              <span className="text-primary font-bold">PawConnect</span>
+              <span>© 2024 All rights reserved.</span>
+            </div>
+            <div className="flex items-center gap-1">
+              Developed & Maintained by <span className="text-foreground font-bold">Asanka Sampath</span>
+            </div>
+          </div>
         </div>
       </footer>
 

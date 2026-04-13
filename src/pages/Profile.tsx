@@ -236,8 +236,8 @@ export default function Profile() {
       setEditingPassword(false);
       setCurrentPassword('');
       setNewPassword('');
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to update password.');
+    } catch (err) {
+      toast.error((err as Error).message || 'Failed to update password.');
     } finally {
       setPasswordSaving(false);
     }

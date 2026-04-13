@@ -137,8 +137,8 @@ export default function RegisterPage() {
       });
       toast.success('Welcome to PawConnect! 🐾');
       navigate(decodeURIComponent(redirectTo), { replace: true });
-    } catch (err: any) {
-      toast.error(err.message || 'Registration failed. Please try again.');
+    } catch (err) {
+      toast.error((err as Error).message || 'Registration failed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
