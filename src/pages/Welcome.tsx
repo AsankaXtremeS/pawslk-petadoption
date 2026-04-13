@@ -20,7 +20,7 @@ export default function Welcome() {
     setScreen('login');
   };
 
-  const handleRegisterComplete = async (userData: { name: string; mobile: string; countryCode: string; language: 'en' | 'si' | 'ta' }) => {
+  const handleRegisterComplete = async (userData: { name: string; mobile: string; countryCode: string; language: 'en' | 'si' | 'ta'; password: string }) => {
     try {
       await registerUser(userData);
       toast.success('Welcome to PawConnect! 🐾');
@@ -29,9 +29,9 @@ export default function Welcome() {
     }
   };
 
-  const handleLoginComplete = async (mobile: string) => {
+  const handleLoginComplete = async (mobile: string, password: string) => {
     try {
-      await loginByMobile(mobile);
+      await loginByMobile(mobile, password);
       toast.success('Welcome back! 🐾');
     } catch (err) {
       toast.error((err as Error).message || 'Login failed. Please check your number.');

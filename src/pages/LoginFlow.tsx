@@ -17,7 +17,7 @@ const countryCodes = [
 ];
 
 interface LoginFlowProps {
-  onComplete: (mobile: string) => void;
+  onComplete: (mobile: string, password: string) => void;
   onBack: () => void;
   onRegister: () => void;
 }
@@ -26,6 +26,7 @@ export default function LoginFlow({ onComplete, onBack, onRegister }: LoginFlowP
   const { t } = useTranslation();
   const [countryCode, setCountryCode] = useState('+94');
   const [mobile, setMobile] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -39,13 +40,17 @@ export default function LoginFlow({ onComplete, onBack, onRegister }: LoginFlowP
       setError(t('auth.errors.mobileInvalid'));
       return;
     }
+    if (!password) {
+      setError(t('auth.errors.passwordRequired') || 'Password is required');
+      return;
+    }
 
     setIsSubmitting(true);
     setError('');
 
     // Build full number without the +  (e.g., "94760589218")
     const fullMobile = countryCode.replace('+', '') + clean;
-    await onComplete(fullMobile);
+    await onComplete(fullMobile, password);
 
     setIsSubmitting(false);
   };
@@ -135,6 +140,28 @@ export default function LoginFlow({ onComplete, onBack, onRegister }: LoginFlowP
                   {error}
                 </motion.p>
               )}
+            </div>
+
+            {/* Password Input */}
+            <div className="rf-field" style={{ marginTop: '1rem' }}>
+              <label className="rf-label" htmlFor="login-password">{t('auth.password') || 'Password'}</label>
+              <div className={`rf-input-wrapper ${error && !password ? 'error' : ''}`}>
+                <input
+                  id="login-password"
+                  type="password"
+                  className="rf-input"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (error) setError('');
+                  }}
+                  autoComplete="current-password"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSubmit();
+                  }}
+                />
+              </div>
             </div>
 
             {/* Submit Button */}

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 type Language = 'en' | 'si' | 'ta';
 
 interface RegisterFlowProps {
-  onComplete: (userData: { name: string; mobile: string; countryCode: string; language: Language }) => void;
+  onComplete: (userData: { name: string; mobile: string; countryCode: string; language: Language; password: string }) => void;
   onBack: () => void;
 }
 
@@ -51,7 +51,8 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
   const [name, setName] = useState('');
   const [countryCode, setCountryCode] = useState('+94');
   const [mobile, setMobile] = useState('');
-  const [errors, setErrors] = useState<{ name?: string; mobile?: string }>({});
+  const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<{ name?: string; mobile?: string; password?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLanguageSelect = (lang: Language) => {
@@ -70,7 +71,7 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
   };
 
   const validateForm = (): boolean => {
-    const newErrors: { name?: string; mobile?: string } = {};
+    const newErrors: { name?: string; mobile?: string; password?: string } = {};
     
     if (!name.trim()) {
       newErrors.name = t('auth.errors.nameRequired');
@@ -80,6 +81,12 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
       newErrors.mobile = t('auth.errors.mobileRequired');
     } else if (!/^[0-9]{7,15}$/.test(mobile.replace(/\s/g, ''))) {
       newErrors.mobile = t('auth.errors.mobileInvalid');
+    }
+
+    if (!password) {
+      newErrors.password = t('auth.errors.passwordRequired') || 'Password is required';
+    } else if (password.length < 6) {
+      newErrors.password = t('auth.errors.passwordTooShort') || 'Min 6 characters';
     }
     
     setErrors(newErrors);
@@ -101,6 +108,7 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
       mobile: fullMobile,
       countryCode,
       language: i18n.language as Language,
+      password: password,
     });
     
     setIsSubmitting(false);
@@ -260,6 +268,34 @@ export default function RegisterFlow({ onComplete, onBack }: RegisterFlowProps) 
                       animate={{ opacity: 1, y: 0 }}
                     >
                       {errors.mobile}
+                    </motion.p>
+                  )}
+                </div>
+
+                {/* Password Input */}
+                <div className="rf-field">
+                  <label className="rf-label" htmlFor="register-password">{t('auth.password') || 'Password'}</label>
+                  <div className={`rf-input-wrapper ${errors.password ? 'error' : ''}`}>
+                    <input
+                      id="register-password"
+                      type="password"
+                      className="rf-input"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        if (errors.password) setErrors(prev => ({ ...prev, password: undefined }));
+                      }}
+                      autoComplete="new-password"
+                    />
+                  </div>
+                  {errors.password && (
+                    <motion.p
+                      className="rf-error"
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                    >
+                      {errors.password}
                     </motion.p>
                   )}
                 </div>
