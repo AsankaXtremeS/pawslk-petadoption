@@ -80,12 +80,12 @@ export default function Index() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className="w-4/5 sm:w-2/3 md:w-auto md:flex-shrink-0 flex justify-center py-2 sm:py-3 md:py-0"
+              className="w-[85%] sm:w-2/3 md:w-auto md:flex-shrink-0 flex justify-center py-4 sm:py-3 md:py-0"
             >
               <img 
                 src="/HeroImage.png" 
                 alt="Happy stray pet" 
-                className="object-contain max-h-[220px] sm:max-h-[250px] md:max-h-[350px] lg:max-h-[450px] animate-float drop-shadow-2xl"
+                className="object-contain max-h-[320px] sm:max-h-[300px] md:max-h-[350px] lg:max-h-[450px] animate-float drop-shadow-2xl"
               />
             </motion.div>
 
@@ -101,7 +101,7 @@ export default function Index() {
                   end={stats?.adopted || 0}
                   label={t('home.stats.saved')}
                   icon={<PawPrint className="h-5 w-5" />}
-                  iconColorClass=" text-orange-600"
+                  iconColorClass=" text-emerald-600"
                 />
               </div>
               <div className="bg-white rounded-xl md:rounded-2xl border shadow-sm flex-1 md:flex-none md:w-[260px] z-20 transition-colors">
@@ -109,7 +109,7 @@ export default function Index() {
                   end={stats?.waiting || 0}
                   label={t('home.stats.waiting')}
                   icon={<HeartPulse className="h-5 w-5" />}
-                  iconColorClass=" text-emerald-600"
+                  iconColorClass=" text-rose-400"
                 />
               </div>
               <div className="bg-white rounded-xl md:rounded-2xl border shadow-sm flex-1 md:flex-none md:w-[260px] z-30 transition-colors">
