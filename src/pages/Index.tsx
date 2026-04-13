@@ -83,7 +83,7 @@ export default function Index() {
               className="w-[85%] sm:w-2/3 md:w-auto md:flex-shrink-0 flex justify-center py-4 sm:py-3 md:py-0"
             >
               <img 
-                src="/HeroImage.png" 
+                src="/Hero.png" 
                 alt="Happy stray pet" 
                 className="object-contain max-h-[320px] sm:max-h-[300px] md:max-h-[350px] lg:max-h-[450px] animate-float drop-shadow-2xl"
               />
