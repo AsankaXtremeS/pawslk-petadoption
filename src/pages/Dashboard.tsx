@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 const COLORS = ['hsl(262, 52%, 56%)', 'hsl(24, 90%, 58%)'];
 
 export default function Dashboard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: stats, isLoading } = useAnimalStats();
 
   if (isLoading) {
@@ -98,34 +98,47 @@ export default function Dashboard() {
         <div className="bg-card rounded-2xl border p-5">
           <h3 className="font-heading text-base font-semibold mb-4">{t('dashboard.dogsVsCats')}</h3>
           {stats.total > 0 ? (
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={55}
-                  outerRadius={80}
-                  paddingAngle={4}
-                  dataKey="value"
-                  label={({ name, value }) => `${name}: ${value}`}
-                  labelLine={false}
-                  style={{ fontSize: '12px' }}
-                >
-                  {pieData.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  contentStyle={{
-                    borderRadius: '12px',
-                    border: '1px solid hsl(240, 6%, 90%)',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                    fontSize: '12px',
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            <>
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={52}
+                    outerRadius={74}
+                    paddingAngle={4}
+                    dataKey="value"
+                    label={false}
+                    labelLine={false}
+                    style={{ fontSize: '12px' }}
+                  >
+                    {pieData.map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{
+                      borderRadius: '12px',
+                      border: '1px solid hsl(240, 6%, 90%)',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                      fontSize: '12px',
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {pieData.map((entry, index) => (
+                  <div key={entry.name} className="flex items-center justify-between rounded-lg bg-muted/40 px-2.5 py-1.5 text-xs">
+                    <span className="inline-flex items-center gap-2 text-muted-foreground">
+                      <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: COLORS[index] }} />
+                      {entry.name}
+                    </span>
+                    <span className="font-semibold tabular-nums">{entry.value}</span>
+                  </div>
+                ))}
+              </div>
+            </>
           ) : (
             <div className="h-[200px] flex items-center justify-center text-sm text-muted-foreground">{t('dashboard.noData')}</div>
           )}
