@@ -157,18 +157,27 @@ export function useUpdateAnimal() {
 export function useMarkAdopted() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, userId, userToken }: { id: string; userId: string; userToken: string }) => {
+    mutationFn: async ({ id, userId, userToken, isAdopted = true }: { id: string; userId: string; userToken: string; isAdopted?: boolean }) => {
       const secureClient = createSecureClient(userToken);
-      const { error } = await secureClient
+      const { data, error } = await secureClient
         .from('animals')
-        .update({ is_adopted: true, adopted_at: new Date().toISOString() })
+        .update({ 
+          is_adopted: isAdopted, 
+          adopted_at: isAdopted ? new Date().toISOString() : null 
+        })
         .eq('id', id)
-        .eq('user_id', userId);
+        .eq('user_id', userId)
+        .select();
+      
       if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error('Verification failed. Only the post creator can change this status.');
+      }
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['animals'] }),
   });
 }
+
 
 export function useUploadPhoto() {
   return useMutation({

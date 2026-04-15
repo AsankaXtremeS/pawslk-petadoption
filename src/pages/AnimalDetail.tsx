@@ -9,6 +9,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { parsePhotoUrls } from '@/utils/imageCompression';
 import { useTranslation } from 'react-i18next';
+import { friendlyError } from '@/utils/errors';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -83,23 +84,34 @@ export default function AnimalDetail() {
     setCurrentSlide(0);
   }, [animal?.id]);
 
-  const handleAdopt = async () => {
+  const handleAdopt = async (targetAdopted: boolean = true) => {
     if (!user) {
       toast.error(t('detail.loginRequired'));
       return;
     }
     try {
-      await markAdopted.mutateAsync({ id: id!, userId: user.id, userToken: user.userToken });
-      setJustAdopted(true);
-      toast.success(t('detail.adoptedSuccess'));
-      confetti({
-        particleCount: 150,
-        spread: 80,
-        origin: { y: 0.6 },
-        colors: ['#a855f7', '#f97316', '#4ade80', '#3b82f6'],
+      await markAdopted.mutateAsync({ 
+        id: id!, 
+        userId: user.id, 
+        userToken: user.userToken,
+        isAdopted: targetAdopted
       });
-    } catch {
-      toast.error(t('detail.genericError'));
+      
+      if (targetAdopted) {
+        setJustAdopted(true);
+        toast.success(t('detail.adoptedSuccess'));
+        confetti({
+          particleCount: 150,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ['#a855f7', '#f97316', '#4ade80', '#3b82f6'],
+        });
+      } else {
+        setJustAdopted(false);
+        toast.success(t('detail.undoSuccess'));
+      }
+    } catch (err) {
+      toast.error(friendlyError(err, t('detail.genericError')));
     }
   };
 
@@ -345,7 +357,7 @@ export default function AnimalDetail() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleAdopt} disabled={markAdopted.isPending} className="rounded-xl bg-success hover:bg-success/90">
+                  <AlertDialogAction onClick={() => handleAdopt(true)} disabled={markAdopted.isPending} className="rounded-xl bg-success hover:bg-success/90">
                     {markAdopted.isPending ? t('profile.actions.updating') : t('detail.yesMark')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -378,6 +390,32 @@ export default function AnimalDetail() {
               <p className="text-sm text-muted-foreground mt-1">
                 {t('detail.adoptedOn', { date: getLocalDate(animal.adopted_at) })}
               </p>
+            )}
+
+            {isOwner && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="mt-4 border-success/30 hover:bg-success/5 text-success">
+                    {t('detail.undoAdoption')}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="font-heading">
+                      {t('detail.confirmUndoTitle')}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {t('detail.confirmUndoDesc')}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => handleAdopt(false)} disabled={markAdopted.isPending} className="rounded-xl bg-primary hover:bg-primary/90">
+                      {markAdopted.isPending ? t('profile.actions.updating') : t('detail.yesUndo')}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
           </motion.div>
         )}

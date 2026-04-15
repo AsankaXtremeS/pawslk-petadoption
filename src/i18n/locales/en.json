@@ -230,6 +230,11 @@
     "confirmAdoption": "Confirm Adoption",
     "confirmDesc": "Are you sure this animal has been adopted? This will move the post into the adopted section and remove it from the main view.",
     "yesMark": "Yes, Mark as Adopted!",
+    "undoAdoption": "Undo Adoption",
+    "confirmUndoTitle": "Bring back to waiting?",
+    "confirmUndoDesc": "This will move the animal back to the main view and mark it as still waiting for a home.",
+    "undoSuccess": "Adoption status removed. The animal is back in the waiting list.",
+    "yesUndo": "Yes, Undo Adoption",
     "interested": "Interested in adopting? Contact the reporter using the phone number above.",
     "animalAdopted": "This animal has been adopted!",
     "adoptedOn": "Adopted on {{date}}"
