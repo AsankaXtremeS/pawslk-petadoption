@@ -25,8 +25,10 @@ export function useNotifications(userId: string | undefined, userToken: string |
   useEffect(() => {
     if (!userId) return;
     
+    // Use a unique channel ID for each instance to avoid "after subscribe" errors
+    const channelId = `notifications-${userId}-${Math.random().toString(36).substring(2, 9)}`;
     const channel = supabase
-      .channel(`notifications-${userId}`)
+      .channel(channelId)
       .on('postgres_changes', { 
         event: '*', 
         schema: 'public', 

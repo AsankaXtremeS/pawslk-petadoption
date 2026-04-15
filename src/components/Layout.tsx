@@ -5,7 +5,7 @@ import { useUser } from '@/contexts/UserContext';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import { FaPhoneAlt as Phone, FaEnvelope as Email, FaMapMarkerAlt as MapMarker } from 'react-icons/fa';
-import { useUnreadNotificationCount } from '@/hooks/useNotifications';
+import NotificationDropdown from './NotificationDropdown';
 
 const navItems = [
   { to: '/', labelKey: 'nav.home', Icon: Home },
@@ -18,7 +18,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
   const location = useLocation();
   const { user, isRegistered, clearUser } = useUser();
-  const unreadCount = useUnreadNotificationCount(user?.id, user?.userToken);
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
@@ -58,20 +57,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             {/* Auth section */}
             {isRegistered && user ? (
-              <div className="flex items-center gap-2 ml-3 pl-3 border-l border-border">
+              <div className="flex items-center gap-2 ml-2 pl-2 border-l border-border">
+                <NotificationDropdown />
+                <div className="mx-1 h-4 w-[1px] bg-border/50" />
                 <Link
                   to="/profile"
                   className="text-xs text-muted-foreground font-medium flex items-center gap-1 hover:text-primary transition-colors relative"
                 >
-                  <div className="relative">
-                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold">
-                      {user.name.charAt(0).toUpperCase()}
-                    </div>
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-destructive text-destructive-foreground text-[8px] font-bold rounded-full flex items-center justify-center border-2 border-background animate-in zoom-in duration-300">
-                        {unreadCount > 9 ? '9+' : unreadCount}
-                      </span>
-                    )}
+                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold">
+                    {user.name.charAt(0).toUpperCase()}
                   </div>
                   {user.name.split(' ')[0]}
                 </Link>
@@ -113,22 +107,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <span className="font-heading text-lg font-bold tracking-tight hidden xs:inline-block">Paw Connect</span>
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <LanguageSwitcher />
             
             {/* Auth section — mobile */}
             {isRegistered && user ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
+                <NotificationDropdown />
                 <Link
                   to="/profile"
-                  className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold relative"
+                  className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold"
                 >
                   {user.name.charAt(0).toUpperCase()}
-                  {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-destructive text-destructive-foreground text-[7px] font-bold rounded-full flex items-center justify-center border-2 border-background">
-                      {unreadCount > 9 ? '9+' : unreadCount}
-                    </span>
-                  )}
                 </Link>
               </div>
             ) : (
@@ -292,7 +282,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             );
           })}
 
-          {/* Profile tab */}
           <div className="flex-1 flex justify-center h-full">
             <Link to={isRegistered ? '/profile' : '/register'} className="flex flex-col items-center justify-center w-full h-full py-1">
               <div className={`
@@ -300,17 +289,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 ${location.pathname === '/profile' ? 'bg-primary/10' : 'hover:bg-muted/50'}
               `}>
                 {isRegistered && user ? (
-                  <div className="relative">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all shadow-sm
-                      ${location.pathname === '/profile' ? 'bg-primary text-primary-foreground ring-4 ring-primary/10' : 'bg-muted text-muted-foreground'}
-                    `}>
-                      {user.name.charAt(0).toUpperCase()}
-                    </div>
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-destructive text-destructive-foreground text-[8px] font-bold rounded-full flex items-center justify-center border-2 border-background shadow-sm">
-                        {unreadCount > 9 ? '9+' : unreadCount}
-                      </span>
-                    )}
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all shadow-sm
+                    ${location.pathname === '/profile' ? 'bg-primary text-primary-foreground ring-4 ring-primary/10' : 'bg-muted text-muted-foreground'}
+                  `}>
+                    {user.name.charAt(0).toUpperCase()}
                   </div>
                 ) : (
                   <UserIcon className={`h-5 w-5 transition-colors ${location.pathname === '/profile' ? 'text-primary' : 'text-muted-foreground'}`} />

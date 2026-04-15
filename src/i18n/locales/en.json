@@ -253,8 +253,10 @@
   "notifications": {
     "title": "Notifications",
     "markAllRead": "Mark all as read",
-    "lovedListing": "loved your listing",
-    "commentedListing": "asked a question about",
+    "loved": "loved your",
+    "commented": "commented on your",
+    "viewAll": "View all notifications",
+    "post": "Post",
     "empty": "No notifications yet",
     "emptyDesc": "Check back later for updates"
   },

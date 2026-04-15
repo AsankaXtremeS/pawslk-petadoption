@@ -94,13 +94,13 @@ export default function Notifications() {
                   </div>
 
                   <div className="flex-1 space-y-1">
-                    <p className="text-sm leading-tight">
-                      <span className="font-bold text-foreground">
-                        {notif.actor?.name || t('common.user')}
-                      </span>{' '}
-                      {notif.type === 'love' ? t('notifications.lovedListing') : t('notifications.commentedListing')}
-                      {' '}<span className="font-bold text-primary">{notif.animal?.location_name || t('common.animal')}</span>
-                    </p>
+                      <p className="text-sm leading-tight">
+                        <span className="font-bold text-foreground">
+                          {notif.actor?.name || t('common.user')}
+                        </span>{' '}
+                        {notif.type === 'love' ? t('notifications.loved') : t('notifications.commented')}
+                        {' '}<span className="font-bold text-primary">{t('notifications.post')}</span>
+                      </p>
                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">
                       {new Date(notif.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </p>
