@@ -102,9 +102,40 @@ function ProfileListingCard({ animal, onDelete, onToggleStatus }: {
           <TypeIcon className="w-3.5 h-3.5 text-primary/60 flex-shrink-0" />
           <span className="capitalize truncate">{animal.type === 'dog' ? t('report.dog') : t('report.cat')} {t('common.at')} {animal.location_name}</span>
         </div>
-        <p className="text-[11px] text-muted-foreground font-medium mt-0.5">
-          {new Date(animal.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric', year: 'numeric' })}
-        </p>
+        <div className="flex items-center gap-2 mt-0.5">
+          <p className="text-[11px] text-muted-foreground font-medium">
+            {new Date(animal.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric', year: 'numeric' })}
+          </p>
+          <div className="w-[1px] h-2.5 bg-border" />
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className="text-[11px] font-bold text-destructive/70 hover:text-destructive flex items-center gap-1 transition-colors" title={t('common.delete')}>
+                <Trash className="w-2.5 h-2.5" />
+                <span>{t('common.delete')}</span>
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="font-heading inline-flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-destructive" />
+                  {t('profile.listings.deleteTitle')}
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  {t('profile.listings.deleteDesc', { type: animal.type === 'dog' ? t('report.dog') : t('report.cat'), location: animal.location_name })}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => onDelete(animal.id)}
+                  className="rounded-xl bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                >
+                  {t('profile.actions.delete')}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
 
       {/* Actions */}
@@ -155,33 +186,6 @@ function ProfileListingCard({ animal, onDelete, onToggleStatus }: {
             <Edit className="w-3 h-3" />
           </button>
         )}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <button className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all" title={t('common.delete')}>
-              <Trash className="w-3 h-3" />
-            </button>
-          </AlertDialogTrigger>
-          <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
-            <AlertDialogHeader>
-              <AlertDialogTitle className="font-heading inline-flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-destructive" />
-                {t('profile.listings.deleteTitle')}
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                {t('profile.listings.deleteDesc', { type: animal.type === 'dog' ? t('report.dog') : t('report.cat'), location: animal.location_name })}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => onDelete(animal.id)}
-                className="rounded-xl bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-              >
-                {t('profile.actions.delete')}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </div>
     </motion.div>
   );

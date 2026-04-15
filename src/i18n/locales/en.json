@@ -16,7 +16,10 @@
     "view": "View",
     "edit": "Edit",
     "delete": "Delete",
-    "call": "Call"
+    "call": "Call",
+    "send": "Send",
+    "user": "User",
+    "animal": "Animal"
   },
   "nav": {
     "home": "Home",
@@ -238,7 +241,22 @@
     "yesUndo": "Yes, Undo Adoption",
     "interested": "Interested in adopting? Contact the reporter using the phone number above.",
     "animalAdopted": "This animal has been adopted!",
-    "adoptedOn": "Adopted on {{date}}"
+    "adoptedOn": "Adopted on {{date}}",
+    "comments": "Comments & Questions",
+    "noComments": "No questions yet. Be the first to ask!",
+    "addCommentPlaceholder": "Ask a question or leave a comment...",
+    "commentAdded": "Comment added successfully!",
+    "commentDeleted": "Comment removed.",
+    "loginToComment": "Log in to ask a question",
+    "interactLogin": "Please log in to love or comment on animals"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "lovedListing": "loved your listing",
+    "commentedListing": "asked a question about",
+    "empty": "No notifications yet",
+    "emptyDesc": "Check back later for updates"
   },
   "notFound": {
     "title": "404",

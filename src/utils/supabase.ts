@@ -28,6 +28,8 @@ export function createSecureClient(userToken: string): SupabaseClient {
   return createClient(supabaseUrl, supabaseKey, {
     global: {
       headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`,
         'x-user-token': userToken,
       },
     },
