@@ -15,7 +15,8 @@
     "by": "By",
     "view": "View",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "call": "Call"
   },
   "nav": {
     "home": "Home",

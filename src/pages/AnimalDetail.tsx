@@ -318,10 +318,21 @@ export default function AnimalDetail() {
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
               <PhoneIcon className="w-4 h-4 text-primary" />
             </div>
-            <div>
+            <div className="flex-1">
               <p className="text-xs text-muted-foreground font-medium">{t('detail.contactToAdopt')}</p>
               <p className="text-sm font-bold text-foreground">{formatPhone(animal.contact_number)}</p>
             </div>
+            <Button
+              size="sm"
+              variant="default"
+              className="rounded-xl h-9 px-4 font-bold shadow-sm"
+              asChild
+            >
+              <a href={`tel:${animal.contact_number}`}>
+                <PhoneIcon className="w-3 h-3 mr-2" />
+                {t('common.call')}
+              </a>
+            </Button>
           </div>
         )}
 
