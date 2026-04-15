@@ -48,7 +48,7 @@ export default function NotificationDropdown() {
           )}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0 overflow-hidden rounded-2xl border-border/50 shadow-2xl" align="end">
+      <PopoverContent className="w-80 p-0 overflow-hidden rounded-2xl border-border/50 shadow-2xl" align="center">
         <div className="flex items-center justify-between p-4 border-b bg-muted/20">
           <h3 className="text-sm font-bold flex items-center gap-2">
             <Bell className="w-3.5 h-3.5 text-primary" />
