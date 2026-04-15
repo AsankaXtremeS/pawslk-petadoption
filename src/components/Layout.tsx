@@ -1,10 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaHome as Home, FaPaw as PawPrint, FaPlus as Plus, FaTachometerAlt as Gauge, FaSignOutAlt as LogOut, FaUser as UserIcon, FaSignInAlt as LogIn, FaUserPlus as UserPlus } from 'react-icons/fa';
+import { FaHome as Home, FaPaw as PawPrint, FaPlus as Plus, FaTachometerAlt as Gauge, FaSignOutAlt as LogOut, FaUser as UserIcon, FaSignInAlt as LogIn, FaUserPlus as UserPlus, FaBell as Bell } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import { FaPhoneAlt as Phone, FaEnvelope as Email, FaMapMarkerAlt as MapMarker } from 'react-icons/fa';
+import NotificationDropdown from './NotificationDropdown';
 
 const navItems = [
   { to: '/', labelKey: 'nav.home', Icon: Home },
@@ -56,10 +57,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             {/* Auth section */}
             {isRegistered && user ? (
-              <div className="flex items-center gap-2 ml-3 pl-3 border-l border-border">
+              <div className="flex items-center gap-2 ml-2 pl-2 border-l border-border">
+                <NotificationDropdown />
+                <div className="mx-1 h-4 w-[1px] bg-border/50" />
                 <Link
                   to="/profile"
-                  className="text-xs text-muted-foreground font-medium flex items-center gap-1 hover:text-primary transition-colors"
+                  className="text-xs text-muted-foreground font-medium flex items-center gap-1 hover:text-primary transition-colors relative"
                 >
                   <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold">
                     {user.name.charAt(0).toUpperCase()}
@@ -104,15 +107,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <span className="font-heading text-lg font-bold tracking-tight hidden xs:inline-block">Paw Connect</span>
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <LanguageSwitcher />
             
             {/* Auth section — mobile */}
             {isRegistered && user ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
+                <NotificationDropdown />
                 <Link
                   to="/profile"
-                  className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold"
+                  className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold"
                 >
                   {user.name.charAt(0).toUpperCase()}
                 </Link>
@@ -278,7 +282,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             );
           })}
 
-          {/* Profile tab */}
           <div className="flex-1 flex justify-center h-full">
             <Link to={isRegistered ? '/profile' : '/register'} className="flex flex-col items-center justify-center w-full h-full py-1">
               <div className={`

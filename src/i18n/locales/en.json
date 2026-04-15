@@ -15,7 +15,11 @@
     "by": "By",
     "view": "View",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "call": "Call",
+    "send": "Send",
+    "user": "User",
+    "animal": "Animal"
   },
   "nav": {
     "home": "Home",
@@ -230,9 +234,31 @@
     "confirmAdoption": "Confirm Adoption",
     "confirmDesc": "Are you sure this animal has been adopted? This will move the post into the adopted section and remove it from the main view.",
     "yesMark": "Yes, Mark as Adopted!",
+    "undoAdoption": "Undo Adoption",
+    "confirmUndoTitle": "Bring back to waiting?",
+    "confirmUndoDesc": "This will move the animal back to the main view and mark it as still waiting for a home.",
+    "undoSuccess": "Adoption status removed. The animal is back in the waiting list.",
+    "yesUndo": "Yes, Undo Adoption",
     "interested": "Interested in adopting? Contact the reporter using the phone number above.",
     "animalAdopted": "This animal has been adopted!",
-    "adoptedOn": "Adopted on {{date}}"
+    "adoptedOn": "Adopted on {{date}}",
+    "comments": "Comments & Questions",
+    "noComments": "No questions yet. Be the first to ask!",
+    "addCommentPlaceholder": "Ask a question or leave a comment...",
+    "commentAdded": "Comment added successfully!",
+    "commentDeleted": "Comment removed.",
+    "loginToComment": "Log in to ask a question",
+    "interactLogin": "Please log in to love or comment on animals"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "loved": "loved your",
+    "commented": "commented on your",
+    "viewAll": "View all notifications",
+    "post": "Post",
+    "empty": "No notifications yet",
+    "emptyDesc": "Check back later for updates"
   },
   "notFound": {
     "title": "404",

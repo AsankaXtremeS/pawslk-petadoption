@@ -11,6 +11,7 @@ import AnimalDetail from "./pages/AnimalDetail";
 import ReportStray from "./pages/ReportStray";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
+import Notifications from "./pages/Notifications";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AboutUs from "./pages/AboutUs";
@@ -57,6 +58,15 @@ function AppContent() {
                   element={
                     <ProtectedRoute>
                       <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                
+                <Route
+                  path="/notifications"
+                  element={
+                    <ProtectedRoute>
+                      <Notifications />
                     </ProtectedRoute>
                   }
                 />

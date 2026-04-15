@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { Animal } from '@/hooks/useAnimals';
-import { FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaHeart as Heart, FaMapMarkerAlt as MapPin, FaPhoneAlt as PhoneIcon } from 'react-icons/fa';
+import { FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaHeart as Heart, FaMapMarkerAlt as MapPin, FaPhoneAlt as PhoneIcon, FaRegComment as Comment } from 'react-icons/fa';
 import { getPrimaryPhotoUrl } from '@/utils/imageCompression';
 import { useTranslation } from 'react-i18next';
 
@@ -88,10 +88,17 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
             </div>
           )}
 
-          <div className="flex items-center justify-between pt-1">
-            <span className="text-[11px] text-muted-foreground font-medium">
-              {animal.gender === 'male' ? t('report.male') : t('report.female')} • {animal.type === 'dog' ? t('report.dog') : t('report.cat')}
-            </span>
+          <div className="flex items-center justify-between pt-1 border-t border-border/50">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
+                <Heart className={`w-2.5 h-2.5 ${animal.reaction_count > 0 ? 'text-rose-500 fill-rose-500' : ''}`} />
+                {animal.reaction_count}
+              </span>
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
+                <Comment className="w-2.5 h-2.5" />
+                {animal.comment_count}
+              </span>
+            </div>
             <span className="text-[11px] text-muted-foreground">
               {new Date(animal.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric' })}
             </span>

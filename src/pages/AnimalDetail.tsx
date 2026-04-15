@@ -9,6 +9,10 @@ import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { parsePhotoUrls } from '@/utils/imageCompression';
 import { useTranslation } from 'react-i18next';
+import { friendlyError } from '@/utils/errors';
+import { useReactionStatus, useToggleReaction } from '@/hooks/useReactions';
+import { useComments, useAddComment, useDeleteComment } from '@/hooks/useComments';
+import { FaRegComment as CommentIcon, FaHeart as HeartSolid, FaRegHeart as HeartOutline, FaPaperPlane as SendIcon, FaTrashAlt as TrashIcon } from 'react-icons/fa';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,6 +34,15 @@ export default function AnimalDetail() {
   const { user } = useUser();
   const [justAdopted, setJustAdopted] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Reactions & Comments
+  const { data: hasReacted } = useReactionStatus(id!, user?.id);
+  const toggleReaction = useToggleReaction();
+  const { data: comments } = useComments(id!);
+  const addComment = useAddComment();
+  const deleteComment = useDeleteComment();
+  const [commentText, setCommentText] = useState('');
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   // Check if the current user is the post owner
   const isOwner = user && animal && animal.user_id === user.id;
@@ -83,23 +96,86 @@ export default function AnimalDetail() {
     setCurrentSlide(0);
   }, [animal?.id]);
 
-  const handleAdopt = async () => {
+  const handleAdopt = async (targetAdopted: boolean = true) => {
     if (!user) {
       toast.error(t('detail.loginRequired'));
       return;
     }
     try {
-      await markAdopted.mutateAsync({ id: id!, userId: user.id, userToken: user.userToken });
-      setJustAdopted(true);
-      toast.success(t('detail.adoptedSuccess'));
-      confetti({
-        particleCount: 150,
-        spread: 80,
-        origin: { y: 0.6 },
-        colors: ['#a855f7', '#f97316', '#4ade80', '#3b82f6'],
+      await markAdopted.mutateAsync({ 
+        id: id!, 
+        userId: user.id, 
+        userToken: user.userToken,
+        isAdopted: targetAdopted
       });
-    } catch {
-      toast.error(t('detail.genericError'));
+      
+      if (targetAdopted) {
+        setJustAdopted(true);
+        toast.success(t('detail.adoptedSuccess'));
+        confetti({
+          particleCount: 150,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ['#a855f7', '#f97316', '#4ade80', '#3b82f6'],
+        });
+      } else {
+        setJustAdopted(false);
+        toast.success(t('detail.undoSuccess'));
+      }
+    } catch (err) {
+      toast.error(friendlyError(err, t('detail.genericError')));
+    }
+  };
+
+  const handleToggleReaction = async () => {
+    if (!user) {
+      navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}&message=detail.loginRequired`);
+      return;
+    }
+    try {
+      await toggleReaction.mutateAsync({
+        animalId: id!,
+        userId: user.id,
+        userToken: user.userToken,
+        hasReacted: !!hasReacted
+      });
+    } catch (err) {
+      toast.error(friendlyError(err, t('detail.genericError')));
+    }
+  };
+
+  const handleAddComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) {
+      navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}&message=detail.loginRequired`);
+      return;
+    }
+    if (!commentText.trim()) return;
+
+    try {
+      setIsSubmittingComment(true);
+      await addComment.mutateAsync({
+        animalId: id!,
+        userId: user.id,
+        userToken: user.userToken,
+        content: commentText.trim()
+      });
+      setCommentText('');
+      toast.success(t('detail.commentAdded'));
+    } catch (err) {
+      toast.error(friendlyError(err, t('detail.genericError')));
+    } finally {
+      setIsSubmittingComment(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!user) return;
+    try {
+      await deleteComment.mutateAsync({ id: commentId, userToken: user.userToken });
+      toast.success(t('detail.commentDeleted'));
+    } catch (err) {
+      toast.error(friendlyError(err, t('detail.genericError')));
     }
   };
 
@@ -235,10 +311,28 @@ export default function AnimalDetail() {
               </span>
             ) : (
               <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold bg-white/90 text-orange-600 shadow-md backdrop-blur-sm">
-                <Heart className="h-4 w-4" />
+                <HeartSolid className="h-4 w-4" />
                 {t('browse.waiting')}
               </span>
             )}
+          </div>
+
+          {/* Reaction button - mobile floating or fixed */}
+          <div className="absolute bottom-4 left-4 z-20">
+            <motion.button
+              whileTap={{ scale: 0.8 }}
+              onClick={handleToggleReaction}
+              className={`
+                flex items-center gap-2 px-5 h-11 rounded-full border-2 font-bold transition-all active:scale-95
+                ${hasReacted 
+                  ? 'bg-rose-50 text-rose-500 border-rose-200' 
+                  : 'bg-white/20 text-white border-white/30 backdrop-blur-md'
+                }
+              `}
+            >
+              {hasReacted ? <HeartSolid className="h-4 w-4" /> : <HeartOutline className="h-4 w-4" />}
+              {animal.reaction_count || 0}
+            </motion.button>
           </div>
 
           {/* Owner badge */}
@@ -306,10 +400,21 @@ export default function AnimalDetail() {
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
               <PhoneIcon className="w-4 h-4 text-primary" />
             </div>
-            <div>
+            <div className="flex-1">
               <p className="text-xs text-muted-foreground font-medium">{t('detail.contactToAdopt')}</p>
               <p className="text-sm font-bold text-foreground">{formatPhone(animal.contact_number)}</p>
             </div>
+            <Button
+              size="sm"
+              variant="default"
+              className="rounded-xl h-9 px-4 font-bold shadow-sm"
+              asChild
+            >
+              <a href={`tel:${animal.contact_number}`}>
+                <PhoneIcon className="w-3 h-3 mr-2" />
+                {t('common.call')}
+              </a>
+            </Button>
           </div>
         )}
 
@@ -345,7 +450,7 @@ export default function AnimalDetail() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleAdopt} disabled={markAdopted.isPending} className="rounded-xl bg-success hover:bg-success/90">
+                  <AlertDialogAction onClick={() => handleAdopt(true)} disabled={markAdopted.isPending} className="rounded-xl bg-success hover:bg-success/90">
                     {markAdopted.isPending ? t('profile.actions.updating') : t('detail.yesMark')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -379,8 +484,136 @@ export default function AnimalDetail() {
                 {t('detail.adoptedOn', { date: getLocalDate(animal.adopted_at) })}
               </p>
             )}
+
+            {isOwner && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline" size="sm" className="mt-4 border-success/30 hover:bg-success/5 text-success">
+                    {t('detail.undoAdoption')}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="font-heading">
+                      {t('detail.confirmUndoTitle')}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {t('detail.confirmUndoDesc')}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => handleAdopt(false)} disabled={markAdopted.isPending} className="rounded-xl bg-primary hover:bg-primary/90">
+                      {markAdopted.isPending ? t('profile.actions.updating') : t('detail.yesUndo')}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </motion.div>
         )}
+
+        {/* Comments Section */}
+        <div className="pt-8 pb-12">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="font-heading text-xl font-bold inline-flex items-center gap-2">
+              <CommentIcon className="text-primary" />
+              {t('detail.comments')}
+              <span className="text-sm font-normal text-muted-foreground ml-1">
+                ({animal.comment_count || 0})
+              </span>
+            </h3>
+          </div>
+
+          {/* Comment List */}
+          <div className="space-y-4 mb-8">
+            {comments && comments.length > 0 ? (
+              comments.map((comment) => (
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  key={comment.id}
+                  className="flex gap-3 group"
+                >
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[10px] font-bold shrink-0">
+                    {comment.user?.name.charAt(0).toUpperCase() || '?'}
+                  </div>
+                  <div className="flex-1 bg-muted/40 rounded-2xl p-3 relative">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold text-foreground">
+                        {comment.user?.name || t('common.user')}
+                      </span>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className="text-[10px] text-muted-foreground">
+                          {new Date(comment.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric' })}
+                        </span>
+                        {user && comment.user_id === user.id && (
+                          <button
+                            onClick={() => handleDeleteComment(comment.id)}
+                            className="text-muted-foreground hover:text-destructive transition-colors"
+                            title={t('common.delete')}
+                          >
+                            <TrashIcon className="w-3 h-3" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
+                      {comment.content}
+                    </p>
+                  </div>
+                </motion.div>
+              ))
+            ) : (
+              <div className="text-center py-8 bg-muted/20 rounded-2xl border border-dashed">
+                <p className="text-sm text-muted-foreground">{t('detail.noComments')}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Add Comment Form */}
+          <form onSubmit={handleAddComment} className="relative">
+            <textarea
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder={t('detail.addCommentPlaceholder')}
+              className="w-full min-h-[100px] bg-muted/30 border rounded-2xl p-4 text-sm resize-none focus:ring-2 focus:ring-primary/20 transition-all outline-none pb-12"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleAddComment(e);
+                }
+              }}
+            />
+            <div className="absolute bottom-3 right-3 flex items-center gap-2">
+              <Button
+                type="submit"
+                size="sm"
+                disabled={!commentText.trim() || isSubmittingComment}
+                className="rounded-xl px-4 py-2 h-9 font-bold"
+              >
+                {isSubmittingComment ? (
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <SendIcon className="w-3 h-3 mr-2" />
+                    {t('common.send')}
+                  </>
+                )}
+              </Button>
+            </div>
+            {!user && (
+              <div 
+                className="absolute inset-0 bg-background/40 backdrop-blur-[1px] flex items-center justify-center rounded-2xl cursor-pointer group"
+                onClick={() => navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}&message=detail.loginRequired`)}
+              >
+                <div className="bg-background border shadow-md px-4 py-2 rounded-full text-xs font-bold text-primary group-hover:scale-105 transition-transform">
+                  {t('detail.loginToComment')}
+                </div>
+              </div>
+            )}
+          </form>
+        </div>
       </motion.div>
     </div>
   );

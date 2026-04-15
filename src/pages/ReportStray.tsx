@@ -81,25 +81,41 @@ export default function ReportStray() {
     }
   }, [user, isEditing]);
 
-  const handlePhotoChange = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validate size
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error(t('report.errors.sizeLimit'));
-      return;
-    }
+  const handlePhotoChange = (startTimeIndex: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files;
+    if (!selectedFiles || selectedFiles.length === 0) return;
 
     const newPhotos = [...photos];
     const newPreviews = [...photoPreviews];
     const newExisting = [...existingUrls];
-    newPhotos[index] = file;
-    newPreviews[index] = URL.createObjectURL(file);
-    newExisting[index] = null; // Override existing URL
+
+    // Loop through selected files and fill slots starting from the clicked index
+    Array.from(selectedFiles).forEach((file, i) => {
+      const targetIndex = startTimeIndex + i;
+      if (targetIndex < MAX_PHOTOS) {
+        // Validate size for each file
+        if (file.size > 5 * 1024 * 1024) {
+          toast.error(`${file.name}: ${t('report.errors.sizeLimit')}`);
+          return;
+        }
+
+        // Revoke old object URL if exists
+        if (newPreviews[targetIndex] && newPhotos[targetIndex]) {
+          URL.revokeObjectURL(newPreviews[targetIndex]!);
+        }
+
+        newPhotos[targetIndex] = file;
+        newPreviews[targetIndex] = URL.createObjectURL(file);
+        newExisting[targetIndex] = null;
+      }
+    });
+
     setPhotos(newPhotos);
     setPhotoPreviews(newPreviews);
     setExistingUrls(newExisting);
+    
+    // Clear input so same files can be selected again if needed
+    e.target.value = '';
   };
 
   const removePhoto = (index: number) => {
@@ -276,6 +292,7 @@ export default function ReportStray() {
                     id={`photo-input-${index}`}
                     type="file"
                     accept="image/*"
+                    multiple
                     onChange={(e) => handlePhotoChange(index, e)}
                     className="hidden"
                   />

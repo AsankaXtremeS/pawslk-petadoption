@@ -19,9 +19,10 @@ import {
   FaChevronRight as ChevronRight,
   FaLock as Lock,
   FaEyeSlash as EyeSlash,
+  FaUndo as Undo,
 } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
-import { useUserAnimals, useDeleteAnimal, type Animal } from '@/hooks/useAnimals';
+import { useUserAnimals, useDeleteAnimal, useMarkAdopted, type Animal } from '@/hooks/useAnimals';
 import { parsePhotoUrls } from '@/utils/imageCompression';
 import { friendlyError } from '@/utils/errors';
 import { toast } from 'sonner';
@@ -57,7 +58,11 @@ const languages = [
   { code: 'ta' as const, label: 'Tamil', nativeLabel: 'தமிழ்', flag: '🇱🇰' },
 ];
 
-function ProfileListingCard({ animal, onDelete }: { animal: Animal; onDelete: (id: string) => void }) {
+function ProfileListingCard({ animal, onDelete, onToggleStatus }: { 
+  animal: Animal; 
+  onDelete: (id: string) => void;
+  onToggleStatus: (id: string, currentStatus: boolean) => void;
+}) {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const photoUrls = parsePhotoUrls(animal.photo_url);
@@ -97,9 +102,40 @@ function ProfileListingCard({ animal, onDelete }: { animal: Animal; onDelete: (i
           <TypeIcon className="w-3.5 h-3.5 text-primary/60 flex-shrink-0" />
           <span className="capitalize truncate">{animal.type === 'dog' ? t('report.dog') : t('report.cat')} {t('common.at')} {animal.location_name}</span>
         </div>
-        <p className="text-[11px] text-muted-foreground font-medium mt-0.5">
-          {new Date(animal.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric', year: 'numeric' })}
-        </p>
+        <div className="flex items-center gap-2 mt-0.5">
+          <p className="text-[11px] text-muted-foreground font-medium">
+            {new Date(animal.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric', year: 'numeric' })}
+          </p>
+          <div className="w-[1px] h-2.5 bg-border" />
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className="text-[11px] font-bold text-destructive/70 hover:text-destructive flex items-center gap-1 transition-colors" title={t('common.delete')}>
+                <Trash className="w-2.5 h-2.5" />
+                <span>{t('common.delete')}</span>
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="font-heading inline-flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-destructive" />
+                  {t('profile.listings.deleteTitle')}
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  {t('profile.listings.deleteDesc', { type: animal.type === 'dog' ? t('report.dog') : t('report.cat'), location: animal.location_name })}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => onDelete(animal.id)}
+                  className="rounded-xl bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                >
+                  {t('profile.actions.delete')}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
 
       {/* Actions */}
@@ -111,7 +147,37 @@ function ProfileListingCard({ animal, onDelete }: { animal: Animal; onDelete: (i
         >
           <Eye className="w-3 h-3" />
         </button>
-        {!animal.is_adopted && (
+        {animal.is_adopted ? (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-success hover:bg-success/10 transition-all"
+                title={t('detail.undoAdoption')}
+              >
+                <Undo className="w-3 h-3" />
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="font-heading">
+                  {t('detail.confirmUndoTitle')}
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  {t('detail.confirmUndoDesc')}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={() => onToggleStatus(animal.id, animal.is_adopted)} 
+                  className="rounded-xl bg-primary hover:bg-primary/90"
+                >
+                  {t('detail.yesUndo')}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        ) : (
           <button
             className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
             onClick={() => navigate(`/report?edit=${animal.id}`)}
@@ -120,33 +186,6 @@ function ProfileListingCard({ animal, onDelete }: { animal: Animal; onDelete: (i
             <Edit className="w-3 h-3" />
           </button>
         )}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <button className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all" title={t('common.delete')}>
-              <Trash className="w-3 h-3" />
-            </button>
-          </AlertDialogTrigger>
-          <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
-            <AlertDialogHeader>
-              <AlertDialogTitle className="font-heading inline-flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-destructive" />
-                {t('profile.listings.deleteTitle')}
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                {t('profile.listings.deleteDesc', { type: animal.type === 'dog' ? t('report.dog') : t('report.cat'), location: animal.location_name })}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => onDelete(animal.id)}
-                className="rounded-xl bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-              >
-                {t('profile.actions.delete')}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </div>
     </motion.div>
   );
@@ -158,6 +197,7 @@ export default function Profile() {
   const { user, updateUser, deleteAccount, clearUser, updatePassword } = useUser();
   const { data: userAnimals, isLoading: animalsLoading } = useUserAnimals(user?.id);
   const deleteAnimal = useDeleteAnimal();
+  const toggleStatus = useMarkAdopted();
 
   // Edit states
   const [editingPhone, setEditingPhone] = useState(false);
@@ -249,6 +289,20 @@ export default function Profile() {
       toast.success('Listing deleted');
     } catch (err) {
       toast.error(friendlyError(err, 'Failed to delete listing.'));
+    }
+  };
+
+  const handleToggleStatus = async (animalId: string, currentStatus: boolean) => {
+    try {
+      await toggleStatus.mutateAsync({ 
+        id: animalId, 
+        userId: user!.id, 
+        userToken: user!.userToken,
+        isAdopted: !currentStatus
+      });
+      toast.success(currentStatus ? t('detail.undoSuccess') : t('detail.adoptedSuccess'));
+    } catch (err) {
+      toast.error(friendlyError(err, 'Failed to update status.'));
     }
   };
 
@@ -544,6 +598,7 @@ export default function Profile() {
                       key={animal.id}
                       animal={animal}
                       onDelete={handleDeleteListing}
+                      onToggleStatus={handleToggleStatus}
                     />
                   ))}
                 </AnimatePresence>

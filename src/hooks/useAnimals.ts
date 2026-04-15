@@ -15,6 +15,8 @@ export type Animal = {
   adopted_at: string | null;
   user_id: string | null;
   contact_number: string | null;
+  reaction_count: number;
+  comment_count: number;
 };
 
 export function useAnimals(filters?: { type?: string; gender?: string; status?: string; search?: string }) {
@@ -35,7 +37,7 @@ export function useAnimals(filters?: { type?: string; gender?: string; status?: 
   return useQuery({
     queryKey: ['animals', filters],
     queryFn: async () => {
-      let query = supabase.from('animals').select('*').order('created_at', { ascending: false });
+      let query = supabase.from('animals').select('*, reaction_count:animal_reactions(count), comment_count:animal_comments(count)').order('created_at', { ascending: false });
 
       if (filters?.type && filters.type !== 'all') {
         query = query.eq('type', filters.type);
@@ -54,7 +56,14 @@ export function useAnimals(filters?: { type?: string; gender?: string; status?: 
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as Animal[];
+      
+      const formattedData = (data as any[]).map(animal => ({
+        ...animal,
+        reaction_count: animal.reaction_count?.[0]?.count || 0,
+        comment_count: animal.comment_count?.[0]?.count || 0,
+      }));
+
+      return formattedData as Animal[];
     },
   });
 }
@@ -81,11 +90,18 @@ export function useWaitingAnimals() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('animals')
-        .select('*')
+        .select('*, reaction_count:animal_reactions(count), comment_count:animal_comments(count)')
         .eq('is_adopted', false)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return data as Animal[];
+
+      const formattedData = (data as any[]).map(animal => ({
+        ...animal,
+        reaction_count: animal.reaction_count?.[0]?.count || 0,
+        comment_count: animal.comment_count?.[0]?.count || 0,
+      }));
+
+      return formattedData as Animal[];
     },
   });
 }
@@ -94,9 +110,19 @@ export function useAnimal(id: string) {
   return useQuery({
     queryKey: ['animals', id],
     queryFn: async () => {
-      const { data, error } = await supabase.from('animals').select('*').eq('id', id).single();
+      const { data, error } = await supabase
+        .from('animals')
+        .select('*, reaction_count:animal_reactions(count), comment_count:animal_comments(count)')
+        .eq('id', id)
+        .single();
       if (error) throw error;
-      return data as Animal;
+
+      const animal = data as Record<string, any>;
+      return {
+        ...animal,
+        reaction_count: animal.reaction_count?.[0]?.count || 0,
+        comment_count: animal.comment_count?.[0]?.count || 0,
+      } as Animal;
     },
     enabled: !!id,
   });
@@ -157,18 +183,27 @@ export function useUpdateAnimal() {
 export function useMarkAdopted() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, userId, userToken }: { id: string; userId: string; userToken: string }) => {
+    mutationFn: async ({ id, userId, userToken, isAdopted = true }: { id: string; userId: string; userToken: string; isAdopted?: boolean }) => {
       const secureClient = createSecureClient(userToken);
-      const { error } = await secureClient
+      const { data, error } = await secureClient
         .from('animals')
-        .update({ is_adopted: true, adopted_at: new Date().toISOString() })
+        .update({ 
+          is_adopted: isAdopted, 
+          adopted_at: isAdopted ? new Date().toISOString() : null 
+        })
         .eq('id', id)
-        .eq('user_id', userId);
+        .eq('user_id', userId)
+        .select();
+      
       if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error('Verification failed. Only the post creator can change this status.');
+      }
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['animals'] }),
   });
 }
+
 
 export function useUploadPhoto() {
   return useMutation({
@@ -270,11 +305,18 @@ export function useUserAnimals(userId: string | undefined) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('animals')
-        .select('*')
+        .select('*, reaction_count:animal_reactions(count), comment_count:animal_comments(count)')
         .eq('user_id', userId!)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return data as Animal[];
+
+      const formattedData = (data as any[]).map(animal => ({
+        ...animal,
+        reaction_count: animal.reaction_count?.[0]?.count || 0,
+        comment_count: animal.comment_count?.[0]?.count || 0,
+      }));
+
+      return formattedData as Animal[];
     },
     enabled: !!userId,
   });
