@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -58,7 +58,7 @@ const languages = [
   { code: 'ta' as const, label: 'Tamil', nativeLabel: 'தமிழ்', flag: '🇱🇰' },
 ];
 
-function ProfileListingCard({ animal, onDelete, onToggleStatus }: { 
+const ProfileListingCard = memo(function ProfileListingCard({ animal, onDelete, onToggleStatus }: { 
   animal: Animal; 
   onDelete: (id: string) => void;
   onToggleStatus: (id: string, currentStatus: boolean) => void;
@@ -71,7 +71,7 @@ function ProfileListingCard({ animal, onDelete, onToggleStatus }: {
 
   return (
     <motion.div
-      className="flex items-center gap-3 p-2 rounded-2xl border bg-background mb-2 transition-all hover:border-primary/20 hover:shadow-sm"
+      className="flex items-center gap-3 p-2 rounded-2xl border bg-background mb-2 transition-[border-color,shadow] hover:border-primary/20 hover:shadow-sm transform-gpu will-change-transform"
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8, transition: { duration: 0.2 } }}
@@ -79,11 +79,11 @@ function ProfileListingCard({ animal, onDelete, onToggleStatus }: {
     >
       {/* Thumbnail */}
       <div
-        className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 relative cursor-pointer bg-muted"
+        className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 relative cursor-pointer bg-muted transform-gpu"
         onClick={() => navigate(`/animals/${animal.id}`)}
       >
         {coverUrl ? (
-          <img src={coverUrl} alt={`${animal.type} at ${animal.location_name}`} className="w-full h-full object-cover hover:scale-105 transition-transform" />
+          <img src={coverUrl} alt={`${animal.type} at ${animal.location_name}`} className="w-full h-full object-cover hover:scale-105 transition-transform" loading="lazy" />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-warm-gradient text-primary/30">
             <TypeIcon className="w-6 h-6" />
@@ -141,7 +141,7 @@ function ProfileListingCard({ animal, onDelete, onToggleStatus }: {
       {/* Actions */}
       <div className="flex gap-1 flex-shrink-0">
         <button
-          className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
+          className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
           onClick={() => navigate(`/animals/${animal.id}`)}
           title={t('common.view')}
         >
@@ -151,7 +151,7 @@ function ProfileListingCard({ animal, onDelete, onToggleStatus }: {
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <button
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-success hover:bg-success/10 transition-all"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-success hover:bg-success/10 transition-colors"
                 title={t('detail.undoAdoption')}
               >
                 <Undo className="w-3 h-3" />
@@ -179,7 +179,7 @@ function ProfileListingCard({ animal, onDelete, onToggleStatus }: {
           </AlertDialog>
         ) : (
           <button
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
             onClick={() => navigate(`/report?edit=${animal.id}`)}
             title={t('common.edit')}
           >
@@ -189,7 +189,7 @@ function ProfileListingCard({ animal, onDelete, onToggleStatus }: {
       </div>
     </motion.div>
   );
-}
+});
 
 export default function Profile() {
   const { t, i18n } = useTranslation();
@@ -584,7 +584,7 @@ export default function Profile() {
               </Link>
             </div>
 
-            <div className="px-4 pb-4">
+            <div className="px-4 pb-4 contain-layout">
               {animalsLoading ? (
                 <div className="space-y-2">
                   {[...Array(2)].map((_, i) => (

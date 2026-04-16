@@ -277,13 +277,14 @@ export default function BrowseAnimals() {
           ))}
         </div>
       ) : animals && animals.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5 contain-layout">
           {animals.map((animal, i) => (
             <motion.div
               key={animal.id}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04 }}
+              transition={{ delay: i * 0.04, ease: "easeOut" }}
+              className="transform-gpu will-change-[transform,opacity]"
             >
               <AnimalCard animal={animal} />
             </motion.div>

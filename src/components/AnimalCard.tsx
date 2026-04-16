@@ -1,10 +1,11 @@
+import { memo } from 'react';
 import { Link } from 'react-router-dom';
 import type { Animal } from '@/hooks/useAnimals';
 import { FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaHeart as Heart, FaMapMarkerAlt as MapPin, FaPhoneAlt as PhoneIcon, FaRegComment as Comment } from 'react-icons/fa';
 import { getPrimaryPhotoUrl } from '@/utils/imageCompression';
 import { useTranslation } from 'react-i18next';
 
-export default function AnimalCard({ animal }: { animal: Animal }) {
+function AnimalCard({ animal }: { animal: Animal }) {
   const { t, i18n } = useTranslation();
   const isAdopted = animal.is_adopted;
   const primaryPhoto = getPrimaryPhotoUrl(animal.photo_url);
@@ -19,8 +20,8 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
   return (
     <Link to={`/animals/${animal.id}`} className="block group">
       <div className={`
-        rounded-2xl overflow-hidden bg-card border transition-all duration-300
-        hover:shadow-soft hover:-translate-y-1
+        rounded-2xl overflow-hidden bg-card border transition-[transform,box-shadow] duration-300
+        hover:shadow-soft hover:-translate-y-1 transform-gpu
         ${isAdopted ? 'border-success/20' : 'border-border'}
       `}>
         {/* Image */}
@@ -29,6 +30,8 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
             <img
               src={primaryPhoto}
               alt={`${animal.type === 'dog' ? t('report.dog') : t('report.cat')} ${t('common.at')} ${animal.location_name}`}
+              width="400"
+              height="300"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               loading="lazy"
             />
@@ -49,7 +52,7 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
                 {t('browse.adopted')}
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/90 text-orange-600 shadow-sm backdrop-blur-sm">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white md:bg-white/90 text-orange-600 shadow-sm md:backdrop-blur-sm">
                 <Heart className="h-3 w-3" />
                 {t('browse.waiting')}
               </span>
@@ -58,7 +61,7 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
 
           {/* Type icon */}
           <div className="absolute bottom-3 left-3">
-            <div className="w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 rounded-full bg-white md:bg-white/80 md:backdrop-blur-sm flex items-center justify-center shadow-sm">
               {animal.type === 'dog'
                 ? <Dog className="h-4 w-4 text-primary" />
                 : <Cat className="h-4 w-4 text-primary" />
@@ -108,3 +111,5 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
     </Link>
   );
 }
+
+export default memo(AnimalCard);
