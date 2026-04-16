@@ -200,13 +200,14 @@ export default function Index() {
           </div>
         ) : recentAnimals.length > 0 ? (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5 contain-layout">
               {recentAnimals.map((animal, i) => (
                 <motion.div
                   key={animal.id}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.07 }}
+                  transition={{ delay: i * 0.05, ease: "easeOut" }}
+                  className="transform-gpu will-change-[transform,opacity]"
                 >
                   <AnimalCard animal={animal} />
                 </motion.div>

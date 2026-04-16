@@ -111,6 +111,7 @@
     -webkit-tap-highlight-color: transparent;
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--muted)) transparent;
+    -webkit-overflow-scrolling: touch;
   }
 
   html::-webkit-scrollbar {
@@ -185,6 +186,18 @@
   }
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Hardware acceleration helper */
+  .transform-gpu {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  /* List rendering isolation */
+  .contain-layout {
+    contain: layout;
   }
 }
 
