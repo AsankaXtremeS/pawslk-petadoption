@@ -24,7 +24,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {/* Desktop top nav — hidden on mobile */}
       <nav className="hidden md:block sticky top-3 z-50 px-4">
         <div className="container max-w-6xl flex items-center justify-between h-12 bg-background/80 backdrop-blur-md border rounded-full px-6 shadow-sm">
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to="/" className="flex items-center gap-2 group" aria-label="Home">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
               <PawPrint className="h-4 w-4 text-primary" />
             </div>
@@ -100,7 +100,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {/* Mobile top bar */}
       <div className="md:hidden sticky top-3 z-50 px-4">
         <div className="flex items-center justify-between h-11 bg-background/80 backdrop-blur-md border rounded-full px-4 shadow-sm">
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to="/" className="flex items-center gap-2 group" aria-label="Home">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center transition-colors group-hover:bg-primary/20">
               <PawPrint className="h-4.5 w-4.5 text-primary" />
             </div>
@@ -250,7 +250,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             if (accent) {
               return (
                 <div key={to} className="flex-1 flex justify-center">
-                  <Link to={to} className="flex flex-col items-center -mt-6">
+                  <Link to={to} className="flex flex-col items-center -mt-6" aria-label={t(labelKey)}>
                     <div className={`
                       w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-300
                       ${isActive ? 'bg-primary shadow-glow scale-105' : 'bg-primary/90 hover:bg-primary group-hover:scale-105 shadow-md'}
@@ -267,7 +267,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
             return (
               <div key={to} className="flex-1 flex justify-center h-full">
-                <Link to={to} className="flex flex-col items-center justify-center w-full h-full py-1">
+                <Link to={to} className="flex flex-col items-center justify-center w-full h-full py-1" aria-label={t(labelKey)}>
                   <div className={`
                     w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200
                     ${isActive ? 'bg-primary/10' : 'hover:bg-muted/50'}

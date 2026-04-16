@@ -29,6 +29,8 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
             <img
               src={primaryPhoto}
               alt={`${animal.type === 'dog' ? t('report.dog') : t('report.cat')} ${t('common.at')} ${animal.location_name}`}
+              width="400"
+              height="300"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               loading="lazy"
             />

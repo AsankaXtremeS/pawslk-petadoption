@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import '../welcome.css';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaPhone as Phone, FaLock as Lock, FaEye as Eye, FaEyeSlash as EyeSlash } from 'react-icons/fa';
