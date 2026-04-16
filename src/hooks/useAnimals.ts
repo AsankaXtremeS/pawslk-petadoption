@@ -234,9 +234,13 @@ export function useAnimalStats() {
   return useQuery({
     queryKey: ['animals', 'stats'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('animals').select('*');
+      // Fetch ONLY the columns we need for stats, avoiding heavy descriptions and photos
+      const { data, error } = await supabase
+        .from('animals')
+        .select('is_adopted, type, created_at, location_name, adopted_at');
+      
       if (error) throw error;
-      const animals = data as Animal[];
+      const animals = data as any[];
       const total = animals.length;
       const adopted = animals.filter(a => a.is_adopted).length;
       const waiting = total - adopted;
