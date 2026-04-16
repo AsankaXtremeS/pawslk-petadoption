@@ -236,16 +236,13 @@ export default function Index() {
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4">
               <Globe className="h-3 w-3" />
-              <span>About PawConnect</span>
+              <span>{t('home.about.badge')}</span>
             </div>
             <h2 className="text-2xl md:text-3xl font-heading font-bold mb-3">
-              PawConnect — Sri Lanka's First Pet Adoption Platform
+              {t('home.about.title')}
             </h2>
             <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              PawConnect (pawconnect.lk) is a free, community-driven pet platform
-              dedicated to rescuing stray animals and connecting them with loving
-              families across Sri Lanka. Paw Connect empowers citizens to report,
-              rescue, and adopt dogs and cats  making every life count.
+              {t('home.about.subtitle')}
             </p>
           </div>
 
@@ -254,29 +251,29 @@ export default function Index() {
             {[
               {
                 icon: <Search className="h-5 w-5" />,
-                title: 'Browse & Adopt',
-                desc: 'Find dogs and cats waiting for forever homes on PawConnect LK.',
+                title: t('home.about.features.browse.title'),
+                desc: t('home.about.features.browse.desc'),
                 link: '/animals',
                 color: 'bg-blue-500/10 text-blue-600',
               },
               {
                 icon: <Camera className="h-5 w-5" />,
-                title: 'Report Strays',
-                desc: 'Snap a photo, add location, and start a rescue journey instantly.',
+                title: t('home.about.features.report.title'),
+                desc: t('home.about.features.report.desc'),
                 link: '/report',
                 color: 'bg-rose-500/10 text-rose-500',
               },
               {
                 icon: <Chart className="h-5 w-5" />,
-                title: 'Track Impact',
-                desc: 'See real-time adoption statistics on the PawConnect dashboard.',
+                title: t('home.about.features.impact.title'),
+                desc: t('home.about.features.impact.desc'),
                 link: '/dashboard',
                 color: 'bg-emerald-500/10 text-emerald-600',
               },
               {
                 icon: <PawPrint className="h-5 w-5" />,
-                title: 'Free & Trilingual',
-                desc: 'Available in English, Sinhala, and Tamil — 100% free to use.',
+                title: t('home.about.features.free.title'),
+                desc: t('home.about.features.free.desc'),
                 link: '/about',
                 color: 'bg-purple-500/10 text-purple-600',
               },
@@ -301,30 +298,30 @@ export default function Index() {
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
                 <Question className="h-5 w-5" />
               </div>
-              <h2 className="text-xl font-heading font-bold">Frequently Asked Questions</h2>
+              <h2 className="text-xl font-heading font-bold">{t('home.faq.title')}</h2>
             </div>
 
             <div className="space-y-4">
               {[
                 {
-                  q: 'What is PawConnect?',
-                  a: 'PawConnect (also known as Paw Connect) is Sri Lanka\'s leading community-driven platform for pet adoption and stray animal rescue. Available at pawconnect.lk, it allows anyone to report stray dogs and cats, browse animals for adoption, and connect with rescuers across the island.',
+                  q: t('home.faq.q1'),
+                  a: t('home.faq.a1'),
                 },
                 {
-                  q: 'How do I adopt a pet on PawConnect?',
-                  a: 'Visit the Browse Animals page on pawconnect.lk to see all available dogs and cats. Each listing includes photos, location, and the reporter\'s contact number. Simply call the reporter to arrange a meeting and adoption. PawConnect LK makes the entire process transparent and free.',
+                  q: t('home.faq.q2'),
+                  a: t('home.faq.a2'),
                 },
                 {
-                  q: 'Is PawConnect free to use?',
-                  a: 'Yes! PawConnect is 100% free. There are no charges for reporting strays, browsing animals, or adopting pets. PawConnect pet services are funded by the community for the community.',
+                  q: t('home.faq.q3'),
+                  a: t('home.faq.a3'),
                 },
                 {
-                  q: 'What areas does PawConnect Sri Lanka cover?',
-                  a: 'PawConnect Sri Lanka covers the entire island. Whether you\'re in Colombo, Galle, Kandy, Jaffna, or any town in between, you can use PawConnect to report and adopt animals. Our platform is available in English, Sinhala, and Tamil.',
+                  q: t('home.faq.q4'),
+                  a: t('home.faq.a4'),
                 },
                 {
-                  q: 'How do I report a stray animal?',
-                  a: 'Create a free account on pawconnect.lk, then click "Add New" to report a stray. Upload up to 3 photos, select the animal type and gender, add the location, and submit. Your report goes live immediately so potential adopters can see the animal.',
+                  q: t('home.faq.q5'),
+                  a: t('home.faq.a5'),
                 },
               ].map((faq, i) => (
                 <details
@@ -355,42 +352,42 @@ export default function Index() {
             "mainEntity": [
               {
                 "@type": "Question",
-                "name": "What is PawConnect?",
+                "name": t('home.faq.q1'),
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "PawConnect (also known as Paw Connect) is Sri Lanka's leading community-driven platform for pet adoption and stray animal rescue. Available at pawconnect.lk, it allows anyone to report stray dogs and cats, browse animals for adoption, and connect with rescuers across the island."
+                  "text": t('home.faq.a1')
                 }
               },
               {
                 "@type": "Question",
-                "name": "How do I adopt a pet on PawConnect?",
+                "name": t('home.faq.q2'),
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Visit the Browse Animals page on pawconnect.lk to see all available dogs and cats. Each listing includes photos, location, and the reporter's contact number. Simply call the reporter to arrange a meeting and adoption. PawConnect LK makes the entire process transparent and free."
+                  "text": t('home.faq.a2')
                 }
               },
               {
                 "@type": "Question",
-                "name": "Is PawConnect free to use?",
+                "name": t('home.faq.q3'),
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Yes! PawConnect is 100% free. There are no charges for reporting strays, browsing animals, or adopting pets. PawConnect pet services are funded by the community for the community."
+                  "text": t('home.faq.a3')
                 }
               },
               {
                 "@type": "Question",
-                "name": "What areas does PawConnect Sri Lanka cover?",
+                "name": t('home.faq.q4'),
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "PawConnect Sri Lanka covers the entire island. Whether you're in Colombo, Galle, Kandy, Jaffna, or any town in between, you can use PawConnect to report and adopt animals. Our platform is available in English, Sinhala, and Tamil."
+                  "text": t('home.faq.a4')
                 }
               },
               {
                 "@type": "Question",
-                "name": "How do I report a stray animal?",
+                "name": t('home.faq.q5'),
                 "acceptedAnswer": {
                   "@type": "Answer",
-                  "text": "Create a free account on pawconnect.lk, then click 'Add New' to report a stray. Upload up to 3 photos, select the animal type and gender, add the location, and submit. Your report goes live immediately so potential adopters can see the animal."
+                  "text": t('home.faq.a5')
                 }
               }
             ]
