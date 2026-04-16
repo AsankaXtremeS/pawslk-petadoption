@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { FaPhoneAlt as Phone, FaEnvelope as Envelope, FaMapMarkerAlt as MapMarker, FaPaw as PawPrint } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 export default function ContactUs() {
   const contactInfo = [
@@ -29,6 +30,67 @@ export default function ContactUs() {
   return (
     <div className="min-h-screen bg-background pt-20 pb-12 px-4">
       <div className="container max-w-5xl mx-auto space-y-10">
+
+        {/* Structured Data: ContactPage + LocalBusiness */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ContactPage",
+              "name": "Contact PawConnect",
+              "description": "Get in touch with PawConnect — Sri Lanka's pet adoption and stray rescue platform. Reach us at pawconnect.lk.",
+              "url": "https://pawconnect.lk/contact",
+              "mainEntity": {
+                "@type": "Organization",
+                "name": "PawConnect",
+                "alternateName": ["Paw Connect", "PawConnect LK", "pawconnect.lk"],
+                "url": "https://pawconnect.lk",
+                "email": "assankasampath@gmail.com",
+                "telephone": "+94760589218",
+                "address": {
+                  "@type": "PostalAddress",
+                  "addressLocality": "Galle",
+                  "addressRegion": "Southern Province",
+                  "addressCountry": "LK"
+                },
+                "contactPoint": {
+                  "@type": "ContactPoint",
+                  "telephone": "+94760589218",
+                  "contactType": "customer service",
+                  "email": "assankasampath@gmail.com",
+                  "areaServed": "LK",
+                  "availableLanguage": ["English", "Sinhala", "Tamil"]
+                }
+              }
+            })
+          }}
+        />
+
+        {/* Breadcrumb Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://pawconnect.lk/"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Contact PawConnect",
+                  "item": "https://pawconnect.lk/contact"
+                }
+              ]
+            })
+          }}
+        />
         
         {/* Header - Streamlined */}
         <section className="text-center space-y-3">
@@ -52,7 +114,8 @@ export default function ContactUs() {
             animate={{ opacity: 1, y: 0 }}
             className="text-base text-muted-foreground max-w-lg mx-auto"
           >
-            Have questions about a stray animal or our platform? Reach out directly through the channels below.
+            Have questions about a stray animal or the PawConnect pet platform? 
+            Reach out directly through the channels below. We're here to help at pawconnect.lk.
           </motion.p>
         </section>
 
@@ -83,8 +146,10 @@ export default function ContactUs() {
         <section className="pt-6">
            <div className="p-6 bg-muted/30 border border-dashed rounded-[1.5rem] text-center max-w-xl mx-auto">
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Your feedback helps us save more lives. 
-                Whether you're a rescuer, an adopter, or just someone who loves animals, we're here to support you in Galle.
+                Your feedback helps PawConnect save more lives. 
+                Whether you're a rescuer, an adopter, or just someone who loves animals, 
+                Paw Connect is here to support you. Visit <Link to="/about" className="text-primary hover:underline font-medium">About PawConnect</Link> to 
+                learn more about our mission in Sri Lanka.
               </p>
            </div>
         </section>

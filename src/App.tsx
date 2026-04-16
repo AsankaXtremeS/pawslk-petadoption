@@ -23,13 +23,34 @@ const ContactUs = lazy(() => import("./pages/ContactUs"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-import { UserProvider } from "@/contexts/UserContext";
+import { UserProvider, useUser } from "@/contexts/UserContext";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const queryClient = new QueryClient();
 
 function AppContent() {
+  const { i18n } = useTranslation();
+  const { user } = useUser();
+
+  // 1. Force English on very first visit (if no manual toggle saved yet)
+  useEffect(() => {
+    const hasInitialLang = localStorage.getItem('PawConnect_lang_initialized');
+    if (!hasInitialLang) {
+      i18n.changeLanguage('en');
+      localStorage.setItem('PawConnect_lang_initialized', 'true');
+    }
+  }, [i18n]);
+
+  // 2. Sync logged-in user's language preference
+  useEffect(() => {
+    if (user?.language && user.language !== i18n.language) {
+      i18n.changeLanguage(user.language);
+    }
+  }, [user?.language, i18n]);
+
   return (
     <BrowserRouter>
       <Suspense fallback={<LoadingScreen />}>

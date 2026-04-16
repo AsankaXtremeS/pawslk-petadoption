@@ -164,10 +164,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center transition-colors group-hover:bg-primary/20">
                   <PawPrint className="h-4.5 w-4.5 text-primary" />
                 </div>
-                <span className="font-heading text-lg font-bold text-foreground">Paw Connect</span>
+                <span className="font-heading text-lg font-bold text-foreground">PawConnect</span>
               </Link>
               <p className="text-[13px] text-muted-foreground leading-relaxed max-w-xs">
-                Empowering communities across Sri Lanka to rescue, report, and adopt stray animals. Together, we can find every pet a home.
+                PawConnect (pawconnect.lk) empowers communities across Sri Lanka to rescue, report, and adopt stray animals. Together, we find every pet a home.
               </p>
             </div>
 
@@ -231,8 +231,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {/* Bottom Copyright Section */}
           <div className="pt-6 border-t flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-muted-foreground font-medium">
             <div className="flex items-center gap-2">
-              <span className="text-primary font-bold">Paw Connect</span>
-              <span>© 2024 All rights reserved.</span>
+              <span className="text-primary font-bold">PawConnect</span>
+              <span>© {new Date().getFullYear()} All rights reserved.</span>
             </div>
             <div className="flex items-center gap-1">
               Developed & Maintained by <span className="text-foreground font-bold">Asanka Sampath</span>
