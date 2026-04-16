@@ -136,7 +136,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
     if (error) throw new Error(error.message || 'Failed to update profile');
 
-    // Update local state
+    // Since we restricted SELECT on 'mobile' column for privacy, we don't use .select() here.
+    // We already have the new values in memory, so we update the local state.
     const updatedUser: UserData = {
       ...user,
       ...updates,
