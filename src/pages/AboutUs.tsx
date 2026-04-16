@@ -1,11 +1,37 @@
 import { motion } from 'framer-motion';
 import { FaPaw as PawPrint, FaHeart as Heart, FaShieldAlt as Shield, FaGlobeAsia as Globe } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 export default function AboutUs() {
   return (
     <div className="min-h-screen bg-background pt-20 pb-12 px-4">
       <div className="container max-w-5xl mx-auto space-y-10">
         
+        {/* Breadcrumb Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "Home",
+                  "item": "https://pawconnect.lk/"
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "About PawConnect",
+                  "item": "https://pawconnect.lk/about"
+                }
+              ]
+            })
+          }}
+        />
+
         {/* Compact Hero Section */}
         <section className="text-center space-y-4">
           <motion.div 
@@ -29,7 +55,9 @@ export default function AboutUs() {
               transition={{ delay: 0.1 }}
               className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto"
             >
-              Giving every stray animal in Sri Lanka a second chance through community-driven reporting and transparent adoption.
+              PawConnect (pawconnect.lk) is Sri Lanka's leading community-driven platform
+              for pet adoption, stray animal rescue, and rehoming — giving every stray 
+              a second chance through transparent reporting and compassionate adoption.
             </motion.p>
           </div>
         </section>
@@ -49,7 +77,9 @@ export default function AboutUs() {
                 <h3 className="text-xl font-bold font-heading">Our Mission</h3>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                To create a world where no animal is left behind. We bridge the gap between abandoned strays and forever homes.
+                To create a world where no animal is left behind. PawConnect bridges the gap 
+                between abandoned strays and forever homes across Sri Lanka — from Colombo to 
+                Galle, Kandy to Jaffna. Paw Connect makes rescue accessible to everyone.
               </p>
             </motion.div>
 
@@ -64,7 +94,9 @@ export default function AboutUs() {
                 <h3 className="text-xl font-bold font-heading">Our Commitment</h3>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Safety and transparency are at our core. We ensure every report has a trace and every adoption is handled with care.
+                Safety and transparency are at the core of PawConnect pet services. 
+                We ensure every report has a trace and every adoption is handled with care. 
+                Available in English, Sinhala, and Tamil on pawconnect.lk.
               </p>
             </motion.div>
           </div>
@@ -81,10 +113,31 @@ export default function AboutUs() {
                 <p>
                   PawConnect empowers citizens. By taking a photo and adding a location, anyone can start a rescue journey. We centralize these efforts to make findings and adoptions easier for everyone.
                 </p>
+                <p>
+                  Whether you search for "PawConnect", "Paw Connect", or visit pawconnect.lk directly — 
+                  you'll find a platform built with love for Sri Lanka's animals. PawConnect LK is your 
+                  go-to pet platform for adoption and rescue.
+                </p>
               </div>
             </div>
           </section>
         </div>
+
+        {/* Internal Links */}
+        <section className="grid sm:grid-cols-3 gap-4">
+          <Link to="/animals" className="p-5 bg-card border rounded-2xl shadow-sm hover:shadow-md transition-all group text-center">
+            <h3 className="text-sm font-bold font-heading mb-1 group-hover:text-primary transition-colors">Browse Animals</h3>
+            <p className="text-xs text-muted-foreground">Find dogs & cats for adoption</p>
+          </Link>
+          <Link to="/dashboard" className="p-5 bg-card border rounded-2xl shadow-sm hover:shadow-md transition-all group text-center">
+            <h3 className="text-sm font-bold font-heading mb-1 group-hover:text-primary transition-colors">Impact Dashboard</h3>
+            <p className="text-xs text-muted-foreground">See our community's impact</p>
+          </Link>
+          <Link to="/contact" className="p-5 bg-card border rounded-2xl shadow-sm hover:shadow-md transition-all group text-center">
+            <h3 className="text-sm font-bold font-heading mb-1 group-hover:text-primary transition-colors">Contact PawConnect</h3>
+            <p className="text-xs text-muted-foreground">Get in touch with our team</p>
+          </Link>
+        </section>
 
         {/* Developer Credit - Compact */}
         <section className="text-center pt-6 border-t">
