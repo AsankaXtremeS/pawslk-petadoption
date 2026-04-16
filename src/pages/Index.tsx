@@ -4,11 +4,13 @@ import { useWaitingAnimals, useAnimalStats } from '@/hooks/useAnimals';
 import AnimalCard from '@/components/AnimalCard';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import EmptyState from '@/components/EmptyState';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useState } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { FaArrowRight as ArrowRight, FaHeart as HeartPulse, FaPaw as PawPrint, FaUsers as Users, FaPlus as Plus, FaSearch as Search, FaCamera as Camera, FaChartLine as Chart, FaGlobeAsia as Globe, FaQuestionCircle as Question } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
 export default function Index() {
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const { t } = useTranslation();
   const { data: animals, isLoading } = useWaitingAnimals();
   const { data: stats } = useAnimalStats();
@@ -92,7 +94,7 @@ export default function Index() {
                 alt="Happy stray pet" 
                 width="616"
                 height="560"
-                fetchpriority="high"
+                fetchPriority="high"
                 className="object-contain w-full max-h-[320px] sm:max-h-[420px] md:max-h-[450px] lg:max-h-[520px] animate-float drop-shadow-2xl"
               />
             </motion.div>
@@ -324,18 +326,37 @@ export default function Index() {
                   a: t('home.faq.a5'),
                 },
               ].map((faq, i) => (
-                <details
+                <div
                   key={i}
                   className="group bg-card rounded-xl border px-5 py-4 cursor-pointer"
+                  onClick={() => setOpenFaqIndex(openFaqIndex === i ? null : i)}
                 >
-                  <summary className="flex items-center justify-between text-sm font-semibold text-foreground list-none">
+                  <div className="flex items-center justify-between text-sm font-semibold text-foreground list-none">
                     <span>{faq.q}</span>
-                    <span className="ml-4 text-muted-foreground group-open:rotate-45 transition-transform duration-200 text-lg">+</span>
-                  </summary>
-                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed pr-8">
-                    {faq.a}
-                  </p>
-                </details>
+                    <motion.span 
+                      className="ml-4 text-muted-foreground text-lg"
+                      animate={{ rotate: openFaqIndex === i ? 45 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      +
+                    </motion.span>
+                  </div>
+                  <AnimatePresence>
+                    {openFaqIndex === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="overflow-hidden"
+                      >
+                        <p className="mt-3 text-sm text-muted-foreground leading-relaxed pr-8">
+                          {faq.a}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               ))}
             </div>
           </div>
