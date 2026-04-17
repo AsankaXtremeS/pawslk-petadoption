@@ -56,7 +56,11 @@
     "getStartedTitle": "Every paw",
     "getStartedAccent": "deserves a home.",
     "getStartedSubtitle": "Report, rescue, and adopt stray animals across Sri Lanka.",
-    "getStartedBtn": "Get Started"
+    "getStartedBtn": "Get Started",
+    "termsTitle": "Terms & Conditions",
+    "termsWarning": "Adding your phone number is entirely voluntary. By providing it, you acknowledge that it will be publicly displayed on your animal listings to facilitate contact between rescuers and adopters. You can delete your account and any of your listings at any time from your profile settings.",
+    "iAgree": "I Agree & Create Account",
+    "termsAndPrivacy": "Terms and Privacy Policy"
   },
   "home": {
     "heroBadge": "Rescuing Sri Lanka's Strays",

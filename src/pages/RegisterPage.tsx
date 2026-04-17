@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import '../welcome.css';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaGlobeAsia as Globe, FaLock as Lock, FaEye as Eye, FaEyeSlash as EyeSlash } from 'react-icons/fa';
+import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaGlobeAsia as Globe, FaLock as Lock, FaEye as Eye, FaEyeSlash as EyeSlash, FaShieldAlt as Shield } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -59,6 +59,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; mobile?: string; password?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
 
   // Auto-select language if passed in query params
   useEffect(() => {
@@ -120,7 +121,11 @@ export default function RegisterPage() {
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
+    setShowTerms(true);
+  };
 
+  const handleAgree = async () => {
+    setShowTerms(false);
     setIsSubmitting(true);
 
     let cleanMobile = mobile.replace(/[^0-9]/g, '');
@@ -148,6 +153,52 @@ export default function RegisterPage() {
   return (
     <div className="register-flow-page">
       <div className="rf-bg-pattern" />
+
+      {/* Terms & Conditions Modal */}
+      <AnimatePresence>
+        {showTerms && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 bg-background/80 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-card border shadow-2xl rounded-3xl max-w-lg w-full overflow-hidden"
+            >
+              <div className="p-6 md:p-8 space-y-6">
+                <div className="flex items-center gap-4 text-primary">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                    <Shield className="text-2xl" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold font-heading">{t('auth.termsTitle')}</h3>
+                    <p className="text-sm text-muted-foreground">{t('auth.termsAndPrivacy')}</p>
+                  </div>
+                </div>
+
+                <div className="bg-muted/30 p-5 rounded-2xl border border-dashed text-sm leading-relaxed text-muted-foreground">
+                  <p className="font-medium text-foreground mb-2">Public Display & Privacy</p>
+                  {t('auth.termsWarning')}
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => setShowTerms(false)}
+                    className="flex-1 py-3 px-6 rounded-xl border font-medium hover:bg-muted transition-colors"
+                  >
+                    {t('common.cancel')}
+                  </button>
+                  <button
+                    onClick={handleAgree}
+                    className="flex-[2] py-3 px-6 rounded-xl bg-primary text-primary-foreground font-bold hover:opacity-90 transition-opacity shadow-lg shadow-primary/20"
+                  >
+                    {t('auth.iAgree')}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Top bar */}
       <div className="rf-topbar">
@@ -192,7 +243,7 @@ export default function RegisterPage() {
                 <div className="rf-step-icon">
                   <Globe />
                 </div>
-                <h2 className="rf-step-title">{t.chooseLanguage}</h2>
+                <h2 className="rf-step-title">{t('auth.chooseLanguage')}</h2>
               </div>
 
               <div className="rf-lang-grid">

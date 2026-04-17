@@ -21,7 +21,12 @@ export default function PrivacyPolicy() {
     {
       icon: <Shield className="text-lg" />,
       title: 'User Control',
-      content: 'You can update your profile or delete your account and listings through your settings.'
+      content: 'You can update your profile or delete your account and posts anytime you want through your settings.'
+    },
+    {
+      icon: <Lock className="text-lg" />,
+      title: 'Public Visibility',
+      content: 'Adding your phone number is entirely voluntary. By providing it, you acknowledge that it will be publicly displayed on your animal listings to help potential adopters contact you directly.'
     }
   ];
 
