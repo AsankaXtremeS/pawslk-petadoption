@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import type { Animal } from '@/hooks/useAnimals';
 import { FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaHeart as Heart, FaMapMarkerAlt as MapPin, FaPhoneAlt as PhoneIcon, FaRegComment as Comment } from 'react-icons/fa';
 import { getPrimaryPhotoUrl } from '@/utils/imageCompression';
+import { getThumbnailUrl } from '@/utils/cloudinary';
 import { useTranslation } from 'react-i18next';
 
 function AnimalCard({ animal }: { animal: Animal }) {
   const { t, i18n } = useTranslation();
   const isAdopted = animal.is_adopted;
-  const primaryPhoto = getPrimaryPhotoUrl(animal.photo_url);
+  const rawPrimaryPhoto = getPrimaryPhotoUrl(animal.photo_url);
+  const primaryPhoto = getThumbnailUrl(rawPrimaryPhoto, 600);
 
   // Format contact number for display (e.g., "94760589218" → "+94 760 589 218")
   const formatPhone = (num: string | null) => {

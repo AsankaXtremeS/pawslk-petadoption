@@ -1,7 +1,7 @@
 import imageCompression from 'browser-image-compression';
 
 /**
- * Compress an image file before uploading to Supabase storage.
+ * Compress an image file before uploading to Cloudinary storage.
  * Converts to WebP format, targets ~300KB, and resizes to max 1200px.
  */
 export const compressImage = async (file: File): Promise<File> => {
