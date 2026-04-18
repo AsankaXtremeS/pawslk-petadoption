@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase, createSecureClient } from '@/utils/supabase';
 import { useEffect } from 'react';
+import { uploadToCloudinary } from '@/utils/cloudinary';
 
 export type Animal = {
   id: string;
@@ -219,13 +220,9 @@ export function useUploadPhoto() {
       // Compress to WebP (~300KB, max 1200px)
       const compressed = await compressImage(file);
 
-      const fileName = `${crypto.randomUUID()}.webp`;
-      const { error } = await supabase.storage.from('animal-photos').upload(fileName, compressed, {
-        contentType: 'image/webp',
-      });
-      if (error) throw error;
-      const { data: urlData } = supabase.storage.from('animal-photos').getPublicUrl(fileName);
-      return urlData.publicUrl;
+      // Upload to Cloudinary instead of Supabase
+      const publicUrl = await uploadToCloudinary(compressed);
+      return publicUrl;
     },
   });
 }
