@@ -241,6 +241,32 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </footer>
 
+      {/* Mobile simple footer */}
+      <footer className="md:hidden bg-muted/20 border-t py-8 px-6">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="flex items-center gap-2">
+            <PawPrint className="h-4.5 w-4.5 text-primary" />
+            <span className="font-heading font-bold text-base">PawConnect</span>
+          </div>
+          <p className="text-[11px] text-muted-foreground leading-relaxed max-w-xs">
+            PawConnect (pawconnect.lk) empowers communities across Sri Lanka to rescue, report, and adopt stray animals.
+          </p>
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-[11px] text-muted-foreground font-semibold">
+            <Link to="/about" className="hover:text-primary transition-colors">About Us</Link>
+            <Link to="/contact" className="hover:text-primary transition-colors">Contact Us</Link>
+            <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+          </div>
+          <div className="space-y-1 mt-2">
+            <p className="text-[10px] text-muted-foreground font-medium">
+              © {new Date().getFullYear()} All rights reserved.
+            </p>
+            <p className="text-[9px] text-muted-foreground/60">
+              Developed by <span className="font-bold">Asanka Sampath</span>
+            </p>
+          </div>
+        </div>
+      </footer>
+
       {/* Mobile bottom tab bar */}
       <div className="md:hidden bottom-nav glass-strong border-t">
         <div className="flex items-end h-16 px-1 pb-1">
