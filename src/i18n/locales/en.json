@@ -60,7 +60,8 @@
     "termsTitle": "Terms & Conditions",
     "termsWarning": "Adding your phone number is entirely voluntary. By providing it, you acknowledge that it will be publicly displayed on your animal listings to facilitate contact between rescuers and adopters. You can delete your account and any of your listings at any time from your profile settings.",
     "iAgree": "I Agree & Create Account",
-    "termsAndPrivacy": "Terms and Privacy Policy"
+    "termsAndPrivacy": "Terms and Privacy Policy",
+    "agreeDisclaimer": "By clicking Create Account, you agree to our <0>Terms & Conditions</0> and <1>Privacy Policy</1>."
   },
   "home": {
     "heroBadge": "Rescuing Sri Lanka's Strays",

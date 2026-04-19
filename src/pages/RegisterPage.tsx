@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaGlobeAsia as Globe, FaLock as Lock, FaEye as Eye, FaEyeSlash as EyeSlash, FaShieldAlt as Shield } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 
 type Language = 'en' | 'si' | 'ta';
 
@@ -121,11 +121,15 @@ export default function RegisterPage() {
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
-    setShowTerms(true);
+    performRegistration();
   };
 
   const handleAgree = async () => {
     setShowTerms(false);
+    performRegistration();
+  };
+
+  const performRegistration = async () => {
     setIsSubmitting(true);
 
     let cleanMobile = mobile.replace(/[^0-9]/g, '');
@@ -420,6 +424,27 @@ export default function RegisterPage() {
                     </>
                   )}
                 </motion.button>
+
+                {/* Terms Disclaimer */}
+                <p className="text-[11px] text-center text-muted-foreground mt-4 leading-relaxed">
+                  <Trans 
+                    i18nKey="auth.agreeDisclaimer"
+                    components={[
+                      <button 
+                        key="terms"
+                        type="button"
+                        onClick={() => setShowTerms(true)}
+                        className="text-primary hover:underline font-medium"
+                      />,
+                      <button 
+                        key="privacy"
+                        type="button"
+                        onClick={() => navigate('/privacy')}
+                        className="text-primary hover:underline font-medium"
+                      />
+                    ]}
+                  />
+                </p>
 
 
               </div>
