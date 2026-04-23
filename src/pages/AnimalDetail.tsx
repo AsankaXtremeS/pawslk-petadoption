@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAnimal, useMarkAdopted } from '@/hooks/useAnimals';
 import { useUser } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
-import { FaArrowLeft as ArrowLeft, FaCalendarAlt as Calendar, FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaEdit as Edit, FaHeart as Heart, FaMapMarkerAlt as MapPin, FaMars as Mars, FaPhoneAlt as PhoneIcon, FaSearch as Search, FaRegCheckCircle as CircleCheck, FaUser as User, FaVenus as Venus, FaChevronLeft as ChevronLeft, FaChevronRight as ChevronRight } from 'react-icons/fa';
+import { FaArrowLeft as ArrowLeft, FaCalendarAlt as Calendar, FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaEdit as Edit, FaHeart as Heart, FaMapMarkerAlt as MapPin, FaMars as Mars, FaPhoneAlt as PhoneIcon, FaSearch as Search, FaRegCheckCircle as CircleCheck, FaUser as User, FaVenus as Venus, FaChevronLeft as ChevronLeft, FaChevronRight as ChevronRight, FaChartLine as Chart } from 'react-icons/fa';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 import { useState, useCallback, useEffect } from 'react';
@@ -232,7 +232,7 @@ export default function AnimalDetail() {
                 <motion.img
                   key={currentSlide}
                   src={photoUrls[currentSlide]}
-                  alt={`${animal.type === 'dog' ? t('report.dog') : t('report.cat')} ${t('common.at')} ${animal.location_name} - ${t('detail.photo')} ${currentSlide + 1}`}
+                  alt={`${t('common.animalTitle.' + animal.type, { location: animal.location_name })} - ${t('detail.photo')} ${currentSlide + 1}`}
                   className="absolute inset-0 w-full h-full object-cover"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -360,7 +360,7 @@ export default function AnimalDetail() {
           </div>
           <div>
             <h1 className="font-heading text-2xl font-bold capitalize">
-              {animal.type === 'dog' ? t('report.dog') : t('report.cat')} {t('common.at')} {animal.location_name}
+              {t('common.animalTitle.' + animal.type, { location: animal.location_name })}
             </h1>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground mt-1">
               <span className="inline-flex items-center gap-1">
@@ -456,6 +456,16 @@ export default function AnimalDetail() {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
+          </div>
+        )}
+
+        {/* Stats Notice */}
+        {!isAdopted && (
+          <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 flex items-start gap-3">
+            <Chart className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {t('detail.statsNotice')}
+            </p>
           </div>
         )}
 

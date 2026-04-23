@@ -100,7 +100,7 @@ const ProfileListingCard = memo(function ProfileListingCard({ animal, onDelete, 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 text-sm font-bold truncate">
           <TypeIcon className="w-3.5 h-3.5 text-primary/60 flex-shrink-0" />
-          <span className="capitalize truncate">{animal.type === 'dog' ? t('report.dog') : t('report.cat')} {t('common.at')} {animal.location_name}</span>
+          <span className="capitalize truncate">{t('common.animalTitle.' + animal.type, { location: animal.location_name })}</span>
         </div>
         <div className="flex items-center gap-2 mt-0.5">
           <p className="text-[11px] text-muted-foreground font-medium">
@@ -121,7 +121,7 @@ const ProfileListingCard = memo(function ProfileListingCard({ animal, onDelete, 
                   {t('profile.listings.deleteTitle')}
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                  {t('profile.listings.deleteDesc', { type: animal.type === 'dog' ? t('report.dog') : t('report.cat'), location: animal.location_name })}
+                  {t('profile.listings.deleteDesc', { type: t('common.animalTitle.' + animal.type, { location: animal.location_name }), location: animal.location_name })}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
@@ -333,7 +333,7 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-4 mb-6"
         >
-          <div className="w-[60px] h-[60px] rounded-full bg-gradient-to-br from-primary to-[hsl(173_58%_28%)] flex items-center justify-center flex-shrink-0 shadow-glow">
+          <div className="w-[60px] h-[60px] rounded-full bg-gradient-to-br from-primary to-[hsl(173_60%_30%)] flex items-center justify-center flex-shrink-0 shadow-glow">
             <span className="text-primary-foreground text-2xl font-extrabold leading-none">
               {user.name.charAt(0).toUpperCase()}
             </span>
@@ -420,7 +420,7 @@ export default function Profile() {
                       />
                     </div>
                     <button
-                      className="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-[hsl(173_58%_32%)] text-primary-foreground font-bold text-sm shadow-glow hover:shadow-lg hover:-translate-y-px transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
+                      className="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-[hsl(173_60%_32%)] text-primary-foreground font-bold text-sm shadow-glow hover:shadow-lg hover:-translate-y-px transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
                       onClick={handlePhoneSave}
                       disabled={phoneSaving}
                     >
@@ -556,7 +556,7 @@ export default function Profile() {
                     </div>
                     
                     <button
-                      className="w-full py-3 mt-1 rounded-xl bg-gradient-to-r from-primary to-[hsl(173_58%_32%)] text-primary-foreground font-bold text-sm shadow-glow hover:shadow-lg hover:-translate-y-px transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
+                      className="w-full py-3 mt-1 rounded-xl bg-gradient-to-r from-primary to-[hsl(173_60%_32%)] text-primary-foreground font-bold text-sm shadow-glow hover:shadow-lg hover:-translate-y-px transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
                       onClick={handlePasswordSave}
                       disabled={passwordSaving}
                     >
