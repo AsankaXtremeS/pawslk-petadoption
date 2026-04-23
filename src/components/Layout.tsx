@@ -110,32 +110,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
-            
-            {/* Auth section — mobile */}
-            {isRegistered && user ? (
-              <div className="flex items-center gap-2">
-                <NotificationDropdown />
-                <Link
-                  to="/profile"
-                  className="w-8 h-8 rounded-full bg-primary text-primary-foreground shadow-sm flex items-center justify-center text-xs font-black active:scale-90 transition-transform"
-                >
-                  {user.name.charAt(0).toUpperCase()}
-                </Link>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1 ml-1">
-                <Link to="/login">
-                  <button className="px-3 py-1.5 rounded-full text-xs font-bold text-muted-foreground active:bg-muted/50 transition-all">
-                    {t('common.login')}
-                  </button>
-                </Link>
-                <Link to="/register">
-                  <button className="px-4 py-1.5 rounded-full text-xs font-black bg-primary text-primary-foreground shadow-glow shadow-primary/20 active:scale-95 transition-all">
-                    {t('common.signup')}
-                  </button>
-                </Link>
-              </div>
-            )}
+            <NotificationDropdown />
           </div>
         </div>
       </div>
