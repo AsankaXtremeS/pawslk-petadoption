@@ -23,71 +23,72 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-[100dvh] flex flex-col bg-background">
       {/* Desktop top nav — hidden on mobile */}
       <nav className="hidden md:block sticky top-3 z-50 px-4">
-        <div className="container max-w-6xl flex items-center justify-between h-12 bg-background/80 backdrop-blur-md border rounded-full px-6 shadow-sm">
-          <Link to="/" className="flex items-center gap-2 group" aria-label="Home">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-              <PawPrint className="h-4 w-4 text-primary" />
+        <div className="container max-w-6xl flex items-center justify-between h-14 bg-white/70 backdrop-blur-xl border border-white/40 rounded-full px-6 shadow-[0_8px_32px_-4px_rgba(0,0,0,0.1)] ring-1 ring-black/5">
+          <Link to="/" className="flex items-center gap-2 group transition-transform hover:scale-105 active:scale-95" aria-label="Home">
+            <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center shadow-glow shadow-primary/20 group-hover:rotate-12 transition-all">
+              <PawPrint className="h-4.5 w-4.5 text-primary-foreground" />
             </div>
-            <span className="font-heading text-lg font-bold text-foreground">Paw Connect</span>
+            <span className="font-heading text-xl font-black text-foreground tracking-tight">PawConnect</span>
           </Link>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             {navItems.map(link => {
               const isActive = location.pathname === link.to;
               return (
-                <Link key={link.to} to={link.to}>
+                <Link key={link.to} to={link.to} className="relative">
                   <button
                     className={`
-                      inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200
-                      ${isActive
-                        ? 'bg-primary text-primary-foreground shadow-sm'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted/60'
-                      }
+                      relative z-10 inline-flex items-center gap-2 px-4 py-2 rounded-full text-[13px] font-bold transition-colors duration-300
+                      ${isActive ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}
                     `}
                   >
-                    <link.Icon className="h-3.5 w-3.5" />
+                    <link.Icon className={`h-4 w-4 ${isActive ? 'animate-pulse' : ''}`} />
                     {t(link.labelKey)}
                   </button>
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-primary rounded-full shadow-glow shadow-primary/30"
+                      transition={{ type: "spring", bounce: 0.25, duration: 0.5 }}
+                    />
+                  )}
                 </Link>
               );
             })}
 
-            <div className="mx-2 h-4 w-[1px] bg-border" />
+            <div className="mx-3 h-6 w-[1.5px] bg-border/50" />
             <LanguageSwitcher />
 
             {/* Auth section */}
             {isRegistered && user ? (
-              <div className="flex items-center gap-2 ml-2 pl-2 border-l border-border">
+              <div className="flex items-center gap-3 ml-2 pl-3 border-l border-border/50">
                 <NotificationDropdown />
-                <div className="mx-1 h-4 w-[1px] bg-border/50" />
                 <Link
                   to="/profile"
-                  className="text-xs text-muted-foreground font-medium flex items-center gap-1 hover:text-primary transition-colors relative"
+                  className="group flex items-center gap-2.5 bg-muted/40 hover:bg-muted/80 px-2.5 py-1 rounded-full transition-all border border-transparent hover:border-primary/10"
                 >
-                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold">
+                  <div className="w-7 h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[11px] font-black shadow-sm group-hover:scale-110 transition-transform">
                     {user.name.charAt(0).toUpperCase()}
                   </div>
-                  {user.name.split(' ')[0]}
+                  <span className="text-xs font-bold text-foreground pr-1">{user.name.split(' ')[0]}</span>
                 </Link>
                 <button
                   onClick={clearUser}
-                  className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+                  className="w-8 h-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all active:scale-90"
                   title={t('common.logout')}
                 >
-                  <LogOut className="h-3 w-3" />
+                  <LogOut className="h-3.5 w-3.5" />
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 ml-3 pl-3 border-l border-border">
+              <div className="flex items-center gap-2 ml-3 pl-3 border-l border-border/50">
                 <Link to="/login">
-                  <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-200">
-                    <LogIn className="h-3.5 w-3.5" />
+                  <button className="px-4 py-2 rounded-full text-xs font-bold text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all">
                     {t('common.login')}
                   </button>
                 </Link>
                 <Link to="/register">
-                  <button className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 transition-all duration-200">
-                    <UserPlus className="h-3.5 w-3.5" />
+                  <button className="px-5 py-2 rounded-full text-xs font-black bg-primary text-primary-foreground shadow-glow shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
                     {t('common.signup')}
                   </button>
                 </Link>
@@ -99,37 +100,37 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Mobile top bar */}
       <div className="md:hidden sticky top-3 z-50 px-4">
-        <div className="flex items-center justify-between h-11 bg-background/80 backdrop-blur-md border rounded-full px-4 shadow-sm">
-          <Link to="/" className="flex items-center gap-2 group" aria-label="Home">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center transition-colors group-hover:bg-primary/20">
-              <PawPrint className="h-4.5 w-4.5 text-primary" />
+        <div className="flex items-center justify-between h-12 bg-white border border-border/40 rounded-full px-4 shadow-[0_4px_16px_-2px_rgba(0,0,0,0.08)] ring-1 ring-black/5">
+          <Link to="/" className="flex items-center gap-2 group active:scale-95 transition-transform" aria-label="Home">
+            <div className="w-8.5 h-8.5 rounded-xl bg-primary flex items-center justify-center shadow-glow shadow-primary/20">
+              <PawPrint className="h-4.5 w-4.5 text-primary-foreground" />
             </div>
-            <span className="font-heading text-lg font-bold tracking-tight hidden xs:inline-block">Paw Connect</span>
+            <span className="font-heading text-lg font-black tracking-tight text-foreground hidden xs:inline-block">PawConnect</span>
           </Link>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             <LanguageSwitcher />
             
             {/* Auth section — mobile */}
             {isRegistered && user ? (
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <NotificationDropdown />
                 <Link
                   to="/profile"
-                  className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold"
+                  className="w-8 h-8 rounded-full bg-primary text-primary-foreground shadow-sm flex items-center justify-center text-xs font-black active:scale-90 transition-transform"
                 >
                   {user.name.charAt(0).toUpperCase()}
                 </Link>
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 ml-1">
+              <div className="flex items-center gap-1 ml-1">
                 <Link to="/login">
-                  <button className="px-2.5 py-1.5 rounded-full text-[11px] font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all">
+                  <button className="px-3 py-1.5 rounded-full text-xs font-bold text-muted-foreground active:bg-muted/50 transition-all">
                     {t('common.login')}
                   </button>
                 </Link>
                 <Link to="/register">
-                  <button className="px-3.5 py-1.5 rounded-full text-[11px] font-semibold bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 transition-all">
+                  <button className="px-4 py-1.5 rounded-full text-xs font-black bg-primary text-primary-foreground shadow-glow shadow-primary/20 active:scale-95 transition-all">
                     {t('common.signup')}
                   </button>
                 </Link>
@@ -268,7 +269,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </footer>
 
       {/* Mobile bottom tab bar */}
-      <div className="md:hidden bottom-nav glass-strong border-t">
+      <div className="md:hidden bottom-nav bg-white rounded-t-[32px] shadow-[0_-8px_32px_-6px_rgba(0,0,0,0.12)] border-t border-border/30 safe-bottom">
         <div className="flex items-end h-16 px-1 pb-1">
           {navItems.map(({ to, labelKey, Icon, accent }) => {
             const isActive = location.pathname === to;
@@ -276,14 +277,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             if (accent) {
               return (
                 <div key={to} className="flex-1 flex justify-center">
-                  <Link to={to} className="flex flex-col items-center -mt-6" aria-label={t(labelKey)}>
+                  <Link to={to} className="flex flex-col items-center -mt-8" aria-label={t(labelKey)}>
                     <div className={`
-                      w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-300
-                      ${isActive ? 'bg-primary shadow-glow scale-105' : 'bg-primary/90 hover:bg-primary group-hover:scale-105 shadow-md'}
+                      w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300 transform-gpu
+                      ${isActive ? 'bg-primary shadow-glow scale-110 -translate-y-1' : 'bg-primary shadow-lg hover:scale-105 active:scale-95'}
                     `}>
                       <Icon className="h-6 w-6 text-primary-foreground" />
                     </div>
-                    <span className={`text-[10px] sm:text-[11px] mt-1.5 font-bold tracking-tight text-center w-full px-1 line-clamp-1 ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+                    <span className={`text-[10px] mt-2 font-black tracking-tight text-center w-full px-1 line-clamp-1 ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
                       {t(labelKey)}
                     </span>
                   </Link>
@@ -295,12 +296,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <div key={to} className="flex-1 flex justify-center h-full">
                 <Link to={to} className="flex flex-col items-center justify-center w-full h-full py-1" aria-label={t(labelKey)}>
                   <div className={`
-                    w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200
-                    ${isActive ? 'bg-primary/10' : 'hover:bg-muted/50'}
+                    w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 active:scale-90
+                    ${isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted/50'}
                   `}>
-                    <Icon className={`h-5 w-5 transition-colors ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+                    <Icon className={`h-5 w-5 transition-transform ${isActive ? 'scale-110' : ''}`} />
                   </div>
-                  <span className={`text-[10px] sm:text-[11px] mt-1 font-medium text-center w-full px-1 line-clamp-1 ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+                  <span className={`text-[10px] mt-1 font-bold text-center w-full px-1 line-clamp-1 ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
                     {t(labelKey)}
                   </span>
                 </Link>
@@ -311,11 +312,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex-1 flex justify-center h-full">
             <Link to={isRegistered ? '/profile' : '/register'} className="flex flex-col items-center justify-center w-full h-full py-1">
               <div className={`
-                w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200
+                w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 active:scale-90
                 ${location.pathname === '/profile' ? 'bg-primary/10' : 'hover:bg-muted/50'}
               `}>
                 {isRegistered && user ? (
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all shadow-sm
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black transition-all shadow-sm
                     ${location.pathname === '/profile' ? 'bg-primary text-primary-foreground ring-4 ring-primary/10' : 'bg-muted text-muted-foreground'}
                   `}>
                     {user.name.charAt(0).toUpperCase()}
@@ -324,7 +325,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <UserIcon className={`h-5 w-5 transition-colors ${location.pathname === '/profile' ? 'text-primary' : 'text-muted-foreground'}`} />
                 )}
               </div>
-              <span className={`text-[10px] sm:text-[11px] mt-1 font-medium text-center w-full px-1 line-clamp-1 ${location.pathname === '/profile' ? 'text-primary' : 'text-muted-foreground'}`}>
+              <span className={`text-[10px] mt-1 font-bold text-center w-full px-1 line-clamp-1 ${location.pathname === '/profile' ? 'text-primary' : 'text-muted-foreground'}`}>
                 {isRegistered ? t('common.profile') : t('common.login')}
               </span>
             </Link>

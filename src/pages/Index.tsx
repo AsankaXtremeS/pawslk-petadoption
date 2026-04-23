@@ -14,10 +14,10 @@ export default function Index() {
   const { t } = useTranslation();
   const { data: animals, isLoading } = useWaitingAnimals();
   const { data: stats } = useAnimalStats();
-  const recentAnimals = animals?.slice(0, 6) || [];
+  const recentAnimals = animals?.slice(0, 9) || [];
   const { scrollY } = useScroll();
   const opacity = useTransform(scrollY, [0, 60], [1, 0]);
-  const pointerEvents = useTransform(scrollY, [0, 60], ["auto", "none"] as any);
+  const pointerEvents = useTransform(scrollY, [0, 60], ["auto", "none"] as string[]);
   const y = useTransform(scrollY, [0, 60], [0, 10]);
 
   return (
@@ -25,13 +25,13 @@ export default function Index() {
       {/* Hero */}
       <section className="relative overflow-hidden min-h-[85dvh] md:min-h-[calc(100vh-4rem)] flex flex-col justify-center pb-20 md:pb-0 md:py-16 bg-background">
         {/* Decorative Paws */}
-        <div className="absolute top-20 left-[10%] opacity-5 text-primary rotate-12 -z-0">
+        <div className="absolute top-20 left-[10%] opacity-10 text-primary rotate-12 -z-0">
           <PawPrint size={120} />
         </div>
-        <div className="absolute bottom-20 right-[15%] opacity-5 text-primary -rotate-12 -z-0">
+        <div className="absolute bottom-20 right-[15%] opacity-10 text-primary -rotate-12 -z-0">
           <PawPrint size={160} />
         </div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] text-primary rotate-45 -z-0">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.08] text-primary rotate-45 -z-0">
           <PawPrint size={320} />
         </div>
 
@@ -147,9 +147,11 @@ export default function Index() {
             <p className="text-sm text-muted-foreground mt-1">{t('home.recent.subtitle')}</p>
           </div>
           {recentAnimals.length > 0 && (
-            <Link to="/animals" className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
-              {t('home.recent.viewAll')}
-              <ArrowRight className="h-3.5 w-3.5" />
+            <Link to="/animals" className="hidden sm:inline-flex">
+              <Button variant="outline" size="sm" className="rounded-full px-5 font-bold border-primary/20 text-primary hover:bg-primary hover:text-white transition-all shadow-sm">
+                {t('home.recent.viewAll')}
+                <ArrowRight className="ml-2 h-3.5 w-3.5" />
+              </Button>
             </Link>
           )}
         </div>
@@ -191,110 +193,98 @@ export default function Index() {
         )}
       </section>
 
-      {/* SEO Content Section — About PawConnect */}
-      <section className="px-4 md:px-0 md:container pb-16 pt-8 md:pt-12">
-        <div className="max-w-4xl mx-auto">
-          {/* Section header */}
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4">
-              <Globe className="h-3 w-3" />
-              <span>{t('home.about.badge')}</span>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-heading font-bold mb-3">
-              {t('home.about.title')}
-            </h2>
-            <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              {t('home.about.subtitle')}
-            </p>
-          </div>
-
-          {/* Features grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-            {[
-              {
-                icon: <Search className="h-5 w-5" />,
-                title: t('home.about.features.browse.title'),
-                desc: t('home.about.features.browse.desc'),
-                link: '/animals',
-                color: 'bg-blue-500/10 text-blue-600',
-              },
-              {
-                icon: <Camera className="h-5 w-5" />,
-                title: t('home.about.features.report.title'),
-                desc: t('home.about.features.report.desc'),
-                link: '/report',
-                color: 'bg-rose-500/10 text-rose-500',
-              },
-              {
-                icon: <Chart className="h-5 w-5" />,
-                title: t('home.about.features.impact.title'),
-                desc: t('home.about.features.impact.desc'),
-                link: '/dashboard',
-                color: 'bg-emerald-500/10 text-emerald-600',
-              },
-              {
-                icon: <PawPrint className="h-5 w-5" />,
-                title: t('home.about.features.free.title'),
-                desc: t('home.about.features.free.desc'),
-                link: '/about',
-                color: 'bg-purple-500/10 text-purple-600',
-              },
-            ].map((feature, i) => (
-              <Link
-                key={i}
-                to={feature.link}
-                className="group p-5 rounded-2xl bg-card border shadow-sm hover:shadow-md transition-all duration-300"
-              >
-                <div className={`w-10 h-10 rounded-xl ${feature.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                  {feature.icon}
-                </div>
-                <h3 className="text-sm font-bold font-heading mb-1">{feature.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{feature.desc}</p>
-              </Link>
-            ))}
-          </div>
-
-          {/* FAQ Section */}
-          <div className="bg-muted/30 rounded-[2rem] border p-6 md:p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                <Question className="h-5 w-5" />
+      {/* Optimized About & FAQ Section */}
+      <section className="px-4 md:px-0 md:container pb-20 pt-8 md:pt-12">
+        <div className="max-w-6xl mx-auto lg:grid lg:grid-cols-2 lg:gap-16 items-start">
+          
+          {/* Left Column: About & Features */}
+          <div className="space-y-8 mb-16 lg:mb-0">
+            <div>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4">
+                <Globe className="h-3 w-3" />
+                <span>{t('home.about.badge')}</span>
               </div>
-              <h2 className="text-xl font-heading font-bold">{t('home.faq.title')}</h2>
+              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4 leading-tight">
+                {t('home.about.title')}
+              </h2>
+              <p className="text-base text-muted-foreground leading-relaxed max-w-xl">
+                {t('home.about.subtitle')}
+              </p>
             </div>
 
-            <div className="space-y-4">
+            {/* Features compact grid */}
+            <div className="grid grid-cols-2 gap-4">
               {[
                 {
-                  q: t('home.faq.q1'),
-                  a: t('home.faq.a1'),
+                  icon: <Search className="h-5 w-5" />,
+                  title: t('home.about.features.browse.title'),
+                  desc: t('home.about.features.browse.desc'),
+                  link: '/animals',
+                  color: 'bg-blue-500/10 text-blue-600',
                 },
                 {
-                  q: t('home.faq.q2'),
-                  a: t('home.faq.a2'),
+                  icon: <Camera className="h-5 w-5" />,
+                  title: t('home.about.features.report.title'),
+                  desc: t('home.about.features.report.desc'),
+                  link: '/report',
+                  color: 'bg-rose-500/10 text-rose-500',
                 },
                 {
-                  q: t('home.faq.q3'),
-                  a: t('home.faq.a3'),
+                  icon: <Chart className="h-5 w-5" />,
+                  title: t('home.about.features.impact.title'),
+                  desc: t('home.about.features.impact.desc'),
+                  link: '/dashboard',
+                  color: 'bg-emerald-500/10 text-emerald-600',
                 },
                 {
-                  q: t('home.faq.q4'),
-                  a: t('home.faq.a4'),
+                  icon: <PawPrint className="h-5 w-5" />,
+                  title: t('home.about.features.free.title'),
+                  desc: t('home.about.features.free.desc'),
+                  link: '/about',
+                  color: 'bg-purple-500/10 text-purple-600',
                 },
-                {
-                  q: t('home.faq.q5'),
-                  a: t('home.faq.a5'),
-                },
+              ].map((feature, i) => (
+                <Link
+                  key={i}
+                  to={feature.link}
+                  className="group p-4 rounded-2xl bg-card border shadow-sm hover:shadow-md transition-all duration-300"
+                >
+                  <div className={`w-10 h-10 rounded-xl ${feature.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-sm font-bold font-heading mb-1">{feature.title}</h3>
+                  <p className="text-[11px] text-muted-foreground leading-snug">{feature.desc}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Column: FAQ */}
+          <div className="bg-muted/30 rounded-[2.5rem] border p-6 md:p-10">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-sm">
+                <Question className="h-6 w-6" />
+              </div>
+              <h2 className="text-2xl font-heading font-bold">{t('home.faq.title')}</h2>
+            </div>
+
+            <div className="space-y-3">
+              {[
+                { q: t('home.faq.q1'), a: t('home.faq.a1') },
+                { q: t('home.faq.q2'), a: t('home.faq.a2') },
+                { q: t('home.faq.q3'), a: t('home.faq.a3') },
+                { q: t('home.faq.q4'), a: t('home.faq.a4') },
+                { q: t('home.faq.q5'), a: t('home.faq.a5') },
               ].map((faq, i) => (
                 <div
                   key={i}
-                  className="group bg-card rounded-xl border px-5 py-4 cursor-pointer"
+                  className="group bg-card rounded-2xl border px-6 py-4 cursor-pointer hover:border-primary/30 transition-colors shadow-sm"
                   onClick={() => setOpenFaqIndex(openFaqIndex === i ? null : i)}
                 >
-                  <div className="flex items-center justify-between text-sm font-semibold text-foreground list-none">
+                  <div className="flex items-center justify-between text-sm font-bold text-foreground list-none">
                     <span>{faq.q}</span>
                     <motion.span 
-                      className="ml-4 text-muted-foreground text-lg"
+                      className="ml-4 text-primary text-lg"
                       animate={{ rotate: openFaqIndex === i ? 45 : 0 }}
                       transition={{ duration: 0.2 }}
                     >
@@ -310,7 +300,7 @@ export default function Index() {
                         transition={{ duration: 0.3, ease: "easeInOut" }}
                         className="overflow-hidden"
                       >
-                        <p className="mt-3 text-sm text-muted-foreground leading-relaxed pr-8">
+                        <p className="mt-4 text-sm text-muted-foreground leading-relaxed pr-6 border-t pt-4 border-border/50">
                           {faq.a}
                         </p>
                       </motion.div>

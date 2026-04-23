@@ -333,7 +333,7 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-4 mb-6"
         >
-          <div className="w-[60px] h-[60px] rounded-full bg-gradient-to-br from-primary to-[hsl(173_58%_28%)] flex items-center justify-center flex-shrink-0 shadow-glow">
+          <div className="w-[60px] h-[60px] rounded-full bg-gradient-to-br from-primary to-[hsl(173_60%_30%)] flex items-center justify-center flex-shrink-0 shadow-glow">
             <span className="text-primary-foreground text-2xl font-extrabold leading-none">
               {user.name.charAt(0).toUpperCase()}
             </span>
@@ -420,7 +420,7 @@ export default function Profile() {
                       />
                     </div>
                     <button
-                      className="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-[hsl(173_58%_32%)] text-primary-foreground font-bold text-sm shadow-glow hover:shadow-lg hover:-translate-y-px transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
+                      className="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-[hsl(173_60%_32%)] text-primary-foreground font-bold text-sm shadow-glow hover:shadow-lg hover:-translate-y-px transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
                       onClick={handlePhoneSave}
                       disabled={phoneSaving}
                     >
@@ -556,7 +556,7 @@ export default function Profile() {
                     </div>
                     
                     <button
-                      className="w-full py-3 mt-1 rounded-xl bg-gradient-to-r from-primary to-[hsl(173_58%_32%)] text-primary-foreground font-bold text-sm shadow-glow hover:shadow-lg hover:-translate-y-px transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
+                      className="w-full py-3 mt-1 rounded-xl bg-gradient-to-r from-primary to-[hsl(173_60%_32%)] text-primary-foreground font-bold text-sm shadow-glow hover:shadow-lg hover:-translate-y-px transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
                       onClick={handlePasswordSave}
                       disabled={passwordSaving}
                     >
