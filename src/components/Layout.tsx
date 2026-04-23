@@ -102,8 +102,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="md:hidden sticky top-3 z-50 px-4">
         <div className="flex items-center justify-between h-12 bg-white border border-border/40 rounded-full px-4 shadow-[0_4px_16px_-2px_rgba(0,0,0,0.08)] ring-1 ring-black/5">
           <Link to="/" className="flex items-center gap-2 group active:scale-95 transition-transform" aria-label="Home">
-            <div className="w-8.5 h-8.5 rounded-xl bg-primary flex items-center justify-center shadow-glow shadow-primary/20">
-              <PawPrint className="h-4.5 w-4.5 text-primary-foreground" />
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-glow shadow-primary/20">
+              <PawPrint className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="font-heading text-lg font-black tracking-tight text-foreground hidden xs:inline-block">PawConnect</span>
           </Link>

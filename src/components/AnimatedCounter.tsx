@@ -7,9 +7,10 @@ interface AnimatedCounterProps {
   label: string;
   icon: ReactNode;
   iconColorClass?: string;
+  className?: string;
 }
 
-export default function AnimatedCounter({ end, duration = 2000, label, icon, iconColorClass = "bg-primary/10 text-primary" }: AnimatedCounterProps) {
+export default function AnimatedCounter({ end, duration = 2000, label, icon, iconColorClass = "bg-primary/10 text-primary", className = "" }: AnimatedCounterProps) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });

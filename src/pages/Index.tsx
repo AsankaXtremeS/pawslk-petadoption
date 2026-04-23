@@ -89,14 +89,36 @@ export default function Index() {
               transition={{ duration: 0.6, delay: 0.15 }}
               className="w-full max-w-[400px] sm:max-w-[520px] sm:w-2/3 md:w-auto md:flex-shrink-0 flex justify-center py-4 sm:py-3 md:py-0"
             >
+              <div className="relative">
                 <img 
-                src="/Hero.webp" 
-                alt="Happy stray pet" 
-                width="616"
-                height="560"
-                fetchPriority="high"
-                className="object-contain w-full max-h-[320px] sm:max-h-[420px] md:max-h-[450px] lg:max-h-[520px] animate-float drop-shadow-2xl"
-              />
+                  src="/Hero.webp" 
+                  alt="Happy stray pet" 
+                  width="616"
+                  height="560"
+                  fetchPriority="high"
+                  className="object-contain w-full max-h-[320px] sm:max-h-[420px] md:max-h-[450px] lg:max-h-[520px] animate-float drop-shadow-2xl"
+                />
+                
+                {/* Mobile Floating Stats Card - Centered and Thin */}
+                <div className="md:hidden absolute -bottom-6 left-0 right-0 flex justify-center z-30 px-4 pointer-events-none">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.5 }}
+                    className="pointer-events-auto bg-rose-50/95 backdrop-blur-md border border-rose-100/50 rounded-full px-4 py-1.5 shadow-xl flex items-center gap-3 ring-1 ring-black/5 overflow-hidden"
+                  >
+                    <div className="flex items-center gap-2">
+                      <HeartPulse className="h-4 w-4 text-rose-500" />
+                      <div className="text-lg font-black text-foreground tracking-tighter">
+                        <AnimatedCounter end={stats?.waiting || 0} label="" icon={null} iconColorClass="hidden" className="p-0 w-auto" />
+                      </div>
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest whitespace-nowrap">
+                        {t('home.stats.waitingTitle')}
+                      </span>
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
             </motion.div>
 
             {/* Right side for desktop / Hidden on mobile: Stats */}
@@ -106,7 +128,7 @@ export default function Index() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="hidden md:flex flex-col gap-3 items-end"
             >
-              <div className="bg-white rounded-2xl border shadow-sm w-[210px] z-10">
+              <div className="bg-white/40 backdrop-blur-md border border-rose-400/30 rounded-3xl p-1.5 shadow-glow shadow-primary/5 overflow-hidden w-[210px] z-10">
                 <AnimatedCounter
                   end={stats?.waiting || 0}
                   label={t('home.stats.waitingTitle')}
@@ -117,26 +139,6 @@ export default function Index() {
             </motion.div>
           </div>
         </div>
-
-        {/* Mobile Floating Statistics Bar (Glassmorphism) - Floating above Nav */}
-        <motion.div 
-          style={{ opacity, pointerEvents, y }}
-          className="md:hidden fixed bottom-[95px] left-4 right-4 z-40"
-        >
-          <div 
-            className="flex items-center justify-center py-2.5 px-6 rounded-full bg-white/80 backdrop-blur-xl border border-white/70 shadow-2xl overflow-hidden"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
-                <HeartPulse className="h-5 w-5" />
-              </div>
-              <div className="flex flex-col leading-none">
-                <span className="text-lg font-bold text-foreground">{stats?.waiting || 0}</span>
-                <span className="text-[10px] uppercase tracking-tighter font-bold text-muted-foreground/80">{t('home.stats.waitingTitle')}</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </section>
 
       {/* Recent Animals (Waiting only) */}
