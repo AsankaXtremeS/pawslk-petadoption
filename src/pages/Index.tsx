@@ -108,26 +108,10 @@ export default function Index() {
             >
               <div className="bg-white rounded-2xl border shadow-sm w-[210px] z-10">
                 <AnimatedCounter
-                  end={stats?.adopted || 0}
-                  label={t('home.stats.saved')}
-                  icon={<PawPrint className="h-5 w-5" />}
-                  iconColorClass=" text-emerald-600"
-                />
-              </div>
-              <div className="bg-white rounded-2xl border shadow-sm w-[210px] z-20">
-                <AnimatedCounter
                   end={stats?.waiting || 0}
-                  label={t('home.stats.waiting')}
+                  label={t('home.stats.waitingTitle')}
                   icon={<HeartPulse className="h-5 w-5" />}
                   iconColorClass=" text-rose-400"
-                />
-              </div>
-              <div className="bg-white rounded-2xl border shadow-sm w-[210px] z-30">
-                <AnimatedCounter
-                  end={stats?.total || 0}
-                  label={t('home.stats.rescuers')}
-                  icon={<Users className="h-5 w-5" />}
-                  iconColorClass=" text-blue-600"
                 />
               </div>
             </motion.div>
@@ -140,39 +124,15 @@ export default function Index() {
           className="md:hidden fixed bottom-[95px] left-4 right-4 z-40"
         >
           <div 
-            className="flex items-center justify-around py-2.5 px-4 rounded-full bg-white/80 backdrop-blur-xl border border-white/70 shadow-2xl overflow-hidden"
+            className="flex items-center justify-center py-2.5 px-6 rounded-full bg-white/80 backdrop-blur-xl border border-white/70 shadow-2xl overflow-hidden"
           >
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-600 shrink-0">
-                <PawPrint className="h-4 w-4" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
+                <HeartPulse className="h-5 w-5" />
               </div>
               <div className="flex flex-col leading-none">
-                <span className="text-sm font-bold text-foreground">{stats?.adopted || 0}</span>
-                <span className="text-[8px] uppercase tracking-tighter font-bold text-muted-foreground/80">{t('home.stats.saved').split(' ')[0]}</span>
-              </div>
-            </div>
-            
-            <div className="w-[1px] h-6 bg-black/5" />
-
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 shrink-0">
-                <HeartPulse className="h-4 w-4" />
-              </div>
-              <div className="flex flex-col leading-none">
-                <span className="text-sm font-bold text-foreground">{stats?.waiting || 0}</span>
-                <span className="text-[8px] uppercase tracking-tighter font-bold text-muted-foreground/80">{t('home.stats.waiting').split(' ')[0]}</span>
-              </div>
-            </div>
-
-            <div className="w-[1px] h-6 bg-black/5" />
-
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-600 shrink-0">
-                <Users className="h-4 w-4" />
-              </div>
-              <div className="flex flex-col leading-none">
-                <span className="text-sm font-bold text-foreground">{stats?.total || 0}</span>
-                <span className="text-[8px] uppercase tracking-tighter font-bold text-muted-foreground/80 leading-none">{t('home.stats.rescuers').split(' ')[0]}</span>
+                <span className="text-lg font-bold text-foreground">{stats?.waiting || 0}</span>
+                <span className="text-[10px] uppercase tracking-tighter font-bold text-muted-foreground/80">{t('home.stats.waitingTitle')}</span>
               </div>
             </div>
           </div>

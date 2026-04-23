@@ -19,7 +19,11 @@
     "call": "Call",
     "send": "Send",
     "user": "User",
-    "animal": "Animal"
+    "animal": "Animal",
+    "animalTitle": {
+      "dog": "Dog in {{location}}",
+      "cat": "Cat in {{location}}"
+    }
   },
   "nav": {
     "home": "Home",
@@ -73,6 +77,7 @@
     "stats": {
       "saved": "Saved",
       "waiting": "Waiting",
+      "waitingTitle": "Animals Waiting for Homes",
       "rescuers": "Rescuers"
     },
     "recent": {
@@ -264,6 +269,7 @@
   },
   "detail": {
     "loginRequired": "You must be logged in to do this.",
+    "statsNotice": "Helping us keep accurate stats? If this pet has been adopted, please mark it as adopted.",
     "adoptedSuccess": "This animal has been marked as adopted! Thank you!",
     "genericError": "Something went wrong. Only the post creator can change status.",
     "notFound": "Animal not found",

@@ -100,7 +100,7 @@ const ProfileListingCard = memo(function ProfileListingCard({ animal, onDelete, 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5 text-sm font-bold truncate">
           <TypeIcon className="w-3.5 h-3.5 text-primary/60 flex-shrink-0" />
-          <span className="capitalize truncate">{animal.type === 'dog' ? t('report.dog') : t('report.cat')} {t('common.at')} {animal.location_name}</span>
+          <span className="capitalize truncate">{t('common.animalTitle.' + animal.type, { location: animal.location_name })}</span>
         </div>
         <div className="flex items-center gap-2 mt-0.5">
           <p className="text-[11px] text-muted-foreground font-medium">
@@ -121,7 +121,7 @@ const ProfileListingCard = memo(function ProfileListingCard({ animal, onDelete, 
                   {t('profile.listings.deleteTitle')}
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                  {t('profile.listings.deleteDesc', { type: animal.type === 'dog' ? t('report.dog') : t('report.cat'), location: animal.location_name })}
+                  {t('profile.listings.deleteDesc', { type: t('common.animalTitle.' + animal.type, { location: animal.location_name }), location: animal.location_name })}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
