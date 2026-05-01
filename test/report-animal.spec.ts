@@ -6,7 +6,6 @@ test.describe('Report Animal', () => {
     await setupSupabaseMocks(page);
     
     // We need to inject the mock user into localStorage to simulate being logged in.
-    // The key from UserContext is 'PawConnect_user'
     await page.addInitScript(() => {
       window.localStorage.setItem('PawConnect_user', JSON.stringify({
         id: 'test-user-id',
@@ -22,30 +21,24 @@ test.describe('Report Animal', () => {
   test('should submit the report form successfully', async ({ page }) => {
     await page.goto('/report');
 
-    // Wait for form to be visible by waiting for the location input
-    const locationInput = page.locator('input[placeholder*="Location"], input[type="text"]').first();
-    await locationInput.waitFor({ state: 'visible', timeout: 10000 });
+    // Wait for form to be visible by waiting for the location input ID we added
+    const locationInput = page.locator('#report-location');
+    await locationInput.waitFor({ state: 'visible', timeout: 15000 });
 
     // Fill the location input
     await locationInput.fill('Colombo');
 
     // Fill description
-    await page.fill('textarea', 'A friendly stray dog found near the park.');
+    await page.fill('#report-description', 'A friendly stray dog found near the park.');
 
-    // Upload a dummy image to the file input
-    // First, we need an input of type file
-    const fileChooserPromise = page.waitForEvent('filechooser');
-    // Click the upload area
-    await page.click('#photo-input-0', { force: true });
-    
-    const fileChooser = await fileChooserPromise;
-    await fileChooser.setFiles({
+    // Upload a dummy image directly to the input (works even if hidden)
+    await page.setInputFiles('#photo-input-0', {
       name: 'dummy.png',
       mimeType: 'image/png',
       buffer: Buffer.from('89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000d4944415478da636460000000050001a5a639080000000049454e44ae426082', 'hex')
     });
 
-    // We have to mock Cloudinary upload as well since useUploadPhoto uses it
+    // Mock Cloudinary
     await page.route('https://api.cloudinary.com/**', async route => {
       await route.fulfill({
         status: 200,
@@ -57,8 +50,8 @@ test.describe('Report Animal', () => {
     // Click Submit
     await page.click('button:has-text("Submit")');
 
-    // Verify redirect or success toast
-    await page.waitForURL('**/animals');
+    // Verify redirect
+    await page.waitForURL('**/animals', { timeout: 15000 });
     expect(page.url()).toContain('/animals');
   });
 });

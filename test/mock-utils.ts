@@ -36,8 +36,8 @@ export const mockAnimals = [
 ];
 
 export async function setupSupabaseMocks(page: Page) {
-  // Mock login RPC
-  await page.route('**/rest/v1/rpc/secure_login', async route => {
+  // Mock login/register RPCs
+  await page.route('**/rest/v1/rpc/**', async route => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -45,38 +45,46 @@ export async function setupSupabaseMocks(page: Page) {
     });
   });
 
-  // Mock register RPC
-  await page.route('**/rest/v1/rpc/secure_register', async route => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify([mockUser])
-    });
-  });
-
-  // Mock animals table GET (list)
+  // Mock animals table
   await page.route('**/rest/v1/animals*', async route => {
     const url = route.request().url();
-    if (route.request().method() === 'GET' && !url.includes('id=eq')) {
+    const method = route.request().method();
+    const headers = route.request().headers();
+
+    if (method === 'GET') {
+      // Check if it's a single item request (Supabase client adds this header for .single())
+      const isSingle = headers['accept']?.includes('vnd.pgrst.object+json');
+      
+      if (isSingle || url.includes('id=eq') || url.includes('.id')) {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(mockAnimals[0]) // Return OBJECT, not array
+        });
+      } else {
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(mockAnimals) // Return ARRAY
+        });
+      }
+    } else if (method === 'POST' || method === 'PATCH') {
       await route.fulfill({
         status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(mockAnimals)
-      });
-    } else if (route.request().method() === 'GET' && url.includes('id=eq')) {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify([mockAnimals[0]])
-      });
-    } else if (route.request().method() === 'POST') {
-      await route.fulfill({
-        status: 201,
         contentType: 'application/json',
         body: JSON.stringify([mockAnimals[0]])
       });
     } else {
       await route.continue();
     }
+  });
+
+  // Mock Cloudinary
+  await page.route('https://api.cloudinary.com/**', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ secure_url: 'http://mock-cloudinary-url.com/photo.png' })
+    });
   });
 }
