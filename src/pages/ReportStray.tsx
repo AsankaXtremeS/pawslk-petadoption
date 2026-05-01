@@ -425,18 +425,23 @@ export default function ReportStray() {
             </div>
           </div>
 
-          {/* Location */}
-          <div>
-            <Label className="text-sm font-medium text-foreground">{t('report.location')}</Label>
-            <div className="relative mt-2">
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <div className="space-y-2">
+            <label className="text-sm font-semibold flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-primary" />
+              {t('report.location')}
+            </label>
+            <div className="relative group">
               <input
+                id="report-location"
                 placeholder={t('report.locationPlaceholder')}
                 value={form.location_name}
                 onChange={e => setForm(f => ({ ...f, location_name: e.target.value }))}
-                className="w-full h-12 pl-11 pr-4 rounded-xl border bg-card text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
+                className="w-full pl-11 pr-4 py-3 bg-muted/30 border-2 border-transparent focus:border-primary/30 rounded-2xl outline-none transition-all duration-300 group-hover:bg-muted/50"
                 required
               />
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
+                <MapPin className="w-5 h-5" />
+              </div>
             </div>
             <button
               type="button"
@@ -456,6 +461,7 @@ export default function ReportStray() {
               <span className="text-xs text-muted-foreground">{form.description.length}/300</span>
             </div>
             <textarea
+              id="report-description"
               placeholder={t('report.descriptionPlaceholder')}
               value={form.description}
               onChange={e => setForm(f => ({ ...f, description: e.target.value.slice(0, 300) }))}

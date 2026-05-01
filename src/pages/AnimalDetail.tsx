@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAnimal, useMarkAdopted } from '@/hooks/useAnimals';
+import { useAnimal, useMarkAdopted, useDeleteAnimal } from '@/hooks/useAnimals';
 import { useUser } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
 import { FaArrowLeft as ArrowLeft, FaCalendarAlt as Calendar, FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaEdit as Edit, FaHeart as Heart, FaMapMarkerAlt as MapPin, FaMars as Mars, FaPhoneAlt as PhoneIcon, FaSearch as Search, FaRegCheckCircle as CircleCheck, FaUser as User, FaVenus as Venus, FaChevronLeft as ChevronLeft, FaChevronRight as ChevronRight, FaChartLine as Chart } from 'react-icons/fa';
@@ -31,6 +31,7 @@ export default function AnimalDetail() {
   const { id } = useParams<{ id: string }>();
   const { data: animal, isLoading } = useAnimal(id!);
   const markAdopted = useMarkAdopted();
+  const deleteAnimal = useDeleteAnimal();
   const { user } = useUser();
   const [justAdopted, setJustAdopted] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -171,12 +172,35 @@ export default function AnimalDetail() {
 
   const handleDeleteComment = async (commentId: string) => {
     if (!user) return;
-    try {
-      await deleteComment.mutateAsync({ id: commentId, userToken: user.userToken });
-      toast.success(t('detail.commentDeleted'));
-    } catch (err) {
-      toast.error(friendlyError(err, t('detail.genericError')));
-    }
+    
+    const deletePromise = deleteComment.mutateAsync({ 
+      id: commentId, 
+      userToken: user.userToken 
+    });
+
+    toast.promise(deletePromise, {
+      loading: t('profile.actions.deleting'),
+      success: t('detail.commentDeleted'),
+      error: (err) => friendlyError(err, t('detail.genericError'))
+    });
+  };
+
+  const handleDeletePost = async () => {
+    if (!user || !animal) return;
+    
+    const deletePromise = deleteAnimal.mutateAsync({ 
+      id: animal.id, 
+      userToken: user.userToken 
+    });
+
+    toast.promise(deletePromise, {
+      loading: t('profile.actions.deleting'),
+      success: () => {
+        navigate('/animals', { replace: true });
+        return t('profile.success.listingDeleted');
+      },
+      error: (err) => friendlyError(err, t('detail.genericError'))
+    });
   };
 
   const formatPhone = (num: string | null) => {
@@ -456,6 +480,44 @@ export default function AnimalDetail() {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="lg" className="w-full">
+                  {deleteAnimal.isPending ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                      {t('profile.actions.deleting')}
+                    </>
+                  ) : (
+                    <>
+                      <TrashIcon className="h-4 w-4 mr-2" />
+                      {t('profile.actions.delete')}
+                    </>
+                  )}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="font-heading">
+                    {t('profile.listings.deleteTitle')}
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {t('profile.listings.deleteDesc')}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={handleDeletePost} 
+                    className="rounded-xl bg-destructive hover:bg-destructive/90"
+                  >
+                    <TrashIcon className="h-4 w-4 mr-2" />
+                    {t('profile.actions.delete')}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         )}
 
@@ -515,6 +577,46 @@ export default function AnimalDetail() {
                     <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
                     <AlertDialogAction onClick={() => handleAdopt(false)} disabled={markAdopted.isPending} className="rounded-xl bg-primary hover:bg-primary/90">
                       {markAdopted.isPending ? t('profile.actions.updating') : t('detail.yesUndo')}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+
+            {isOwner && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="sm" className="mt-2 w-full">
+                    {deleteAnimal.isPending ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                        {t('profile.actions.deleting')}
+                      </>
+                    ) : (
+                      <>
+                        <TrashIcon className="h-3.5 w-3.5 mr-2" />
+                        {t('profile.actions.delete')}
+                      </>
+                    )}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="font-heading">
+                      {t('profile.listings.deleteTitle')}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {t('profile.listings.deleteDesc')}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={handleDeletePost} 
+                      className="rounded-xl bg-destructive hover:bg-destructive/90"
+                    >
+                      <TrashIcon className="h-4 w-4 mr-2" />
+                      {t('profile.actions.delete')}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
