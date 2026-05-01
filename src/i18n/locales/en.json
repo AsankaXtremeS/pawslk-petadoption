@@ -241,7 +241,7 @@
       "noListings": "No listings yet",
       "reportLink": "Report a stray",
       "deleteTitle": "Delete Listing",
-      "deleteDesc": "Are you sure you want to permanently delete this {{type}} listing from {{location}}? This action cannot be undone.",
+      "deleteDesc": "Are you sure you want to permanently delete this listing? This action cannot be undone.",
       "edit": "Edit"
     },
     "actions": {
@@ -264,7 +264,8 @@
     },
     "success": {
       "phoneUpdated": "Phone number updated!",
-      "accountDeleted": "Account deleted. We're sorry to see you go."
+      "accountDeleted": "Account deleted. We're sorry to see you go.",
+      "listingDeleted": "Listing deleted successfully."
     }
   },
   "detail": {
