@@ -87,7 +87,7 @@ export default function PrivacyPolicy() {
             </div>
             <div className="text-sm font-bold text-foreground text-center md:text-right">
               <p>Asanka Sampath</p>
-              <p className="text-primary">assankasampath@gmail.com</p>
+              <p className="text-primary">asankasampath200228@gmail.com</p>
               <p className="text-muted-foreground font-normal">Galle, Sri Lanka</p>
             </div>
           </section>

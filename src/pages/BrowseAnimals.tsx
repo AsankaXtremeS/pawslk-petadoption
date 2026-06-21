@@ -284,7 +284,7 @@ export default function BrowseAnimals() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04, ease: "easeOut" }}
-              className="transform-gpu will-change-[transform,opacity]"
+              className="transform-gpu will-change-[transform,opacity] h-full"
             >
               <AnimalCard animal={animal} />
             </motion.div>

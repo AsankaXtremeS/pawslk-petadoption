@@ -173,7 +173,7 @@ export default function Index() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05, ease: "easeOut" }}
-                  className="transform-gpu will-change-[transform,opacity]"
+                  className="transform-gpu will-change-[transform,opacity] h-full"
                 >
                   <AnimalCard animal={animal} />
                 </motion.div>

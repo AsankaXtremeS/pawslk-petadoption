@@ -192,7 +192,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <div className="w-7 h-7 rounded-lg bg-primary/5 flex items-center justify-center text-primary shrink-0">
                     <Email className="h-3.5 w-3.5" />
                   </div>
-                  <span className="break-all">assankasampath@gmail.com</span>
+                  <span className="break-all">asankasampath200228@gmail.com</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="w-7 h-7 rounded-lg bg-primary/5 flex items-center justify-center text-primary shrink-0">
