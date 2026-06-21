@@ -20,14 +20,14 @@ function AnimalCard({ animal }: { animal: Animal }) {
   };
 
   return (
-    <Link to={`/animals/${animal.id}`} className="block group">
+    <Link to={`/animals/${animal.id}`} className="block group h-full">
       <div className={`
         rounded-2xl overflow-hidden bg-card border transition-[transform,box-shadow] duration-300
-        hover:shadow-soft hover:-translate-y-1 transform-gpu
+        hover:shadow-soft hover:-translate-y-1 transform-gpu h-full flex flex-col
         ${isAdopted ? 'border-success/20' : 'border-border'}
       `}>
         {/* Image */}
-        <div className="relative aspect-[4/3] bg-muted overflow-hidden">
+        <div className="relative aspect-square sm:aspect-[4/3] bg-muted overflow-hidden shrink-0">
           {primaryPhoto ? (
             <img
               src={primaryPhoto}
@@ -40,71 +40,66 @@ function AnimalCard({ animal }: { animal: Animal }) {
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-lavender to-peach">
               {animal.type === 'dog'
-                ? <Dog className="h-12 w-12 text-primary/40" />
-                : <Cat className="h-12 w-12 text-primary/40" />
+                ? <Dog className="h-10 w-10 sm:h-12 sm:w-12 text-primary/40" />
+                : <Cat className="h-10 w-10 sm:h-12 sm:w-12 text-primary/40" />
               }
             </div>
           )}
 
-          {/* Status pill */}
-          <div className="absolute top-3 right-3">
+          {/* Smooth gradient transition & subtle blur at the bottom of image */}
+          <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-card to-transparent pointer-events-none backdrop-blur-[0.5px]" />
+
+          {/* Status pill - micro-sized */}
+          <div className="absolute top-2 right-2 z-10">
             {isAdopted ? (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-success text-success-foreground shadow-sm">
-                <CheckCircle2 className="h-3 w-3" />
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-success text-success-foreground shadow-sm">
+                <CheckCircle2 className="h-2 w-2 sm:h-2.5 sm:w-2.5" />
                 {t('browse.adopted')}
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white md:bg-white/90 text-orange-600 shadow-sm md:backdrop-blur-sm">
-                <Heart className="h-3 w-3" />
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-white/95 text-orange-600 shadow-sm backdrop-blur-sm border border-orange-100/50">
+                <Heart className="h-2 w-2 sm:h-2.5 sm:w-2.5 text-orange-500 fill-orange-500" />
                 {t('browse.waiting')}
               </span>
             )}
           </div>
-
-          {/* Type icon */}
-          <div className="absolute bottom-3 left-3">
-            <div className="w-8 h-8 rounded-full bg-white md:bg-white/80 md:backdrop-blur-sm flex items-center justify-center shadow-sm">
-              {animal.type === 'dog'
-                ? <Dog className="h-4 w-4 text-primary" />
-                : <Cat className="h-4 w-4 text-primary" />
-              }
-            </div>
-          </div>
         </div>
 
         {/* Info */}
-        <div className="p-4 space-y-1.5">
-          <div className="flex items-center gap-1.5 text-sm text-foreground font-bold truncate">
-            <MapPin className="w-3.5 h-3.5 text-primary/60 shrink-0" />
-            <span className="truncate">{animal.location_name}</span>
+        <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between space-y-2">
+          <div className="space-y-1">
+            <div className="flex items-center gap-1 text-xs sm:text-sm text-foreground font-bold truncate">
+              <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-primary/60 shrink-0" />
+              <span className="truncate">{animal.location_name}</span>
+            </div>
+
+            {animal.description && (
+              <p className="text-[11px] sm:text-xs text-muted-foreground line-clamp-2 leading-relaxed break-words">
+                {animal.description}
+              </p>
+            )}
+
+            {/* Contact number */}
+            {animal.contact_number && !isAdopted && (
+              <div className="flex items-center gap-1.5 text-[11px] sm:text-xs text-primary font-semibold pt-0.5">
+                <PhoneIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                <span className="truncate">{formatPhone(animal.contact_number)}</span>
+              </div>
+            )}
           </div>
 
-          {animal.description && (
-            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed break-words">
-              {animal.description}
-            </p>
-          )}
-
-          {/* Contact number */}
-          {animal.contact_number && !isAdopted && (
-            <div className="flex items-center gap-1.5 text-xs text-primary font-semibold">
-              <PhoneIcon className="w-3 h-3" />
-              <span>{formatPhone(animal.contact_number)}</span>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between pt-1 border-t border-border/50">
-            <div className="flex items-center gap-3">
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
-                <Heart className={`w-2.5 h-2.5 ${animal.reaction_count > 0 ? 'text-rose-500 fill-rose-500' : ''}`} />
-                {animal.reaction_count}
+          <div className="flex items-center justify-between pt-2 border-t border-border/50 text-[10px] sm:text-[11px]">
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <span className="inline-flex items-center gap-0.5 font-medium text-muted-foreground">
+                <Heart className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${animal.reaction_count > 0 ? 'text-rose-500 fill-rose-500' : ''}`} />
+                <span>{animal.reaction_count}</span>
               </span>
-              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
-                <Comment className="w-2.5 h-2.5" />
-                {animal.comment_count}
+              <span className="inline-flex items-center gap-0.5 font-medium text-muted-foreground">
+                <Comment className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                <span>{animal.comment_count}</span>
               </span>
             </div>
-            <span className="text-[11px] text-muted-foreground">
+            <span className="text-muted-foreground shrink-0">
               {new Date(animal.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric' })}
             </span>
           </div>

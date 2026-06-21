@@ -240,10 +240,17 @@ export default function AnimalDetail() {
   const TypeIcon = animal.type === 'dog' ? Dog : Cat;
 
   return (
-    <div className="pb-6">
+    <div className="pb-16 relative overflow-x-hidden pt-5 md:pt-2">
+      {/* Blurred background image banner for modern visual depth */}
+      {photoUrls.length > 0 && (
+        <div className="absolute top-0 inset-x-0 h-[350px] md:h-[480px] overflow-hidden opacity-[0.06] dark:opacity-[0.12] pointer-events-none blur-3xl scale-110">
+          <img src={photoUrls[0]} className="w-full h-full object-cover" alt="" />
+        </div>
+      )}
+
       {/* Photo carousel section */}
-      <div className="relative">
-        <div className={`relative aspect-[4/3] md:aspect-video bg-muted overflow-hidden md:max-w-2xl md:mx-auto md:mt-6 md:rounded-2xl ${isAdopted ? 'md:ring-4 md:ring-success/20' : ''}`}>
+      <div className="relative max-w-2xl mx-auto px-4 md:px-0 mt-2 md:mt-4 z-10">
+        <div className={`relative aspect-square xs:aspect-[4/3] md:aspect-video bg-muted overflow-hidden rounded-3xl shadow-lg border border-black/5 dark:border-white/5 ${isAdopted ? 'ring-4 ring-success/20' : ''}`}>
           {photoUrls.length > 0 ? (
             <div
               className="relative w-full h-full"
@@ -305,7 +312,7 @@ export default function AnimalDetail() {
 
               {/* Photo counter */}
               {hasMultiplePhotos && (
-                <div className="absolute top-4 left-14 md:left-4 z-10">
+                <div className="absolute top-4 left-14 z-10">
                   <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-black/40 text-white backdrop-blur-sm">
                     {t('detail.photoCounter', { current: currentSlide + 1, total: photoUrls.length })}
                   </span>
@@ -321,48 +328,43 @@ export default function AnimalDetail() {
           {/* Back button */}
           <button
             onClick={() => navigate(-1)}
-            className="absolute top-4 left-4 w-10 h-10 rounded-full bg-black/30 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/50 transition-colors z-20"
+            className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/45 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition-colors z-20 shadow-md"
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
 
-          {/* Status badge */}
-          <div className="absolute top-4 right-4 z-20">
-            {isAdopted ? (
-              <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold bg-success text-success-foreground shadow-md">
-                <CheckCircle2 className="h-4 w-4" />
+          {/* Status badge - Only show if adopted, waiting badge removed */}
+          {isAdopted && (
+            <div className="absolute top-3 right-3 z-20">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-success text-success-foreground shadow-md">
+                <CheckCircle2 className="h-3.5 w-3.5" />
                 {t('browse.adopted')}
               </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-semibold bg-white/90 text-orange-600 shadow-md backdrop-blur-sm">
-                <HeartSolid className="h-4 w-4" />
-                {t('browse.waiting')}
-              </span>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Reaction button - mobile floating or fixed */}
-          <div className="absolute bottom-4 left-4 z-20">
+          <div className="absolute bottom-3 left-3 z-20">
             <motion.button
               whileTap={{ scale: 0.8 }}
               onClick={handleToggleReaction}
               className={`
-                flex items-center gap-2 px-5 h-11 rounded-full border-2 font-bold transition-all active:scale-95
+                flex items-center gap-1.5 px-4 h-9 rounded-full border border-white/20 font-bold transition-all active:scale-95 text-xs shadow-sm
                 ${hasReacted 
-                  ? 'bg-rose-50 text-rose-500 border-rose-200' 
-                  : 'bg-white/20 text-white border-white/30 backdrop-blur-md'
+                  ? 'bg-rose-500 text-white border-transparent shadow-rose-500/10' 
+                  : 'bg-black/40 text-white backdrop-blur-md hover:bg-black/50'
                 }
               `}
             >
-              {hasReacted ? <HeartSolid className="h-4 w-4" /> : <HeartOutline className="h-4 w-4" />}
-              {animal.reaction_count || 0}
+              {hasReacted ? <HeartSolid className="h-3.5 w-3.5 fill-white text-white" /> : <HeartOutline className="h-3.5 w-3.5" />}
+              <span>{animal.reaction_count || 0}</span>
             </motion.button>
           </div>
 
           {/* Owner badge */}
           {isOwner && (
-            <div className="absolute bottom-3 right-4 z-20">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary text-primary-foreground shadow-md">
+            <div className="absolute bottom-3 right-3 z-20">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-xs font-semibold bg-primary text-primary-foreground shadow-md">
                 {t('detail.yourPost')}
               </span>
             </div>
@@ -370,68 +372,77 @@ export default function AnimalDetail() {
         </div>
       </div>
 
-      {/* Info section */}
+      {/* Info section - styled as glassmorphic details panels */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
-        className="px-5 md:px-0 md:max-w-2xl md:mx-auto mt-5 space-y-5"
+        className="px-4 md:px-0 md:max-w-2xl md:mx-auto mt-5 space-y-5 relative z-10"
       >
-        {/* Title row */}
-        <div className="flex items-start gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-            <TypeIcon className="h-6 w-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="font-heading text-2xl font-bold capitalize">
-              {t('common.animalTitle.' + animal.type, { location: animal.location_name })}
-            </h1>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground mt-1">
-              <span className="inline-flex items-center gap-1">
-                {animal.gender === 'male' ? <Mars className="w-3.5 h-3.5" /> : <Venus className="w-3.5 h-3.5" />}
-                <span className="capitalize">{animal.gender === 'male' ? t('report.male') : t('report.female')}</span>
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5" />
-                {getLocalDate(animal.created_at)}
-              </span>
+        {/* Main Details Panel */}
+        <div className="p-5 md:p-6 rounded-3xl bg-white/60 dark:bg-card/60 backdrop-blur-md border border-white/20 dark:border-border/10 shadow-soft space-y-5">
+          {/* Title row */}
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 shadow-sm border border-primary/5">
+              <TypeIcon className="h-6 w-6 text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h1 className="font-heading text-xl md:text-2xl font-black capitalize text-foreground tracking-tight leading-tight">
+                {t('common.animalTitle.' + animal.type, { location: animal.location_name })}
+              </h1>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-1.5 font-semibold">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-muted/50 dark:bg-muted/30">
+                  {animal.gender === 'male' ? <Mars className="w-3 h-3 text-blue-500" /> : <Venus className="w-3 h-3 text-pink-500" />}
+                  <span className="capitalize">{animal.gender === 'male' ? t('report.male') : t('report.female')}</span>
+                </span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-muted/50 dark:bg-muted/30">
+                  <Calendar className="w-3 h-3 text-primary/70" />
+                  <span>{getLocalDate(animal.created_at)}</span>
+                </span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Description */}
-        {animal.description && (
-          <p className="text-foreground/80 leading-relaxed break-words whitespace-pre-wrap">{animal.description}</p>
-        )}
-
-        {/* Details grid */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="flex items-center gap-2.5 p-3 rounded-xl bg-muted/50">
-            <MapPin className="w-4 h-4 text-primary/60 shrink-0" />
-            <span className="text-sm truncate">{animal.location_name}</span>
-          </div>
-          {animal.reporter_name && (
-            <div className="flex items-center gap-2.5 p-3 rounded-xl bg-muted/50">
-              <User className="w-4 h-4 text-primary/60 shrink-0" />
-              <span className="text-sm truncate">{t('common.by')} {animal.reporter_name.split(' ')[0]}</span>
+          {/* Description */}
+          {animal.description && (
+            <div className="pt-3 border-t border-border/40">
+              <p className="text-foreground/80 leading-relaxed break-words whitespace-pre-wrap text-sm md:text-base">
+                {animal.description}
+              </p>
             </div>
           )}
+
+          {/* Details grid */}
+          <div className="grid grid-cols-2 gap-3 pt-1">
+            <div className="flex items-center gap-2 p-3 rounded-2xl bg-muted/30 dark:bg-muted/10 border border-border/5">
+              <MapPin className="w-3.5 h-3.5 text-primary/60 shrink-0" />
+              <span className="text-xs md:text-sm font-bold text-foreground/90 truncate">{animal.location_name}</span>
+            </div>
+            {animal.reporter_name && (
+              <div className="flex items-center gap-2 p-3 rounded-2xl bg-muted/30 dark:bg-muted/10 border border-border/5">
+                <User className="w-3.5 h-3.5 text-primary/60 shrink-0" />
+                <span className="text-xs md:text-sm font-bold text-foreground/90 truncate">
+                  {t('common.by')} {animal.reporter_name.split(' ')[0]}
+                </span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Contact number — shown for non-adopted animals to non-owners */}
         {animal.contact_number && !isAdopted && (
-          <div className="flex items-center gap-3 p-4 rounded-xl bg-primary/5 border border-primary/10">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+          <div className="flex items-center gap-3 p-4 rounded-3xl bg-primary/5 dark:bg-primary/10 border border-primary/10 shadow-sm">
+            <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
               <PhoneIcon className="w-4 h-4 text-primary" />
             </div>
-            <div className="flex-1">
-              <p className="text-xs text-muted-foreground font-medium">{t('detail.contactToAdopt')}</p>
-              <p className="text-sm font-bold text-foreground">{formatPhone(animal.contact_number)}</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] md:text-xs text-muted-foreground font-bold uppercase tracking-wider">{t('detail.contactToAdopt')}</p>
+              <p className="text-sm font-black text-foreground truncate">{formatPhone(animal.contact_number)}</p>
             </div>
             <Button
               size="sm"
               variant="default"
-              className="rounded-xl h-9 px-4 font-bold shadow-sm"
+              className="rounded-2xl h-10 px-4 font-black shadow-sm shrink-0"
               asChild
             >
               <a href={`tel:${animal.contact_number}`}>
@@ -444,11 +455,11 @@ export default function AnimalDetail() {
 
         {/* Owner actions: Edit + Mark Adopted */}
         {isOwner && !isAdopted && (
-          <div className="space-y-3">
+          <div className="p-4 rounded-3xl bg-white/60 dark:bg-card/60 backdrop-blur-md border border-white/20 dark:border-border/10 shadow-soft space-y-3">
             <Button
               variant="outline"
               size="lg"
-              className="w-full"
+              className="w-full rounded-2xl font-bold h-11"
               onClick={() => navigate(`/report?edit=${animal.id}`)}
             >
               <Edit className="h-4 w-4 mr-2" />
@@ -457,24 +468,24 @@ export default function AnimalDetail() {
 
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="success" size="lg" className="w-full text-base">
+                <Button variant="success" size="lg" className="w-full text-base rounded-2xl font-bold h-11">
                   <CheckCircle2 className="h-5 w-5 mr-2" />
                   {t('detail.markAsAdopted')}
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
+              <AlertDialogContent className="rounded-3xl w-[calc(100%-2rem)]">
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="font-heading inline-flex items-center gap-2">
+                  <AlertDialogTitle className="font-heading inline-flex items-center gap-2 text-foreground font-bold">
                     <CircleCheck className="h-5 w-5 text-success" />
                     {t('detail.confirmAdoption')}
                   </AlertDialogTitle>
-                  <AlertDialogDescription>
+                  <AlertDialogDescription className="text-muted-foreground">
                     {t('detail.confirmDesc')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => handleAdopt(true)} disabled={markAdopted.isPending} className="rounded-xl bg-success hover:bg-success/90">
+                <AlertDialogFooter className="gap-2 sm:gap-0">
+                  <AlertDialogCancel className="rounded-2xl">{t('profile.actions.cancel')}</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => handleAdopt(true)} disabled={markAdopted.isPending} className="rounded-2xl bg-success hover:bg-success/90">
                     {markAdopted.isPending ? t('profile.actions.updating') : t('detail.yesMark')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -483,7 +494,7 @@ export default function AnimalDetail() {
 
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive" size="lg" className="w-full">
+                <Button variant="destructive" size="lg" className="w-full rounded-2xl font-bold h-11">
                   {deleteAnimal.isPending ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
@@ -497,20 +508,20 @@ export default function AnimalDetail() {
                   )}
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
+              <AlertDialogContent className="rounded-3xl w-[calc(100%-2rem)]">
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="font-heading">
+                  <AlertDialogTitle className="font-heading text-foreground font-bold">
                     {t('profile.listings.deleteTitle')}
                   </AlertDialogTitle>
-                  <AlertDialogDescription>
+                  <AlertDialogDescription className="text-muted-foreground">
                     {t('profile.listings.deleteDesc')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
+                <AlertDialogFooter className="gap-2 sm:gap-0">
+                  <AlertDialogCancel className="rounded-2xl">{t('profile.actions.cancel')}</AlertDialogCancel>
                   <AlertDialogAction 
                     onClick={handleDeletePost} 
-                    className="rounded-xl bg-destructive hover:bg-destructive/90"
+                    className="rounded-2xl bg-destructive hover:bg-destructive/90"
                   >
                     <TrashIcon className="h-4 w-4 mr-2" />
                     {t('profile.actions.delete')}
@@ -523,9 +534,9 @@ export default function AnimalDetail() {
 
         {/* Stats Notice */}
         {!isAdopted && (
-          <div className="bg-primary/5 border border-primary/10 rounded-2xl p-4 flex items-start gap-3">
+          <div className="bg-primary/5 dark:bg-primary/10 border border-primary/10 rounded-3xl p-4 flex items-start gap-3">
             <Chart className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-            <p className="text-xs text-muted-foreground leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed font-medium">
               {t('detail.statsNotice')}
             </p>
           </div>
@@ -533,8 +544,8 @@ export default function AnimalDetail() {
 
         {/* Non-owner sees a message for waiting animals */}
         {!isOwner && !isAdopted && animal.contact_number && (
-          <div className="bg-muted/50 rounded-2xl p-4 text-center">
-            <p className="text-sm text-muted-foreground">
+          <div className="bg-muted/30 dark:bg-muted/10 rounded-3xl p-4 text-center border border-border/5">
+            <p className="text-xs md:text-sm text-muted-foreground font-semibold">
               {t('detail.interested')}
             </p>
           </div>
@@ -545,14 +556,14 @@ export default function AnimalDetail() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-success/10 border border-success/20 rounded-2xl p-5 text-center"
+            className="bg-success/10 border border-success/20 rounded-3xl p-5 text-center"
           >
-            <p className="text-lg font-heading font-semibold text-success inline-flex items-center justify-center gap-2">
+            <p className="text-lg font-heading font-black text-success inline-flex items-center justify-center gap-2">
               <CircleCheck className="h-5 w-5" />
               {t('detail.animalAdopted')}
             </p>
             {animal.adopted_at && (
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-sm text-muted-foreground mt-1.5 font-medium">
                 {t('detail.adoptedOn', { date: getLocalDate(animal.adopted_at) })}
               </p>
             )}
@@ -560,22 +571,22 @@ export default function AnimalDetail() {
             {isOwner && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="mt-4 border-success/30 hover:bg-success/5 text-success">
+                  <Button variant="outline" size="sm" className="mt-4 border-success/30 hover:bg-success/5 text-success rounded-2xl font-bold">
                     {t('detail.undoAdoption')}
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
+                <AlertDialogContent className="rounded-3xl w-[calc(100%-2rem)]">
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="font-heading">
+                    <AlertDialogTitle className="font-heading text-foreground font-bold">
                       {t('detail.confirmUndoTitle')}
                     </AlertDialogTitle>
-                    <AlertDialogDescription>
+                    <AlertDialogDescription className="text-muted-foreground">
                       {t('detail.confirmUndoDesc')}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => handleAdopt(false)} disabled={markAdopted.isPending} className="rounded-xl bg-primary hover:bg-primary/90">
+                  <AlertDialogFooter className="gap-2 sm:gap-0">
+                    <AlertDialogCancel className="rounded-2xl">{t('profile.actions.cancel')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => handleAdopt(false)} disabled={markAdopted.isPending} className="rounded-2xl bg-primary hover:bg-primary/90">
                       {markAdopted.isPending ? t('profile.actions.updating') : t('detail.yesUndo')}
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -586,7 +597,7 @@ export default function AnimalDetail() {
             {isOwner && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" size="sm" className="mt-2 w-full">
+                  <Button variant="destructive" size="sm" className="mt-2 w-full rounded-2xl font-bold">
                     {deleteAnimal.isPending ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
@@ -600,20 +611,20 @@ export default function AnimalDetail() {
                     )}
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
+                <AlertDialogContent className="rounded-3xl w-[calc(100%-2rem)]">
                   <AlertDialogHeader>
-                    <AlertDialogTitle className="font-heading">
+                    <AlertDialogTitle className="font-heading text-foreground font-bold">
                       {t('profile.listings.deleteTitle')}
                     </AlertDialogTitle>
-                    <AlertDialogDescription>
+                    <AlertDialogDescription className="text-muted-foreground">
                       {t('profile.listings.deleteDesc')}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
+                  <AlertDialogFooter className="gap-2 sm:gap-0">
+                    <AlertDialogCancel className="rounded-2xl">{t('profile.actions.cancel')}</AlertDialogCancel>
                     <AlertDialogAction 
                       onClick={handleDeletePost} 
-                      className="rounded-xl bg-destructive hover:bg-destructive/90"
+                      className="rounded-2xl bg-destructive hover:bg-destructive/90"
                     >
                       <TrashIcon className="h-4 w-4 mr-2" />
                       {t('profile.actions.delete')}
@@ -625,20 +636,20 @@ export default function AnimalDetail() {
           </motion.div>
         )}
 
-        {/* Comments Section */}
-        <div className="pt-8 pb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-heading text-xl font-bold inline-flex items-center gap-2">
-              <CommentIcon className="text-primary" />
+        {/* Comments Section - styled as a modern glassmorphic sheet */}
+        <div className="p-5 md:p-6 rounded-3xl bg-white/60 dark:bg-card/60 backdrop-blur-md border border-white/20 dark:border-border/10 shadow-soft space-y-6">
+          <div className="flex items-center justify-between pb-3 border-b border-border/40">
+            <h3 className="font-heading text-lg font-black inline-flex items-center gap-2 text-foreground">
+              <CommentIcon className="text-primary h-5 w-5" />
               {t('detail.comments')}
-              <span className="text-sm font-normal text-muted-foreground ml-1">
+              <span className="text-sm font-bold text-muted-foreground ml-1">
                 ({animal.comment_count || 0})
               </span>
             </h3>
           </div>
 
           {/* Comment List */}
-          <div className="space-y-4 mb-8">
+          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1 hide-scrollbar">
             {comments && comments.length > 0 ? (
               comments.map((comment) => (
                 <motion.div
@@ -647,49 +658,49 @@ export default function AnimalDetail() {
                   key={comment.id}
                   className="flex gap-3 group"
                 >
-                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-[10px] font-bold shrink-0">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-black shrink-0 border border-primary/5 shadow-sm">
                     {comment.user?.name.charAt(0).toUpperCase() || '?'}
                   </div>
-                  <div className="flex-1 bg-muted/40 rounded-2xl p-3 relative">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold text-foreground">
+                  <div className="flex-1 bg-muted/30 dark:bg-muted/10 rounded-2xl p-3 relative border border-border/5">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs font-black text-foreground">
                         {comment.user?.name || t('common.user')}
                       </span>
-                      <div className="flex flex-col items-end gap-1">
-                        <span className="text-[10px] text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[9px] text-muted-foreground font-semibold">
                           {new Date(comment.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric' })}
                         </span>
                         {user && comment.user_id === user.id && (
                           <button
                             onClick={() => handleDeleteComment(comment.id)}
-                            className="text-muted-foreground hover:text-destructive transition-colors"
+                            className="text-muted-foreground hover:text-destructive transition-colors p-0.5 rounded hover:bg-destructive/10"
                             title={t('common.delete')}
                           >
-                            <TrashIcon className="w-3 h-3" />
+                            <TrashIcon className="w-2.5 h-2.5" />
                           </button>
                         )}
                       </div>
                     </div>
-                    <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
+                    <p className="text-xs md:text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
                       {comment.content}
                     </p>
                   </div>
                 </motion.div>
               ))
             ) : (
-              <div className="text-center py-8 bg-muted/20 rounded-2xl border border-dashed">
-                <p className="text-sm text-muted-foreground">{t('detail.noComments')}</p>
+              <div className="text-center py-8 bg-muted/20 dark:bg-muted/5 rounded-2xl border border-dashed border-border/30">
+                <p className="text-xs md:text-sm text-muted-foreground font-medium">{t('detail.noComments')}</p>
               </div>
             )}
           </div>
 
           {/* Add Comment Form */}
-          <form onSubmit={handleAddComment} className="relative">
+          <form onSubmit={handleAddComment} className="relative mt-4 pt-4 border-t border-border/40">
             <textarea
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder={t('detail.addCommentPlaceholder')}
-              className="w-full min-h-[100px] bg-muted/30 border rounded-2xl p-4 text-sm resize-none focus:ring-2 focus:ring-primary/20 transition-all outline-none pb-12"
+              className="w-full min-h-[90px] bg-muted/20 dark:bg-muted/5 border border-border/30 dark:border-border/10 rounded-2xl p-4 text-xs md:text-sm resize-none focus:ring-2 focus:ring-primary/20 transition-all outline-none pb-12 text-foreground"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -702,10 +713,10 @@ export default function AnimalDetail() {
                 type="submit"
                 size="sm"
                 disabled={!commentText.trim() || isSubmittingComment}
-                className="rounded-xl px-4 py-2 h-9 font-bold"
+                className="rounded-xl px-4 py-2 h-8 font-black text-xs shadow-sm"
               >
                 {isSubmittingComment ? (
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
                     <SendIcon className="w-3 h-3 mr-2" />
@@ -716,10 +727,10 @@ export default function AnimalDetail() {
             </div>
             {!user && (
               <div 
-                className="absolute inset-0 bg-background/40 backdrop-blur-[1px] flex items-center justify-center rounded-2xl cursor-pointer group"
+                className="absolute inset-0 bg-background/50 dark:bg-black/50 backdrop-blur-[1px] flex items-center justify-center rounded-2xl cursor-pointer group"
                 onClick={() => navigate(`/login?redirect=${encodeURIComponent(window.location.pathname)}&message=detail.loginRequired`)}
               >
-                <div className="bg-background border shadow-md px-4 py-2 rounded-full text-xs font-bold text-primary group-hover:scale-105 transition-transform">
+                <div className="bg-background border shadow-md px-4 py-2 rounded-full text-xs font-black text-primary group-hover:scale-105 transition-transform">
                   {t('detail.loginToComment')}
                 </div>
               </div>

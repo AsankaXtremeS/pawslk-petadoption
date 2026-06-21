@@ -14,8 +14,8 @@ export default function ContactUs() {
     {
       icon: <Envelope className="text-xl" />,
       label: 'Email Address',
-      value: 'assankasampath@gmail.com',
-      href: 'mailto:assankasampath@gmail.com',
+      value: 'asankasampath200228@gmail.com',
+      href: 'mailto:asankasampath200228@gmail.com',
       color: 'bg-blue-500/10 text-blue-500',
     },
     {
@@ -46,7 +46,7 @@ export default function ContactUs() {
                 "name": "PawConnect",
                 "alternateName": ["Paw Connect", "PawConnect LK", "pawconnect.lk"],
                 "url": "https://pawconnect.lk",
-                "email": "assankasampath@gmail.com",
+                "email": "asankasampath200228@gmail.com",
                 "telephone": "+94760589218",
                 "address": {
                   "@type": "PostalAddress",
@@ -58,7 +58,7 @@ export default function ContactUs() {
                   "@type": "ContactPoint",
                   "telephone": "+94760589218",
                   "contactType": "customer service",
-                  "email": "assankasampath@gmail.com",
+                  "email": "asankasampath200228@gmail.com",
                   "areaServed": "LK",
                   "availableLanguage": ["English", "Sinhala", "Tamil"]
                 }
