@@ -51,16 +51,30 @@ function AnimalCard({ animal }: { animal: Animal }) {
 
           {/* Status pill - micro-sized */}
           <div className="absolute top-2 right-2 z-10">
-            {isAdopted ? (
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-success text-success-foreground shadow-sm">
-                <CheckCircle2 className="h-2 w-2 sm:h-2.5 sm:w-2.5" />
-                {t('browse.adopted')}
-              </span>
+            {animal.post_type === 'lost' ? (
+              isAdopted ? (
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-success text-success-foreground shadow-sm">
+                  <CheckCircle2 className="h-2 w-2 sm:h-2.5 sm:w-2.5" />
+                  Reunited
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-blue-600 text-white shadow-sm border border-blue-500/30">
+                  <Heart className="h-2 w-2 sm:h-2.5 sm:w-2.5 text-white fill-white animate-pulse" />
+                  Lost
+                </span>
+              )
             ) : (
-              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-white/95 text-orange-600 shadow-sm backdrop-blur-sm border border-orange-100/50">
-                <Heart className="h-2 w-2 sm:h-2.5 sm:w-2.5 text-orange-500 fill-orange-500" />
-                {t('browse.waiting')}
-              </span>
+              isAdopted ? (
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-success text-success-foreground shadow-sm">
+                  <CheckCircle2 className="h-2 w-2 sm:h-2.5 sm:w-2.5" />
+                  {t('browse.adopted')}
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-white/95 text-orange-600 shadow-sm backdrop-blur-sm border border-orange-100/50">
+                  <Heart className="h-2 w-2 sm:h-2.5 sm:w-2.5 text-orange-500 fill-orange-500" />
+                  {t('browse.waiting')}
+                </span>
+              )
             )}
           </div>
         </div>

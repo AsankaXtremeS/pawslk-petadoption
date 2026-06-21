@@ -1,24 +1,39 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { useWaitingAnimals, useAnimalStats } from '@/hooks/useAnimals';
+import { useWaitingAnimals, useAnimalStats, useLostAnimals } from '@/hooks/useAnimals';
 import AnimalCard from '@/components/AnimalCard';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import EmptyState from '@/components/EmptyState';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { FaArrowRight as ArrowRight, FaHeart as HeartPulse, FaPaw as PawPrint, FaUsers as Users, FaPlus as Plus, FaSearch as Search, FaCamera as Camera, FaChartLine as Chart, FaGlobeAsia as Globe, FaQuestionCircle as Question } from 'react-icons/fa';
+import { FaArrowRight as ArrowRight, FaHeart as HeartPulse, FaPaw as PawPrint, FaUsers as Users, FaPlus as Plus, FaSearch as Search, FaCamera as Camera, FaChartLine as Chart, FaGlobeAsia as Globe, FaQuestionCircle as Question, FaChevronLeft as ChevronLeft, FaChevronRight as ChevronRight, FaExclamationCircle as ExclamationCircle } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import { getPrimaryPhotoUrl } from '@/utils/imageCompression';
+import { getThumbnailUrl } from '@/utils/cloudinary';
 
 export default function Index() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const { t } = useTranslation();
   const { data: animals, isLoading } = useWaitingAnimals();
+  const { data: lostAnimals } = useLostAnimals();
   const { data: stats } = useAnimalStats();
   const recentAnimals = animals?.slice(0, 9) || [];
   const { scrollY } = useScroll();
   const opacity = useTransform(scrollY, [0, 60], [1, 0]);
   const pointerEvents = useTransform(scrollY, [0, 60], ["auto", "none"] as string[]);
   const y = useTransform(scrollY, [0, 60], [0, 10]);
+
+  const lostScrollRef = useRef<HTMLDivElement>(null);
+  
+  const scrollLost = (direction: 'left' | 'right') => {
+    if (lostScrollRef.current) {
+      const scrollAmount = 240; // width of thin card + gap
+      lostScrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   return (
     <div>
@@ -66,17 +81,23 @@ export default function Index() {
                 {t('home.heroSubtitle')}
               </p>
 
-              <div className="flex flex-row gap-3 md:gap-4 justify-center md:justify-start items-center w-full">
+              <div className="flex flex-row gap-1.5 sm:gap-4 justify-center md:justify-start items-center w-full">
                 <Link to="/animals" className="flex-1 sm:flex-none">
-                  <Button variant="hero" size="lg" className="w-full sm:w-auto px-4 md:px-8 py-6 md:py-7 text-sm md:text-base">
-                    <PawPrint className="mr-1.5 h-4 w-4 md:h-5 md:w-5" />
-                    {t('home.animalsBtn')}
+                  <Button variant="hero" size="lg" className="w-full h-11 sm:h-12 px-1 xs:px-3 sm:px-8 text-[11px] xs:text-xs sm:text-base">
+                    <PawPrint className="mr-1 h-3.5 w-3.5 sm:h-5 sm:w-5 shrink-0" />
+                    <span className="truncate">{t('home.animalsBtn')}</span>
                   </Button>
                 </Link>
                 <Link to="/report" className="flex-1 sm:flex-none">
-                  <Button variant="hero-outline" size="lg" className="w-full sm:w-auto px-4 md:px-8 py-6 md:py-7 text-sm md:text-base">
-                    <Plus className="mr-1.5 h-4 w-4 md:h-5 md:w-5" />
-                    {t('home.addNewBtn')}
+                  <Button variant="hero-outline" size="lg" className="w-full h-11 sm:h-12 px-1 xs:px-3 sm:px-8 text-[11px] xs:text-xs sm:text-base">
+                    <Plus className="mr-1 h-3.5 w-3.5 sm:h-5 sm:w-5 shrink-0" />
+                    <span className="truncate">{t('home.addNewBtn')}</span>
+                  </Button>
+                </Link>
+                <Link to="/report?type=lost" className="flex-1 sm:flex-none">
+                  <Button variant="hero" size="lg" className="w-full h-11 sm:h-12 px-1 xs:px-3 sm:px-8 text-[11px] xs:text-xs sm:text-base bg-rose-600 hover:bg-rose-700 text-white border-transparent shadow-rose-500/20 hover:shadow-rose-500/30">
+                    <ExclamationCircle className="mr-1 h-3.5 w-3.5 sm:h-5 sm:w-5 text-white animate-pulse shrink-0" />
+                    <span className="truncate">Report Lost</span>
                   </Button>
                 </Link>
               </div>
@@ -95,7 +116,7 @@ export default function Index() {
                   alt="Happy stray pet" 
                   width="616"
                   height="560"
-                  fetchPriority="high"
+                  fetchpriority="high"
                   className="object-contain w-full max-h-[320px] sm:max-h-[420px] md:max-h-[450px] lg:max-h-[520px] animate-float drop-shadow-2xl"
                 />
                 
@@ -140,6 +161,84 @@ export default function Index() {
           </div>
         </div>
       </section>
+
+      {/* Lost Pets Carousel - Thin, catchy alerts before stray listings */}
+      {lostAnimals && lostAnimals.length > 0 && (
+        <section className="px-4 md:px-0 md:container py-8 border-b border-border/40 bg-rose-500/[0.01] relative overflow-hidden">
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:bg-rose-950/30 dark:text-rose-400">
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
+                Active Alerts
+              </span>
+              <h2 className="text-xl md:text-2xl font-heading font-black tracking-tight mt-1">Lost & Found Pets</h2>
+            </div>
+            
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => scrollLost('left')}
+                className="w-8 h-8 rounded-full border border-border bg-card flex items-center justify-center text-foreground hover:bg-muted transition-colors shadow-sm"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={() => scrollLost('right')}
+                className="w-8 h-8 rounded-full border border-border bg-card flex items-center justify-center text-foreground hover:bg-muted transition-colors shadow-sm"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Carousel container */}
+          <div 
+            ref={lostScrollRef}
+            className="flex gap-3 md:gap-4 overflow-x-auto pb-3 scrollbar-none snap-x snap-mandatory scroll-smooth px-4 md:px-0"
+          >
+            {lostAnimals.map((animal) => {
+              const rawPrimaryPhoto = getPrimaryPhotoUrl(animal.photo_url);
+              const primaryPhoto = getThumbnailUrl(rawPrimaryPhoto, 400); // smaller size for thin carousel
+              return (
+                <Link 
+                  key={animal.id}
+                  to={`/animals/${animal.id}`}
+                  className="w-36 sm:w-44 shrink-0 snap-start group relative aspect-[3/4] rounded-xl overflow-hidden border border-rose-500/20 shadow-sm hover:shadow-md hover:border-rose-500/40 hover:-translate-y-0.5 transition-all duration-300 transform-gpu bg-muted"
+                >
+                  {primaryPhoto ? (
+                    <img 
+                      src={primaryPhoto} 
+                      alt="" 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-muted">
+                      <PawPrint className="w-8 h-8 text-muted-foreground/30" />
+                    </div>
+                  )}
+
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-black/20 pointer-events-none" />
+
+                  {/* Top Alert Badge */}
+                  <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-rose-600 text-white font-black text-[9px] uppercase shadow-sm">
+                    <span className="w-1 h-1 rounded-full bg-white animate-pulse" />
+                    Lost
+                  </div>
+
+                  {/* Location info */}
+                  <div className="absolute bottom-2.5 inset-x-2 text-white">
+                    <p className="text-[8px] font-black uppercase text-rose-300 tracking-widest mb-0.5">Last Seen</p>
+                    <p className="text-xs font-bold leading-tight truncate">{animal.location_name}</p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Recent Animals (Waiting only) */}
       <section className="px-4 md:px-0 md:container pb-12 pt-6 md:pt-16">
@@ -194,6 +293,8 @@ export default function Index() {
           <EmptyState message={t('home.recent.empty')} />
         )}
       </section>
+
+
 
       {/* Optimized About & FAQ Section */}
       <section className="px-4 md:px-0 md:container pb-20 pt-8 md:pt-12">
