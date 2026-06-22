@@ -24,8 +24,18 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
  * in the DB and in localStorage. An attacker would need to know
  * this token to modify any data.
  */
+const secureClientsCache = new Map<string, SupabaseClient>();
+
 export function createSecureClient(userToken: string): SupabaseClient {
-  return createClient(supabaseUrl, supabaseKey, {
+  if (secureClientsCache.has(userToken)) {
+    return secureClientsCache.get(userToken)!;
+  }
+  const client = createClient(supabaseUrl, supabaseKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+    },
     global: {
       headers: {
         'apikey': supabaseKey,
@@ -34,4 +44,6 @@ export function createSecureClient(userToken: string): SupabaseClient {
       },
     },
   });
+  secureClientsCache.set(userToken, client);
+  return client;
 }

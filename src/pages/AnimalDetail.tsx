@@ -112,7 +112,7 @@ export default function AnimalDetail() {
       
       if (targetAdopted) {
         setJustAdopted(true);
-        toast.success(t('detail.adoptedSuccess'));
+        toast.success(animal?.post_type === 'lost' ? 'This pet has been marked as reunited! Thank you!' : t('detail.adoptedSuccess'));
         confetti({
           particleCount: 150,
           spread: 80,
@@ -121,7 +121,7 @@ export default function AnimalDetail() {
         });
       } else {
         setJustAdopted(false);
-        toast.success(t('detail.undoSuccess'));
+        toast.success(animal?.post_type === 'lost' ? 'Reunited status removed.' : t('detail.undoSuccess'));
       }
     } catch (err) {
       toast.error(friendlyError(err, t('detail.genericError')));
@@ -333,14 +333,23 @@ export default function AnimalDetail() {
             <ArrowLeft className="h-4 w-4" />
           </button>
 
-          {/* Status badge - Only show if adopted, waiting badge removed */}
-          {isAdopted && (
+          {/* Status badge - Only show if adopted/reunited or if lost */}
+          {isAdopted ? (
             <div className="absolute top-3 right-3 z-20">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-success text-success-foreground shadow-md">
                 <CheckCircle2 className="h-3.5 w-3.5" />
-                {t('browse.adopted')}
+                {animal.post_type === 'lost' ? 'Reunited' : t('browse.adopted')}
               </span>
             </div>
+          ) : (
+            animal.post_type === 'lost' && (
+              <div className="absolute top-3 right-3 z-20">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-600 text-white shadow-md border border-blue-500/30">
+                  <Heart className="h-3.5 w-3.5 text-white fill-white animate-pulse" />
+                  Lost
+                </span>
+              </div>
+            )
           )}
 
           {/* Reaction button - mobile floating or fixed */}
@@ -436,7 +445,9 @@ export default function AnimalDetail() {
               <PhoneIcon className="w-4 h-4 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] md:text-xs text-muted-foreground font-bold uppercase tracking-wider">{t('detail.contactToAdopt')}</p>
+              <p className="text-[10px] md:text-xs text-muted-foreground font-bold uppercase tracking-wider">
+                {animal.post_type === 'lost' ? 'Contact Owner / Reporter' : t('detail.contactToAdopt')}
+              </p>
               <p className="text-sm font-black text-foreground truncate">{formatPhone(animal.contact_number)}</p>
             </div>
             <Button
@@ -470,23 +481,25 @@ export default function AnimalDetail() {
               <AlertDialogTrigger asChild>
                 <Button variant="success" size="lg" className="w-full text-base rounded-2xl font-bold h-11">
                   <CheckCircle2 className="h-5 w-5 mr-2" />
-                  {t('detail.markAsAdopted')}
+                  {animal.post_type === 'lost' ? 'Mark as Reunited' : t('detail.markAsAdopted')}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent className="rounded-3xl w-[calc(100%-2rem)]">
                 <AlertDialogHeader>
                   <AlertDialogTitle className="font-heading inline-flex items-center gap-2 text-foreground font-bold">
                     <CircleCheck className="h-5 w-5 text-success" />
-                    {t('detail.confirmAdoption')}
+                    {animal.post_type === 'lost' ? 'Confirm Reunited' : t('detail.confirmAdoption')}
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-muted-foreground">
-                    {t('detail.confirmDesc')}
+                    {animal.post_type === 'lost' 
+                      ? 'Are you sure this pet has been reunited? This will move the post into the reunited section and remove it from the main view.'
+                      : t('detail.confirmDesc')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="gap-2 sm:gap-0">
                   <AlertDialogCancel className="rounded-2xl">{t('profile.actions.cancel')}</AlertDialogCancel>
                   <AlertDialogAction onClick={() => handleAdopt(true)} disabled={markAdopted.isPending} className="rounded-2xl bg-success hover:bg-success/90">
-                    {markAdopted.isPending ? t('profile.actions.updating') : t('detail.yesMark')}
+                    {markAdopted.isPending ? t('profile.actions.updating') : (animal.post_type === 'lost' ? 'Yes, Mark as Reunited!' : t('detail.yesMark'))}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -537,7 +550,9 @@ export default function AnimalDetail() {
           <div className="bg-primary/5 dark:bg-primary/10 border border-primary/10 rounded-3xl p-4 flex items-start gap-3">
             <Chart className="w-5 h-5 text-primary shrink-0 mt-0.5" />
             <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-              {t('detail.statsNotice')}
+              {animal.post_type === 'lost'
+                ? 'Helping us keep accurate records? If this pet has been found, please mark it as reunited.'
+                : t('detail.statsNotice')}
             </p>
           </div>
         )}
@@ -546,7 +561,9 @@ export default function AnimalDetail() {
         {!isOwner && !isAdopted && animal.contact_number && (
           <div className="bg-muted/30 dark:bg-muted/10 rounded-3xl p-4 text-center border border-border/5">
             <p className="text-xs md:text-sm text-muted-foreground font-semibold">
-              {t('detail.interested')}
+              {animal.post_type === 'lost'
+                ? 'Have you seen this pet or have information? Contact the reporter using the phone number above.'
+                : t('detail.interested')}
             </p>
           </div>
         )}
@@ -560,11 +577,13 @@ export default function AnimalDetail() {
           >
             <p className="text-lg font-heading font-black text-success inline-flex items-center justify-center gap-2">
               <CircleCheck className="h-5 w-5" />
-              {t('detail.animalAdopted')}
+              {animal.post_type === 'lost' ? 'This pet has been reunited!' : t('detail.animalAdopted')}
             </p>
             {animal.adopted_at && (
               <p className="text-sm text-muted-foreground mt-1.5 font-medium">
-                {t('detail.adoptedOn', { date: getLocalDate(animal.adopted_at) })}
+                {animal.post_type === 'lost'
+                  ? `Reunited on ${getLocalDate(animal.adopted_at)}`
+                  : t('detail.adoptedOn', { date: getLocalDate(animal.adopted_at) })}
               </p>
             )}
 
@@ -572,22 +591,24 @@ export default function AnimalDetail() {
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="outline" size="sm" className="mt-4 border-success/30 hover:bg-success/5 text-success rounded-2xl font-bold">
-                    {t('detail.undoAdoption')}
+                    {animal.post_type === 'lost' ? 'Undo Reunited' : t('detail.undoAdoption')}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent className="rounded-3xl w-[calc(100%-2rem)]">
                   <AlertDialogHeader>
                     <AlertDialogTitle className="font-heading text-foreground font-bold">
-                      {t('detail.confirmUndoTitle')}
+                      {animal.post_type === 'lost' ? 'Bring back to lost list?' : t('detail.confirmUndoTitle')}
                     </AlertDialogTitle>
                     <AlertDialogDescription className="text-muted-foreground">
-                      {t('detail.confirmUndoDesc')}
+                      {animal.post_type === 'lost'
+                        ? 'This will move the pet back to the main view and mark it as still missing.'
+                        : t('detail.confirmUndoDesc')}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter className="gap-2 sm:gap-0">
                     <AlertDialogCancel className="rounded-2xl">{t('profile.actions.cancel')}</AlertDialogCancel>
                     <AlertDialogAction onClick={() => handleAdopt(false)} disabled={markAdopted.isPending} className="rounded-2xl bg-primary hover:bg-primary/90">
-                      {markAdopted.isPending ? t('profile.actions.updating') : t('detail.yesUndo')}
+                      {markAdopted.isPending ? t('profile.actions.updating') : (animal.post_type === 'lost' ? 'Yes, Undo Reunited' : t('detail.yesUndo'))}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

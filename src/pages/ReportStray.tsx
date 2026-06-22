@@ -18,6 +18,7 @@ export default function ReportStray() {
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('edit');
   const isEditing = !!editId;
+  const paramType = searchParams.get('type');
 
   const { user } = useUser();
   const reportAnimal = useReportAnimal();
@@ -27,12 +28,17 @@ export default function ReportStray() {
   // If editing, fetch existing animal data
   const { data: existingAnimal } = useAnimal(editId || '');
 
+  const [step, setStep] = useState<'choose' | 'form'>(
+    isEditing || paramType === 'adopt' || paramType === 'lost' ? 'form' : 'choose'
+  );
+
   const [form, setForm] = useState({
     type: 'dog' as 'dog' | 'cat',
     gender: 'male' as 'male' | 'female',
     location_name: '',
     description: '',
     reporter_name: user?.name || '',
+    post_type: (paramType === 'lost' ? 'lost' : 'adopt') as 'adopt' | 'lost',
   });
   // Up to 3 photos — each slot has a File (new) or null (empty/existing)
   const [photos, setPhotos] = useState<(File | null)[]>([null, null, null]);
@@ -45,6 +51,7 @@ export default function ReportStray() {
   // Pre-fill form data for editing
   useEffect(() => {
     if (isEditing && existingAnimal) {
+      setStep('form');
       // Security check: only owner can edit
       if (user && existingAnimal.user_id !== user.id) {
         toast.error(t('report.errors.editOwnOnly'));
@@ -57,6 +64,7 @@ export default function ReportStray() {
         location_name: existingAnimal.location_name,
         description: existingAnimal.description || '',
         reporter_name: existingAnimal.reporter_name || user?.name || '',
+        post_type: existingAnimal.post_type || 'adopt',
       });
       if (existingAnimal.photo_url) {
         const urls = parsePhotoUrls(existingAnimal.photo_url);
@@ -80,6 +88,8 @@ export default function ReportStray() {
       setForm(f => ({ ...f, reporter_name: user.name }));
     }
   }, [user, isEditing]);
+
+  const filledCount = photoPreviews.filter(p => p !== null).length;
 
   const handlePhotoChange = (startTimeIndex: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
@@ -140,6 +150,11 @@ export default function ReportStray() {
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`,
+        {
+          headers: {
+            'User-Agent': 'PawConnect-PetAdoptionApp/1.0',
+          },
+        }
       );
       if (!response.ok) throw new Error('Reverse geocode failed');
       const data = await response.json();
@@ -223,6 +238,7 @@ export default function ReportStray() {
             gender: form.gender,
             location_name: form.location_name.trim(),
             description: form.description.trim() || undefined,
+            post_type: form.post_type,
             ...(photo_url ? { photo_url } : {}),
           },
         });
@@ -239,6 +255,7 @@ export default function ReportStray() {
           photo_url,
           user_id: user?.id,
           contact_number: user?.mobile || undefined,
+          post_type: form.post_type,
         });
         toast.success(t('report.success.reported'));
         navigate('/animals');
@@ -250,8 +267,66 @@ export default function ReportStray() {
     }
   };
 
-  // Count filled slots
-  const filledCount = photoPreviews.filter(p => p !== null).length;
+  if (step === 'choose') {
+    return (
+      <div className="px-4 md:px-0 md:container py-12 md:py-20 flex items-center justify-center min-h-[70vh]">
+        <div className="max-w-2xl w-full text-center space-y-8">
+          <div className="space-y-3">
+            <h1 className="text-3xl md:text-4xl font-heading font-black tracking-tight text-foreground">
+              What would you like to report?
+            </h1>
+            <p className="text-sm md:text-base text-muted-foreground max-w-md mx-auto leading-relaxed">
+              Choose the listing type that best describes the pet you are reporting.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6 mt-8">
+            {/* Option 1: Stray for Adoption */}
+            <motion.button
+              whileHover={{ y: -6, scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                setForm(f => ({ ...f, post_type: 'adopt' }));
+                setStep('form');
+              }}
+              className="group flex flex-col items-center text-center p-6 md:p-8 rounded-3xl bg-white/60 dark:bg-card/60 backdrop-blur-md border border-white/20 dark:border-border/10 shadow-soft hover:shadow-glow hover:shadow-success/5 transition-all duration-300 relative overflow-hidden"
+            >
+              <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-green-400 to-emerald-500" />
+              <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                <PawPrint className="w-8 h-8" />
+              </div>
+              <h2 className="text-lg font-black font-heading text-foreground mb-2">Report a Stray</h2>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Found a stray dog or cat in need of a home? Submit details to help connect them with loving families.
+              </p>
+            </motion.button>
+
+            {/* Option 2: Lost Pet */}
+            <motion.button
+              whileHover={{ y: -6, scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                setForm(f => ({ ...f, post_type: 'lost' }));
+                setStep('form');
+              }}
+              className="group flex flex-col items-center text-center p-6 md:p-8 rounded-3xl bg-white/60 dark:bg-card/60 backdrop-blur-md border border-white/20 dark:border-border/10 shadow-soft hover:shadow-glow hover:shadow-red-500/5 transition-all duration-300 relative overflow-hidden"
+            >
+              <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-red-400 to-rose-500" />
+              <div className="w-16 h-16 rounded-2xl bg-red-500/10 text-red-500 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 relative">
+                <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-red-500 border-2 border-background animate-ping" />
+                <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-red-500 border-2 border-background" />
+                <Dog className="w-8 h-8" />
+              </div>
+              <h2 className="text-lg font-black font-heading text-foreground mb-2">Report a Lost Pet</h2>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Lost your family pet? Share their details here so the local community can help you find and reunite them.
+              </p>
+            </motion.button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="px-4 md:px-0 md:container py-6 md:py-10">
@@ -262,12 +337,23 @@ export default function ReportStray() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
+          {!isEditing && (
+            <button
+              type="button"
+              onClick={() => setStep('choose')}
+              className="inline-flex items-center gap-1.5 text-xs text-primary font-bold hover:underline mb-3"
+            >
+              ← Change listing type ({form.post_type === 'lost' ? 'Lost Pet' : 'For Adoption'})
+            </button>
+          )}
           <h1 className="text-2xl md:text-3xl font-heading font-bold">
-            {isEditing ? t('report.editTitle') : t('report.title')}
+            {isEditing ? t('report.editTitle') : (form.post_type === 'lost' ? 'Report a Lost Pet' : t('report.title'))}
           </h1>
           <p className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
             <PawPrint className="h-3.5 w-3.5 text-primary" />
-            {isEditing ? t('report.editSubtitle') : t('report.subtitle')}
+            {isEditing 
+              ? t('report.editSubtitle') 
+              : (form.post_type === 'lost' ? 'Provide details to help find your missing pet' : t('report.subtitle'))}
           </p>
         </motion.div>
 
@@ -428,12 +514,12 @@ export default function ReportStray() {
           <div className="space-y-2">
             <label className="text-sm font-semibold flex items-center gap-2">
               <MapPin className="w-4 h-4 text-primary" />
-              {t('report.location')}
+              {form.post_type === 'lost' ? 'Last Seen Location' : t('report.location')}
             </label>
             <div className="relative group">
               <input
                 id="report-location"
-                placeholder={t('report.locationPlaceholder')}
+                placeholder={form.post_type === 'lost' ? 'e.g. Mattegoda, near petrol station' : t('report.locationPlaceholder')}
                 value={form.location_name}
                 onChange={e => setForm(f => ({ ...f, location_name: e.target.value }))}
                 className="w-full pl-11 pr-4 py-3 bg-muted/30 border-2 border-transparent focus:border-primary/30 rounded-2xl outline-none transition-all duration-300 group-hover:bg-muted/50"
@@ -462,7 +548,7 @@ export default function ReportStray() {
             </div>
             <textarea
               id="report-description"
-              placeholder={t('report.descriptionPlaceholder')}
+              placeholder={form.post_type === 'lost' ? 'Please describe distinct features, collar details, color, date lost, etc.' : t('report.descriptionPlaceholder')}
               value={form.description}
               onChange={e => setForm(f => ({ ...f, description: e.target.value.slice(0, 300) }))}
               maxLength={300}
@@ -497,7 +583,7 @@ export default function ReportStray() {
             <PawPrint className="h-5 w-5 mr-2" />
             {isSubmitting
               ? (isEditing ? t('report.updating') : t('report.submitting'))
-              : (isEditing ? t('report.update') : t('report.submit'))
+              : (isEditing ? t('report.update') : (form.post_type === 'lost' ? 'Post Lost Report' : t('report.submit')))
             }
           </Button>
         </motion.form>

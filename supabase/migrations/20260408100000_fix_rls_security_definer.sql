@@ -40,7 +40,12 @@ CREATE POLICY "Owner can update own animals"
       coalesce(current_setting('request.headers', true)::json->>'x-user-token', '')
     )
   )
-  WITH CHECK (true);
+  WITH CHECK (
+    public.check_user_token(
+      user_id,
+      coalesce(current_setting('request.headers', true)::json->>'x-user-token', '')
+    )
+  );
 
 
 -- 3. Update Animals DELETE Policy
@@ -65,7 +70,12 @@ CREATE POLICY "Users can update own record"
       coalesce(current_setting('request.headers', true)::json->>'x-user-token', '')
     )
   )
-  WITH CHECK (true);
+  WITH CHECK (
+    public.check_user_token(
+      id,
+      coalesce(current_setting('request.headers', true)::json->>'x-user-token', '')
+    )
+  );
 
 
 -- 5. Update Users DELETE Policy

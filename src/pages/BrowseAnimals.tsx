@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function BrowseAnimals() {
   const { t } = useTranslation();
+  const [postType, setPostType] = useState('adopt'); // 'adopt' | 'lost'
   const [type, setType] = useState('all');
   const [gender, setGender] = useState('all');
   const [status, setStatus] = useState('waiting');
@@ -30,6 +31,7 @@ export default function BrowseAnimals() {
     gender: gender !== 'all' ? gender : undefined,
     status: status !== 'all' ? status : undefined,
     search: search || undefined,
+    post_type: postType,
   });
 
   // Count active filters (excluding defaults)
@@ -80,18 +82,52 @@ export default function BrowseAnimals() {
     </div>
   );
 
+  const statusOptions = postType === 'lost' ? [
+    { key: 'waiting', label: 'Still Missing', icon: <HeartPulse className="w-3.5 h-3.5" /> },
+    { key: 'adopted', label: 'Found & Reunited', icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
+    { key: 'all', label: t('browse.all') },
+  ] : [
+    { key: 'waiting', label: t('browse.waiting'), icon: <HeartPulse className="w-3.5 h-3.5" /> },
+    { key: 'adopted', label: t('browse.adopted'), icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
+    { key: 'all', label: t('browse.all') },
+  ];
+
   return (
     <div className="px-4 md:px-0 md:container py-6 md:py-10">
       {/* Header */}
       <div className="mb-5">
         <h1 className="text-2xl md:text-3xl font-heading font-bold">
-          {status === 'adopted' ? t('browse.adoptedTitle') : t('browse.title')}
+          {postType === 'lost' 
+            ? (status === 'adopted' ? 'Found & Reunited Pets' : 'Lost & Found Reports')
+            : (status === 'adopted' ? t('browse.adoptedTitle') : t('browse.title'))}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          {status === 'adopted'
-            ? t('browse.adoptedSubtitle')
-            : t('browse.subtitle')}
+          {postType === 'lost'
+            ? (status === 'adopted' ? 'Help celebrate reunite success stories in our community!' : 'Help us find lost pets in the neighborhood.')
+            : (status === 'adopted' ? t('browse.adoptedSubtitle') : t('browse.subtitle'))}
         </p>
+      </div>
+
+      {/* Tab Selector */}
+      <div className="flex border-b border-border/50 mb-6 gap-6 relative">
+        <button
+          onClick={() => { setPostType('adopt'); setStatus('waiting'); }}
+          className={`pb-3 text-sm font-black tracking-tight relative transition-colors ${postType === 'adopt' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          {t('nav.browse') || 'For Adoption'}
+          {postType === 'adopt' && (
+            <motion.div layoutId="browseTabLine" className="absolute bottom-0 inset-x-0 h-0.5 bg-primary" />
+          )}
+        </button>
+        <button
+          onClick={() => { setPostType('lost'); setStatus('waiting'); }}
+          className={`pb-3 text-sm font-black tracking-tight relative transition-colors ${postType === 'lost' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+        >
+          Lost Pets
+          {postType === 'lost' && (
+            <motion.div layoutId="browseTabLine" className="absolute bottom-0 inset-x-0 h-0.5 bg-primary" />
+          )}
+        </button>
       </div>
 
       {/* ===== SEARCH + FILTER CONTROLS ===== */}
@@ -132,11 +168,7 @@ export default function BrowseAnimals() {
       <div className="browse-desktop-filters hidden md:flex">
         <FilterSection label={t('browse.status')}>
           <SegmentedControl
-            options={[
-              { key: 'waiting', label: t('browse.waiting'), icon: <HeartPulse className="w-3.5 h-3.5" /> },
-              { key: 'adopted', label: t('browse.adopted'), icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
-              { key: 'all', label: t('browse.all') },
-            ]}
+            options={statusOptions}
             value={status}
             onChange={setStatus}
           />
@@ -191,11 +223,7 @@ export default function BrowseAnimals() {
             <div className="browse-mobile-filters-inner">
               <FilterSection label={t('browse.status')}>
                 <SegmentedControl
-                  options={[
-                    { key: 'waiting', label: t('browse.waiting'), icon: <HeartPulse className="w-3.5 h-3.5" /> },
-                    { key: 'adopted', label: t('browse.adopted'), icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
-                    { key: 'all', label: t('browse.all') },
-                  ]}
+                  options={statusOptions}
                   value={status}
                   onChange={setStatus}
                 />
@@ -241,7 +269,7 @@ export default function BrowseAnimals() {
         <div className="browse-active-tags md:hidden">
           {status !== 'waiting' && (
             <span className="browse-tag">
-              {status === 'adopted' ? t('browse.adopted') : t('browse.all')}
+              {status === 'adopted' ? (postType === 'lost' ? 'Reunited' : t('browse.adopted')) : t('browse.all')}
               <button onClick={() => setStatus('waiting')}><X className="w-2.5 h-2.5" /></button>
             </span>
           )}
@@ -292,9 +320,9 @@ export default function BrowseAnimals() {
         </div>
       ) : (
         <EmptyState
-          message={status === 'adopted'
-            ? t('browse.noAdoptedYet')
-            : undefined}
+          message={postType === 'lost'
+            ? (status === 'adopted' ? 'No reunited pets yet.' : 'No lost pets reported right now.')
+            : (status === 'adopted' ? t('browse.noAdoptedYet') : undefined)}
         />
       )}
     </div>

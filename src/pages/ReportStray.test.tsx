@@ -21,6 +21,7 @@ vi.mock('framer-motion', async () => {
     motion: {
       div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
       form: ({ children, ...props }: any) => <form {...props}>{children}</form>,
+      button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
     },
   };
 });
@@ -63,9 +64,9 @@ describe('ReportStray', () => {
     } as any);
   });
 
-  const renderComponent = () => {
+  const renderComponent = (initialEntries = ['/report?type=adopt']) => {
     return render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={initialEntries}>
         <ReportStray />
       </MemoryRouter>
     );

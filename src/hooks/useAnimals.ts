@@ -18,9 +18,10 @@ export type Animal = {
   contact_number: string | null;
   reaction_count: number;
   comment_count: number;
+  post_type: 'adopt' | 'lost';
 };
 
-export function useAnimals(filters?: { type?: string; gender?: string; status?: string; search?: string }) {
+export function useAnimals(filters?: { type?: string; gender?: string; status?: string; search?: string; post_type?: string }) {
   const queryClient = useQueryClient();
 
   // Realtime subscription
@@ -50,6 +51,9 @@ export function useAnimals(filters?: { type?: string; gender?: string; status?: 
         query = query.eq('is_adopted', true);
       } else if (filters?.status === 'waiting') {
         query = query.eq('is_adopted', false);
+      }
+      if (filters?.post_type && filters.post_type !== 'all') {
+        query = query.eq('post_type', filters.post_type);
       }
       if (filters?.search) {
         query = query.or(`location_name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
@@ -93,6 +97,46 @@ export function useWaitingAnimals() {
         .from('animals')
         .select('*, reaction_count:animal_reactions(count), comment_count:animal_comments(count)')
         .eq('is_adopted', false)
+        .eq('post_type', 'adopt')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+
+      const formattedData = (data as any[]).map(animal => ({
+        ...animal,
+        reaction_count: animal.reaction_count?.[0]?.count || 0,
+        comment_count: animal.comment_count?.[0]?.count || 0,
+      }));
+
+      return formattedData as Animal[];
+    },
+  });
+}
+
+/**
+ * Fetch waiting lost pets — used for homepage lost pets carousel.
+ */
+export function useLostAnimals() {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('animals-lost')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'animals' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['animals', 'lost'] });
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [queryClient]);
+
+  return useQuery({
+    queryKey: ['animals', 'lost'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('animals')
+        .select('*, reaction_count:animal_reactions(count), comment_count:animal_comments(count)')
+        .eq('is_adopted', false)
+        .eq('post_type', 'lost')
         .order('created_at', { ascending: false });
       if (error) throw error;
 
@@ -141,6 +185,7 @@ export function useReportAnimal() {
       reporter_name?: string;
       user_id?: string;
       contact_number?: string;
+      post_type?: string;
     }) => {
       const { data, error } = await supabase.from('animals').insert([animal]).select().single();
       if (error) throw error;
@@ -161,7 +206,7 @@ export function useUpdateAnimal() {
     mutationFn: async ({ id, userToken, updates }: {
       id: string;
       userToken: string;
-      updates: Partial<Pick<Animal, 'type' | 'gender' | 'photo_url' | 'location_name' | 'description'>>
+      updates: Partial<Pick<Animal, 'type' | 'gender' | 'photo_url' | 'location_name' | 'description' | 'post_type'>>
     }) => {
       const secureClient = createSecureClient(userToken);
       const { data, error } = await secureClient
