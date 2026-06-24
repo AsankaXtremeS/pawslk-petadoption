@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useOutlet } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaHome as Home, FaPaw as PawPrint, FaPlus as Plus, FaTachometerAlt as Gauge, FaSignOutAlt as LogOut, FaUser as UserIcon, FaSignInAlt as LogIn, FaUserPlus as UserPlus, FaBell as Bell } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
@@ -14,9 +14,10 @@ const navItems = [
   { to: '/dashboard', labelKey: 'nav.stats', Icon: Gauge },
 ];
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout() {
   const { t } = useTranslation();
   const location = useLocation();
+  const outlet = useOutlet();
   const { user, isRegistered, clearUser } = useUser();
 
   return (
@@ -125,7 +126,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
           >
-            {children}
+            {outlet}
           </motion.div>
         </AnimatePresence>
       </main>

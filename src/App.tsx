@@ -60,55 +60,48 @@ function AppContent() {
           <Route path="/register" element={<RegisterPage />} />
 
           {/* Main app pages — rendered WITH the Layout (navbar, footer, bottom tabs) */}
-          <Route
-            path="*"
-            element={
-              <Layout>
-                <Routes>
-                  {/* Public routes — accessible to everyone */}
-                  <Route path="/" element={<Index />} />
-                  <Route path="/animals" element={<BrowseAnimals />} />
-                  <Route path="/animals/:id" element={<AnimalDetail />} />
-                  <Route path="/dashboard" element={<Dashboard />} />
+          <Route element={<Layout />}>
+            {/* Public routes — accessible to everyone */}
+            <Route path="/" element={<Index />} />
+            <Route path="/animals" element={<BrowseAnimals />} />
+            <Route path="/animals/:id" element={<AnimalDetail />} />
+            <Route path="/dashboard" element={<Dashboard />} />
 
-                  {/* Protected routes — require authentication */}
-                  <Route
-                    path="/report"
-                    element={
-                      <ProtectedRoute>
-                        <ReportStray />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/profile"
-                    element={
-                      <ProtectedRoute>
-                        <Profile />
-                      </ProtectedRoute>
-                    }
-                  />
-                  
-                  <Route
-                    path="/notifications"
-                    element={
-                      <ProtectedRoute>
-                        <Notifications />
-                      </ProtectedRoute>
-                    }
-                  />
-                  
-                  {/* Information Pages */}
-                  <Route path="/about" element={<AboutUs />} />
-                  <Route path="/contact" element={<ContactUs />} />
-                  <Route path="/privacy" element={<PrivacyPolicy />} />
+            {/* Protected routes — require authentication */}
+            <Route
+              path="/report"
+              element={
+                <ProtectedRoute>
+                  <ReportStray />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute>
+                  <Notifications />
+                </ProtectedRoute>
+              }
+            />
+            
+            {/* Information Pages */}
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
 
-                  {/* Catch-all */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Layout>
-            }
-          />
+            {/* Catch-all */}
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Routes>
       </Suspense>
     </BrowserRouter>

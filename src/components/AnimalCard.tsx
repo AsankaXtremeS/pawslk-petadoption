@@ -58,7 +58,7 @@ function AnimalCard({ animal }: { animal: Animal }) {
                   Reunited
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-blue-600 text-white shadow-sm border border-blue-500/30">
+                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-rose-600 text-white shadow-sm border border-rose-500/30">
                   <Heart className="h-2 w-2 sm:h-2.5 sm:w-2.5 text-white fill-white animate-pulse" />
                   Lost
                 </span>

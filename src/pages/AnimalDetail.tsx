@@ -344,7 +344,7 @@ export default function AnimalDetail() {
           ) : (
             animal.post_type === 'lost' && (
               <div className="absolute top-3 right-3 z-20">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-600 text-white shadow-md border border-blue-500/30">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-600 text-white shadow-md border border-rose-500/30">
                   <Heart className="h-3.5 w-3.5 text-white fill-white animate-pulse" />
                   Lost
                 </span>
