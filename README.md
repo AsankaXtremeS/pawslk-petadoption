@@ -22,28 +22,28 @@ PawConnect (`pawconnect.lk`) is a modern, community-driven web application desig
 ```mermaid
 graph TD
     %% Client Layer
-    subgraph Client [Client-Side (React, Vite & Tailwind)]
+    subgraph Client ["Client-Side (React, Vite & Tailwind)"]
         UI[React Components / Pages]
         FM[Framer Motion Animations]
         Router[React Router Dom]
     end
 
     %% State Layer
-    subgraph State [State & Localization]
+    subgraph State ["State & Localization"]
         UC[UserContext - Auth & Session State]
         RQ[React Query - Cache & Client Sync]
         i18n[i18next - Multi-Language Provider]
     end
 
     %% Services Layer
-    subgraph Services [API & Services Layer]
+    subgraph Services ["API & Services Layer"]
         SClient[Supabase Client + Token Auth]
         Cloudinary[Cloudinary API]
         Compression[Image Compression Utility]
     end
 
     %% Backend Layer
-    subgraph Backend [Backend & Storage Layer]
+    subgraph Backend ["Backend & Storage Layer"]
         Postgres[(PostgreSQL DB)]
         RLS[Row Level Security Policies]
         Realtime[Realtime PubSub Channels]
