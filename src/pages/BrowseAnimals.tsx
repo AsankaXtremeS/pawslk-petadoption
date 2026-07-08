@@ -116,7 +116,12 @@ export default function BrowseAnimals() {
         >
           {t('nav.browse') || 'For Adoption'}
           {postType === 'adopt' && (
-            <motion.div layoutId="browseTabLine" className="absolute bottom-0 inset-x-0 h-0.5 bg-primary" />
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              className="absolute bottom-0 inset-x-0 h-0.5 bg-primary origin-left"
+              transition={{ duration: 0.2 }}
+            />
           )}
         </button>
         <button
@@ -125,7 +130,12 @@ export default function BrowseAnimals() {
         >
           Lost Pets
           {postType === 'lost' && (
-            <motion.div layoutId="browseTabLine" className="absolute bottom-0 inset-x-0 h-0.5 bg-primary" />
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              className="absolute bottom-0 inset-x-0 h-0.5 bg-primary origin-left"
+              transition={{ duration: 0.2 }}
+            />
           )}
         </button>
       </div>
