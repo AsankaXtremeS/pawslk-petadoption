@@ -311,10 +311,10 @@ export default function Index() {
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm lg:text-base font-black leading-none">
-                      100+
+                      170+
                     </span>
                     <span className="text-[8px] lg:text-[9px] text-[#e0f2fe] uppercase font-bold tracking-wider mt-0.5">
-                      Active
+                      Active Users
                     </span>
                   </div>
                 </div>
