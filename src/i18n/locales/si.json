@@ -49,6 +49,9 @@
     "createAccount": "ගිණුම සාදන්න",
     "noAccount": "ගිණුමක් නොමැතිද?",
     "alreadyHaveAccount": "දැනටමත් ගිණුමක් තිබේද?",
+    "forgotPassword": "මුරපදය අමතකද?",
+    "resetPasswordInstruction": "ඔබගේ මුරපදය නැවත සැකසීමට, WhatsApp හරහා ඇඩ්මින් අමතන්න.",
+    "contactAdmin": "WhatsApp හරහා ඇඩ්මින් අමතන්න",
     "errors": {
       "mobileRequired": "දුරකතන අංකය අවශ්‍යයි",
       "mobileInvalid": "වලංගු අංක 10ක දුරකතන අංකයක් ඇතුළත් කරන්න",
