@@ -85,12 +85,11 @@ export default function LanguageSwitcher({ mini = false }: { mini?: boolean }) {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border hover:bg-muted transition-all text-xs font-medium"
+        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-border/60 hover:bg-muted/35 transition-all text-xs font-bold text-foreground"
       >
-        <Globe className="h-3 w-3 text-primary" />
-        <span className="hidden sm:inline">{currentLanguage.native}</span>
-        <span className="sm:hidden">{currentLanguage.code.toUpperCase()}</span>
-        <ChevronDown className={`h-2.5 w-2.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <Globe className="h-3.5 w-3.5 text-primary" />
+        <span>{currentLanguage.code.toUpperCase()}</span>
+        <ChevronDown className={`h-2.5 w-2.5 text-muted-foreground/80 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       <AnimatePresence>

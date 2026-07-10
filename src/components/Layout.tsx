@@ -26,7 +26,7 @@ export default function Layout() {
       <nav className="hidden md:block sticky top-3 z-50 px-4">
         <div className="container max-w-6xl flex items-center justify-between h-14 bg-white/70 backdrop-blur-xl border border-white/40 rounded-full px-6 shadow-[0_8px_32px_-4px_rgba(0,0,0,0.1)] ring-1 ring-black/5">
           <Link to="/" className="flex items-center gap-2 group transition-transform hover:scale-105 active:scale-95" aria-label="Home">
-            <div className="w-8 h-8 rounded-xl bg-primary flex items-center justify-center shadow-glow shadow-primary/20 group-hover:rotate-12 transition-all">
+            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-md group-hover:rotate-12 transition-all">
               <PawPrint className="h-4.5 w-4.5 text-primary-foreground" />
             </div>
             <span className="font-heading text-xl font-black text-foreground tracking-tight">PawConnect</span>
@@ -100,16 +100,15 @@ export default function Layout() {
       </nav>
 
       {/* Mobile top bar */}
-      <div className="md:hidden sticky top-3 z-50 px-4">
-        <div className="flex items-center justify-between h-12 bg-white border border-border/40 rounded-full px-4 shadow-[0_4px_16px_-2px_rgba(0,0,0,0.08)] ring-1 ring-black/5">
-          <Link to="/" className="flex items-center gap-2 group active:scale-95 transition-transform" aria-label="Home">
-            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center shadow-glow shadow-primary/20">
-              <PawPrint className="h-5 w-5 text-primary-foreground" />
+      <div className="md:hidden sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-border/30 px-5 py-3">
+        <div className="flex items-center justify-between h-11">
+          <Link to="/" className="flex items-center active:scale-95 transition-transform" aria-label="Home">
+            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-sm">
+              <PawPrint className="h-5.5 w-5.5 text-primary-foreground" />
             </div>
-            <span className="font-heading text-lg font-black tracking-tight text-foreground hidden xs:inline-block">PawConnect</span>
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <LanguageSwitcher />
             <NotificationDropdown />
           </div>

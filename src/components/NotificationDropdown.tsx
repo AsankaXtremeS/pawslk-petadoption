@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaBell as Bell, FaHeart as Heart, FaComment as CommentIcon, FaCheckDouble as CheckDouble } from 'react-icons/fa';
+import { FaRegBell as Bell, FaHeart as Heart, FaComment as CommentIcon, FaCheckDouble as CheckDouble } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '@/contexts/UserContext';
 import { useNotifications, useMarkNotificationRead, useMarkAllNotificationsRead } from '@/hooks/useNotifications';
@@ -39,12 +39,10 @@ export default function NotificationDropdown() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button className="relative p-2 rounded-full hover:bg-muted/60 transition-colors group">
-          <Bell className={`h-4 w-4 transition-colors ${unreadCount > 0 ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`} />
+        <button className="relative p-2 rounded-full hover:bg-muted/50 transition-colors group">
+          <Bell className="h-5 w-5 text-foreground transition-colors" />
           {unreadCount > 0 && (
-            <span className="absolute top-1.5 right-1.5 w-3.5 h-3.5 bg-destructive text-destructive-foreground text-[8px] font-bold rounded-full flex items-center justify-center border-2 border-background animate-in zoom-in duration-300">
-              {unreadCount > 9 ? '9+' : unreadCount}
-            </span>
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full border border-white animate-in zoom-in duration-300" />
           )}
         </button>
       </PopoverTrigger>
