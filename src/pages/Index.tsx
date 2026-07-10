@@ -6,8 +6,34 @@ import AnimatedCounter from '@/components/AnimatedCounter';
 import EmptyState from '@/components/EmptyState';
 import { useState, useRef } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { FaArrowRight as ArrowRight, FaHeart as HeartPulse, FaPaw as PawPrint, FaUsers as Users, FaPlus as Plus, FaSearch as Search, FaCamera as Camera, FaChartLine as Chart, FaGlobeAsia as Globe, FaQuestionCircle as Question, FaChevronLeft as ChevronLeft, FaChevronRight as ChevronRight, FaExclamationCircle as ExclamationCircle } from 'react-icons/fa';
+import { FaArrowRight as ArrowRight, FaHeart as HeartPulse, FaPaw as PawPrint, FaUsers as Users, FaPlus as Plus, FaSearch as Search, FaCamera as Camera, FaChartLine as Chart, FaGlobeAsia as Globe, FaQuestionCircle as Question, FaChevronLeft as ChevronLeft, FaChevronRight as ChevronRight, FaExclamationCircle as ExclamationCircle, FaMapMarkerAlt as MapMarker } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+
+// Heart Outline Doodle component
+const HeartDoodle = ({ className, delay = 0 }: { className?: string; delay?: number }) => (
+  <motion.svg
+    animate={{ 
+      y: [0, -6, 0],
+      rotate: [0, 4, -4, 0]
+    }}
+    transition={{
+      duration: 3.5,
+      repeat: Infinity,
+      repeatType: "reverse",
+      ease: "easeInOut",
+      delay
+    }}
+    className={className}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+  </motion.svg>
+);
 import { getPrimaryPhotoUrl } from '@/utils/imageCompression';
 import { getThumbnailUrl } from '@/utils/cloudinary';
 
@@ -37,127 +63,266 @@ export default function Index() {
 
   return (
     <div>
-      {/* Hero */}
-      <section className="relative overflow-hidden min-h-[85dvh] md:min-h-[calc(100vh-4rem)] flex flex-col justify-center pb-20 md:pb-0 md:py-16 bg-background">
-        {/* Decorative Paws */}
-        <div className="absolute top-20 left-[10%] opacity-10 text-primary rotate-12 -z-0">
-          <PawPrint size={120} />
-        </div>
-        <div className="absolute bottom-20 right-[15%] opacity-10 text-primary -rotate-12 -z-0">
-          <PawPrint size={160} />
-        </div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.08] text-primary rotate-45 -z-0">
-          <PawPrint size={320} />
+      {/* Top Dashboard Section */}
+      <section className="relative overflow-hidden pt-1 pb-5 md:py-8 bg-[#fafdfc] md:bg-white border-b border-border/20">
+        {/* Soft decorative background glow */}
+        <div className="absolute top-0 right-0 w-[45%] h-[45%] rounded-full bg-[#f4faf7] filter blur-3xl -z-10 opacity-75" />
+
+        {/* Mobile-Only Background Decorative Paw Icon */}
+        <div className="md:hidden absolute top-[10%] left-[-30px] text-primary/[0.04] -z-10 -rotate-12 pointer-events-none">
+          <PawPrint className="w-36 h-36" />
         </div>
 
+        <div className="px-5 md:px-0 md:container">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 lg:gap-12 items-center">
+            
+            {/* Left Column: Hero Text & Quick Action Cards */}
+            <div className="col-span-1 md:col-span-7 lg:col-span-7 flex flex-col justify-center gap-4 md:gap-6 lg:gap-8">
+              
+              {/* Hero Text */}
+              <div className="w-full">
+                {/* Text Block */}
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-center md:text-left flex flex-col items-center md:items-start"
+                >
+                  {/* Be their hero badge */}
+                  <div className="mb-2.5 md:mb-4">
+                    <Link to="/animals" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors text-primary text-[10px] sm:text-xs font-bold">
+                      <HeartPulse className="h-3 w-3 sm:h-3.5 sm:w-3.5 animate-pulse" />
+                      <span>Paw Connect</span>
+                    </Link>
+                  </div>
 
-        <div className="relative z-10 px-5 md:px-0 md:container flex-1 flex flex-col justify-center">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-4 lg:gap-8 w-full mt-8 md:mt-0">
-            {/* Left side for desktop: Text content */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="flex-1 text-center md:text-left w-full md:max-w-md lg:max-w-lg"
-            >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.1 }}
-                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-6"
-              >
-                <PawPrint className="h-3 w-3" />
-                <span className="hidden md:inline">{t('home.heroBadge')}</span>
-                <span className="md:hidden">Paw Connect</span>
-              </motion.div>
+                  <h1 className="text-4xl xs:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-heading font-black leading-[1.12] text-slate-800 tracking-tight">
+                    {t('home.heroTitle')}
+                    <br />
+                    <span className="text-primary font-extrabold">{t('home.heroTitleGradient')}</span>
+                  </h1>
 
-              <h1 className="text-4xl md:text-5xl lg:text-7xl font-heading font-bold leading-[1.1] mb-5">
-                {t('home.heroTitle')}
-                <br />
-                <span className="text-gradient">{t('home.heroTitleGradient')}</span>
-              </h1>
-
-              <p className="text-base md:text-lg text-muted-foreground mx-auto md:mx-0 mb-8 leading-relaxed">
-                {t('home.heroSubtitle')}
-              </p>
-
-              <div className="flex flex-row gap-1.5 sm:gap-4 justify-center md:justify-start items-center w-full">
-                <Link to="/animals" className="flex-1 sm:flex-none">
-                  <Button variant="hero" size="lg" className="w-full h-11 sm:h-12 px-1 xs:px-3 sm:px-8 text-[11px] xs:text-xs sm:text-base">
-                    <PawPrint className="mr-1 h-3.5 w-3.5 sm:h-5 sm:w-5 shrink-0" />
-                    <span className="truncate">{t('home.animalsBtn')}</span>
-                  </Button>
-                </Link>
-                <Link to="/report" className="flex-1 sm:flex-none">
-                  <Button variant="hero-outline" size="lg" className="w-full h-11 sm:h-12 px-1 xs:px-3 sm:px-8 text-[11px] xs:text-xs sm:text-base">
-                    <Plus className="mr-1 h-3.5 w-3.5 sm:h-5 sm:w-5 shrink-0" />
-                    <span className="truncate">{t('home.addNewBtn')}</span>
-                  </Button>
-                </Link>
-                <Link to="/report?type=lost" className="flex-1 sm:flex-none">
-                  <Button variant="hero" size="lg" className="w-full h-11 sm:h-12 px-1 xs:px-3 sm:px-8 text-[11px] xs:text-xs sm:text-base bg-rose-600 hover:bg-rose-700 text-white border-transparent shadow-rose-500/20 hover:shadow-rose-500/30">
-                    <ExclamationCircle className="mr-1 h-3.5 w-3.5 sm:h-5 sm:w-5 text-white animate-pulse shrink-0" />
-                    <span className="truncate">Report Lost</span>
-                  </Button>
-                </Link>
+                  <p className="text-xs xs:text-sm md:text-lg text-slate-500 mt-1.5 md:mt-4 max-w-xs md:max-w-xl lg:max-w-2xl leading-relaxed">
+                    {t('home.heroSubtitle')}
+                  </p>
+                </motion.div>
               </div>
-            </motion.div>
 
-            {/* Middle for desktop / Middle for mobile: Image */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="w-full max-w-[400px] sm:max-w-[520px] sm:w-2/3 md:w-auto md:flex-shrink-0 flex justify-center py-4 sm:py-3 md:py-0"
-            >
-              <div className="relative">
+              {/* Mobile-Only Illustration (Vertical Stack, Inline, Centered, Large, Overlapping buttons) */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.10 }}
+                className="md:hidden w-full max-w-[260px] xs:max-w-[320px] aspect-square flex items-center justify-center mx-auto -mb-10 xs:-mb-14 relative z-0 pointer-events-none"
+              >
                 <img 
                   src="/Hero.webp" 
-                  alt="Happy stray pet" 
-                  width="616"
-                  height="560"
-                  fetchpriority="high"
-                  className="object-contain w-full max-h-[320px] sm:max-h-[420px] md:max-h-[450px] lg:max-h-[520px] animate-float drop-shadow-2xl"
+                  alt="" 
+                  className="object-contain w-full h-full drop-shadow-md"
                 />
+              </motion.div>
+
+              {/* Quick Action Cards Grid (3 Columns on mobile and desktop) */}
+              <div className="grid grid-cols-3 gap-2 md:gap-4 lg:gap-6 mt-2 md:mt-0 relative z-10">
                 
-                {/* Mobile Floating Stats Card - Centered and Thin */}
-                <div className="md:hidden absolute -bottom-6 left-0 right-0 flex justify-center z-30 px-4 pointer-events-none">
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5, duration: 0.5 }}
-                    className="pointer-events-auto bg-rose-50/95 backdrop-blur-md border border-rose-100/50 rounded-full px-4 py-1.5 shadow-xl flex items-center gap-3 ring-1 ring-black/5 overflow-hidden"
-                  >
-                    <div className="flex items-center gap-2">
-                      <HeartPulse className="h-4 w-4 text-rose-500" />
-                      <div className="text-lg font-black text-foreground tracking-tighter">
-                        <AnimatedCounter end={stats?.waiting || 0} label="" icon={null} iconColorClass="hidden" className="p-0 w-auto" />
-                      </div>
-                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest whitespace-nowrap">
-                        {t('home.stats.waitingTitle')}
+                {/* Card 1: Animals */}
+                <Link 
+                  to="/animals" 
+                  className="bg-[#f0f9f6] rounded-[20px] md:rounded-3xl p-3 md:p-5 relative flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group border border-emerald-500/5"
+                >
+                  <div className="pb-8">
+                    <div className="w-8 h-8 md:w-11 md:h-11 rounded-full bg-primary flex items-center justify-center text-white mb-2 md:mb-4 shadow-sm">
+                      <PawPrint className="w-4 h-4 md:w-5 md:h-5" />
+                    </div>
+                    <h3 className="font-heading text-xs sm:text-sm md:text-lg font-black text-slate-800 mb-0.5 md:mb-1">Animals</h3>
+                    <p className="text-[9px] md:text-xs text-slate-500 leading-snug md:leading-relaxed pr-4 md:pr-8">Browse all animals waiting for homes</p>
+                  </div>
+                  <div className="absolute bottom-2.5 right-2.5 md:bottom-5 md:right-5 w-6 h-6 md:w-8 md:h-8 rounded-full bg-[#ccfbf1] text-primary flex items-center justify-center group-hover:translate-x-0.5 transition-transform shadow-sm">
+                    <ArrowRight className="w-3 md:w-3.5 h-3 md:h-3.5" />
+                  </div>
+                </Link>
+
+                {/* Card 2: Add New */}
+                <Link 
+                  to="/report" 
+                  className="bg-[#f4f7f6] rounded-[20px] md:rounded-3xl p-3 md:p-5 relative flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group border border-slate-500/5"
+                >
+                  <div className="pb-8">
+                    <div className="w-8 h-8 md:w-11 md:h-11 rounded-full bg-teal-800 flex items-center justify-center text-white mb-2 md:mb-4 shadow-sm">
+                      <Plus className="w-4 h-4 md:w-5 md:h-5" />
+                    </div>
+                    <h3 className="font-heading text-xs sm:text-sm md:text-lg font-black text-slate-800 mb-0.5 md:mb-1">Add New</h3>
+                    <p className="text-[9px] md:text-xs text-slate-500 leading-snug md:leading-relaxed pr-4 md:pr-8">Report or add a new animal</p>
+                  </div>
+                  <div className="absolute bottom-2.5 right-2.5 md:bottom-5 md:right-5 w-6 h-6 md:w-8 md:h-8 rounded-full bg-teal-50 text-teal-800 flex items-center justify-center group-hover:translate-x-0.5 transition-transform shadow-sm">
+                    <ArrowRight className="w-3 md:w-3.5 h-3 md:h-3.5" />
+                  </div>
+                </Link>
+
+                {/* Card 3: Report Lost */}
+                <Link 
+                  to="/report?type=lost" 
+                  className="bg-[#fdf2f2] rounded-[20px] md:rounded-3xl p-3 md:p-5 relative flex flex-col justify-between hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group border border-rose-500/5"
+                >
+                  <div className="pb-8">
+                    <div className="w-8 h-8 md:w-11 md:h-11 rounded-full bg-rose-600 flex items-center justify-center text-white mb-2 md:mb-4 shadow-sm">
+                      <ExclamationCircle className="w-4 h-4 md:w-5 md:h-5" />
+                    </div>
+                    <h3 className="font-heading text-xs sm:text-sm md:text-lg font-black text-slate-800 mb-0.5 md:mb-1">Report Lost</h3>
+                    <p className="text-[9px] md:text-xs text-slate-500 leading-snug md:leading-relaxed pr-4 md:pr-8">Report a lost or missing pet</p>
+                  </div>
+                  <div className="absolute bottom-2.5 right-2.5 md:bottom-5 md:right-5 w-6 h-6 md:w-8 md:h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center group-hover:translate-x-0.5 transition-transform shadow-sm">
+                    <ArrowRight className="w-3 md:w-3.5 h-3 md:h-3.5" />
+                  </div>
+                </Link>
+
+              </div>
+
+              {/* Mobile-Only Horizontal Stats Banner */}
+              <div className="md:hidden mt-2 w-full bg-[#0f5143] rounded-2xl p-3.5 text-white shadow-md">
+                <div className="flex items-center justify-between w-full gap-2">
+                  
+                  {/* Stat 1: Waiting */}
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-[#ccfbf1]/20 text-[#ccfbf1] flex items-center justify-center shrink-0">
+                      <HeartPulse className="w-4 h-4" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs sm:text-sm font-black leading-none">
+                        {stats?.waiting || 0}
+                      </span>
+                      <span className="text-[8px] text-slate-200 uppercase font-bold mt-0.5 leading-none">
+                        {t('home.stats.waiting') || "Waiting"}
                       </span>
                     </div>
-                  </motion.div>
+                  </div>
+
+                  <div className="h-6 border-r border-white/15" />
+
+                  {/* Stat 2: Adopted */}
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-[#fef3c7]/20 text-[#fef3c7] flex items-center justify-center shrink-0">
+                      <PawPrint className="w-4 h-4" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs sm:text-sm font-black leading-none">
+                        {stats?.adopted || 0}
+                      </span>
+                      <span className="text-[8px] text-slate-200 uppercase font-bold mt-0.5 leading-none">
+                        {t('home.stats.saved') || "Adopted"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="h-6 border-r border-white/15" />
+
+                  {/* Stat 3: Active Users */}
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-[#e0f2fe]/20 text-[#e0f2fe] flex items-center justify-center shrink-0">
+                      <Users className="w-4 h-4" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs sm:text-sm font-black leading-none">
+                        320+
+                      </span>
+                      <span className="text-[8px] text-slate-200 uppercase font-bold mt-0.5 leading-none">
+                        Active Users
+                      </span>
+                    </div>
+                  </div>
+
                 </div>
               </div>
-            </motion.div>
+            </div>
 
-            {/* Right side for desktop / Hidden on mobile: Stats */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="hidden md:flex flex-col gap-3 items-end"
-            >
-              <div className="bg-white/40 backdrop-blur-md border border-rose-400/30 rounded-3xl p-1.5 shadow-glow shadow-primary/5 overflow-hidden w-[210px] z-10">
-                <AnimatedCounter
-                  end={stats?.waiting || 0}
-                  label={t('home.stats.waitingTitle')}
-                  icon={<HeartPulse className="h-5 w-5" />}
-                  iconColorClass=" text-rose-400"
-                />
+             {/* Right Column: Pet Illustration & Compact Stats (Desktop Only) */}
+            <div className="hidden md:flex md:col-span-5 lg:col-span-5 flex-col items-center justify-center gap-2 lg:gap-0">
+              
+              {/* Desktop Pet Illustration */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.15 }}
+                className="flex justify-center relative w-full pt-2 pb-0 z-0"
+              >
+                <div className="relative w-full max-w-[340px] lg:max-w-[420px] xl:max-w-[460px] aspect-square flex items-center justify-center">
+                  {/* Circle backdrop */}
+                  <div className="absolute inset-0 rounded-full bg-[#ecf7f4]/80 shadow-[0_0_50px_rgba(236,247,244,0.6)] -z-10 scale-[1.05]" />
+                  
+                  {/* Decorative Dotted pattern */}
+                  <div className="absolute top-6 right-6 w-14 h-14 bg-[radial-gradient(#0f766e_1.5px,transparent_1.5px)] [background-size:8px_8px] opacity-25 -z-10" />
+
+                  {/* Hero image */}
+                  <img 
+                    src="/Hero.webp" 
+                    alt="Happy stray pet" 
+                    width="616"
+                    height="560"
+                    fetchpriority="high"
+                    className="object-contain w-full h-full max-h-[300px] lg:max-h-[380px] xl:max-h-[420px] drop-shadow-2xl animate-float"
+                  />
+
+                  {/* Subtle Background Heart Doodle (positioned out of the way) */}
+                  <HeartDoodle className="absolute top-[8%] left-[8%] w-5 h-5 text-primary/30" delay={0.5} />
+                </div>
+              </motion.div>
+
+              {/* Desktop Compact Horizontal Stats Card */}
+              <div className="w-full max-w-[340px] lg:max-w-[420px] xl:max-w-[460px] bg-[#0f5143] rounded-[20px] p-3 text-white shadow-md flex items-center justify-around gap-2 lg:gap-4 -mt-5 lg:-mt-7 relative z-10">
+                
+                {/* Stat 1: Animals Waiting */}
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-[#ccfbf1]/20 text-[#ccfbf1] flex items-center justify-center shrink-0 shadow-inner">
+                    <HeartPulse className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm lg:text-base font-black leading-none">
+                      {stats?.waiting || 0}
+                    </span>
+                    <span className="text-[8px] lg:text-[9px] text-[#a7f3d0] uppercase font-bold tracking-wider mt-0.5">
+                      {t('home.stats.waiting') || "Waiting"}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="h-6 border-r border-white/10" />
+
+                {/* Stat 2: Animals Adopted */}
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-[#fef3c7]/20 text-[#fef3c7] flex items-center justify-center shrink-0 shadow-inner">
+                    <PawPrint className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm lg:text-base font-black leading-none">
+                      {stats?.adopted || 0}
+                    </span>
+                    <span className="text-[8px] lg:text-[9px] text-[#fef3c7] uppercase font-bold tracking-wider mt-0.5">
+                      {t('home.stats.saved') || "Adopted"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="h-6 border-r border-white/10" />
+
+                {/* Stat 3: Active Users */}
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-[#e0f2fe]/20 text-[#e0f2fe] flex items-center justify-center shrink-0 shadow-inner">
+                    <Users className="w-4 h-4" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm lg:text-base font-black leading-none">
+                      320+
+                    </span>
+                    <span className="text-[8px] lg:text-[9px] text-[#e0f2fe] uppercase font-bold tracking-wider mt-0.5">
+                      Active
+                    </span>
+                  </div>
+                </div>
+
               </div>
-            </motion.div>
+
+            </div>
+
           </div>
         </div>
       </section>
