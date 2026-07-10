@@ -64,7 +64,7 @@ export default function Index() {
   return (
     <div>
       {/* Top Dashboard Section */}
-      <section className="relative overflow-hidden pt-4 pb-5 md:py-8 bg-[#fafdfc] md:bg-white border-b border-border/20">
+      <section className="relative overflow-hidden pt-1 pb-5 md:py-8 bg-[#fafdfc] md:bg-white border-b border-border/20">
         {/* Soft decorative background glow */}
         <div className="absolute top-0 right-0 w-[45%] h-[45%] rounded-full bg-[#f4faf7] filter blur-3xl -z-10 opacity-75" />
 
@@ -96,7 +96,7 @@ export default function Index() {
                     </Link>
                   </div>
 
-                  <h1 className="text-3xl xs:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-heading font-black leading-[1.12] text-slate-800 tracking-tight">
+                  <h1 className="text-4xl xs:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-heading font-black leading-[1.12] text-slate-800 tracking-tight">
                     {t('home.heroTitle')}
                     <br />
                     <span className="text-primary font-extrabold">{t('home.heroTitleGradient')}</span>
@@ -235,15 +235,15 @@ export default function Index() {
               </div>
             </div>
 
-            {/* Right Column: Pet Illustration & Compact Stats (Desktop Only) */}
-            <div className="hidden md:flex md:col-span-5 lg:col-span-5 flex-col items-center justify-center gap-4 lg:gap-6">
+             {/* Right Column: Pet Illustration & Compact Stats (Desktop Only) */}
+            <div className="hidden md:flex md:col-span-5 lg:col-span-5 flex-col items-center justify-center gap-2 lg:gap-0">
               
               {/* Desktop Pet Illustration */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.15 }}
-                className="flex justify-center relative w-full py-2"
+                className="flex justify-center relative w-full pt-2 pb-0 z-0"
               >
                 <div className="relative w-full max-w-[340px] lg:max-w-[420px] xl:max-w-[460px] aspect-square flex items-center justify-center">
                   {/* Circle backdrop */}
@@ -268,7 +268,7 @@ export default function Index() {
               </motion.div>
 
               {/* Desktop Compact Horizontal Stats Card */}
-              <div className="w-full max-w-[340px] lg:max-w-[420px] xl:max-w-[460px] bg-[#0f5143] rounded-[20px] p-3 text-white shadow-md flex items-center justify-around gap-2 lg:gap-4 mt-2">
+              <div className="w-full max-w-[340px] lg:max-w-[420px] xl:max-w-[460px] bg-[#0f5143] rounded-[20px] p-3 text-white shadow-md flex items-center justify-around gap-2 lg:gap-4 -mt-5 lg:-mt-7 relative z-10">
                 
                 {/* Stat 1: Animals Waiting */}
                 <div className="flex items-center gap-2.5">

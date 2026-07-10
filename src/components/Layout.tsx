@@ -23,7 +23,7 @@ export default function Layout() {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background">
       {/* Desktop top nav — hidden on mobile */}
-      <nav className="hidden md:block sticky top-3 z-50 px-4">
+      <nav className="hidden md:block sticky top-3 z-50 px-4 mb-10">
         <div className="container max-w-6xl flex items-center justify-between h-14 bg-white/70 backdrop-blur-xl border border-white/40 rounded-full px-6 shadow-[0_8px_32px_-4px_rgba(0,0,0,0.1)] ring-1 ring-black/5">
           <Link to="/" className="flex items-center gap-2 group transition-transform hover:scale-105 active:scale-95" aria-label="Home">
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-md group-hover:rotate-12 transition-all">
@@ -100,7 +100,7 @@ export default function Layout() {
       </nav>
 
       {/* Mobile top bar */}
-      <div className="md:hidden sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-border/30 px-5 py-3">
+      <div className="md:hidden sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-border/30 px-5 pt-3 pb-1">
         <div className="flex items-center justify-between h-11">
           <Link to="/" className="flex items-center active:scale-95 transition-transform" aria-label="Home">
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shadow-sm">
