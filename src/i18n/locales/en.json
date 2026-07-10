@@ -49,6 +49,9 @@
     "createAccount": "Create Account",
     "noAccount": "Don't have an account?",
     "alreadyHaveAccount": "Already have an account?",
+    "forgotPassword": "Forgot Password?",
+    "resetPasswordInstruction": "To reset your password, contact the admin via WhatsApp.",
+    "contactAdmin": "Contact Admin via WhatsApp",
     "errors": {
       "mobileRequired": "Mobile number is required",
       "mobileInvalid": "Enter a valid 9-digit mobile number (e.g. 76xxxxxxx)",

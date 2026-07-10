@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import '../welcome.css';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaPhone as Phone, FaLock as Lock, FaEye as Eye, FaEyeSlash as EyeSlash } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight, FaPhone as Phone, FaLock as Lock, FaEye as Eye, FaEyeSlash as EyeSlash, FaWhatsapp as Whatsapp } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -32,6 +32,7 @@ export default function LoginPage() {
   const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotInfo, setShowForgotInfo] = useState(false);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -200,6 +201,86 @@ export default function LoginPage() {
                 </button>
               </div>
             </div>
+
+            {/* Forgot Password Link & Section */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '-0.5rem', marginBottom: '0.75rem' }}>
+              <button
+                type="button"
+                onClick={() => setShowForgotInfo(!showForgotInfo)}
+                className="hover:underline transition-all text-xs font-semibold"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'hsl(var(--primary))',
+                  cursor: 'pointer',
+                  padding: '4px 0'
+                }}
+              >
+                {t('auth.forgotPassword')}
+              </button>
+            </div>
+
+            <AnimatePresence>
+              {showForgotInfo && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                  animate={{ opacity: 1, height: 'auto', marginTop: 8, marginBottom: 16 }}
+                  exit={{ opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ overflow: 'hidden' }}
+                >
+                  <div
+                    style={{
+                      padding: '1rem',
+                      borderRadius: '0.75rem',
+                      backgroundColor: 'hsl(var(--muted) / 0.5)',
+                      border: '1px solid hsl(var(--border))',
+                      fontSize: '0.825rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.75rem',
+                      alignItems: 'center',
+                      textAlign: 'center'
+                    }}
+                  >
+                    <p style={{ color: 'hsl(var(--foreground))', margin: 0, lineHeight: 1.4 }}>
+                      {t('auth.resetPasswordInstruction')}
+                    </p>
+                    <a
+                      href={`https://wa.me/94760589218?text=${encodeURIComponent(
+                        mobile.replace(/[^0-9]/g, '') 
+                          ? `Hi Admin, I forgot my password on PawConnect. Please help me reset it. My registered mobile number is: ${countryCode.replace('+', '')}${mobile.replace(/[^0-9]/g, '')}`
+                          : `Hi Admin, I forgot my password on PawConnect. Please help me reset it.`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="whatsapp-reset-btn"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        padding: '0.625rem 1.25rem',
+                        backgroundColor: '#25D366',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        fontSize: '0.8rem',
+                        borderRadius: '0.75rem',
+                        textDecoration: 'none',
+                        transition: 'transform 0.2s',
+                        border: 'none',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(37, 211, 102, 0.2)'
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.03)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                    >
+                      <Whatsapp style={{ fontSize: '1.1rem' }} />
+                      <span>{t('auth.contactAdmin')}</span>
+                    </a>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Submit Button */}
             <motion.button
