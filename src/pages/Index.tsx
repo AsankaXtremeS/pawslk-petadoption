@@ -64,70 +64,66 @@ export default function Index() {
   return (
     <div>
       {/* Top Dashboard Section */}
-      <section className="relative overflow-hidden pt-4 pb-5 md:py-8 bg-white border-b border-border/20">
+      <section className="relative overflow-hidden pt-4 pb-5 md:py-8 bg-[#fafdfc] md:bg-white border-b border-border/20">
         {/* Soft decorative background glow */}
         <div className="absolute top-0 right-0 w-[45%] h-[45%] rounded-full bg-[#f4faf7] filter blur-3xl -z-10 opacity-75" />
+
+        {/* Mobile-Only Background Decorative Paw Icon */}
+        <div className="md:hidden absolute top-[10%] left-[-30px] text-primary/[0.04] -z-10 -rotate-12 pointer-events-none">
+          <PawPrint className="w-36 h-36" />
+        </div>
 
         <div className="px-5 md:px-0 md:container">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-10 lg:gap-12 items-center">
             
             {/* Left Column: Hero Text & Quick Action Cards */}
-            <div className="col-span-1 md:col-span-7 lg:col-span-7 flex flex-col justify-center gap-6 lg:gap-8">
+            <div className="col-span-1 md:col-span-7 lg:col-span-7 flex flex-col justify-center gap-4 md:gap-6 lg:gap-8">
               
-              {/* Hero Text & Mobile Illustration Header */}
-              <div className="flex flex-row items-center justify-between gap-4 w-full md:block">
-                
+              {/* Hero Text */}
+              <div className="w-full">
                 {/* Text Block */}
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="flex-1 text-left flex flex-col items-start"
+                  className="text-center md:text-left flex flex-col items-center md:items-start"
                 >
                   {/* Be their hero badge */}
                   <div className="mb-2.5 md:mb-4">
                     <Link to="/animals" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors text-primary text-[10px] sm:text-xs font-bold">
                       <HeartPulse className="h-3 w-3 sm:h-3.5 sm:w-3.5 animate-pulse" />
-                      <span>Be their hero today.</span>
+                      <span>Paw Connect</span>
                     </Link>
                   </div>
 
-                  <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-heading font-black leading-[1.12] text-slate-800 tracking-tight">
+                  <h1 className="text-3xl xs:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-heading font-black leading-[1.12] text-slate-800 tracking-tight">
                     {t('home.heroTitle')}
                     <br />
                     <span className="text-primary font-extrabold">{t('home.heroTitleGradient')}</span>
                   </h1>
 
-                  <p className="text-[10px] xs:text-xs sm:text-sm md:text-lg text-slate-500 mt-2 md:mt-4 max-w-[190px] xs:max-w-[220px] sm:max-w-xs md:max-w-xl lg:max-w-2xl leading-relaxed">
+                  <p className="text-xs xs:text-sm md:text-lg text-slate-500 mt-1.5 md:mt-4 max-w-xs md:max-w-xl lg:max-w-2xl leading-relaxed">
                     {t('home.heroSubtitle')}
                   </p>
                 </motion.div>
-
-                {/* Mobile-Only Illustration */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5, delay: 0.10 }}
-                  className="md:hidden w-[95px] xs:w-[115px] aspect-square relative flex items-center justify-center shrink-0"
-                >
-                  {/* Backdrop circle */}
-                  <div className="absolute inset-0 rounded-full bg-[#ecf7f4] -z-10" />
-                  
-                  {/* Hero image */}
-                  <img 
-                    src="/Hero.webp" 
-                    alt="" 
-                    className="object-contain w-full h-full max-h-[80px] xs:max-h-[100px] drop-shadow-md animate-float"
-                  />
-
-                  {/* Simple hearts on mobile */}
-                  <HeartDoodle className="absolute top-1 left-2 w-3.5 h-3.5 text-primary/60" delay={0} />
-                  <HeartDoodle className="absolute top-0 right-2 w-3 h-3 text-primary/70" delay={1} />
-                </motion.div>
               </div>
 
-              {/* Quick Action Cards Grid (3 Columns) */}
-              <div className="grid grid-cols-3 gap-2 md:gap-4 lg:gap-6 mt-2 md:mt-0">
+              {/* Mobile-Only Illustration (Vertical Stack, Inline, Centered, Large, Overlapping buttons) */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.10 }}
+                className="md:hidden w-full max-w-[260px] xs:max-w-[320px] aspect-square flex items-center justify-center mx-auto -mb-10 xs:-mb-14 relative z-0 pointer-events-none"
+              >
+                <img 
+                  src="/Hero.webp" 
+                  alt="" 
+                  className="object-contain w-full h-full drop-shadow-md"
+                />
+              </motion.div>
+
+              {/* Quick Action Cards Grid (3 Columns on mobile and desktop) */}
+              <div className="grid grid-cols-3 gap-2 md:gap-4 lg:gap-6 mt-2 md:mt-0 relative z-10">
                 
                 {/* Card 1: Animals */}
                 <Link 
@@ -180,6 +176,62 @@ export default function Index() {
                   </div>
                 </Link>
 
+              </div>
+
+              {/* Mobile-Only Horizontal Stats Banner */}
+              <div className="md:hidden mt-2 w-full bg-[#0f5143] rounded-2xl p-3.5 text-white shadow-md">
+                <div className="flex items-center justify-between w-full gap-2">
+                  
+                  {/* Stat 1: Waiting */}
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-[#ccfbf1]/20 text-[#ccfbf1] flex items-center justify-center shrink-0">
+                      <HeartPulse className="w-4 h-4" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs sm:text-sm font-black leading-none">
+                        {stats?.waiting || 0}
+                      </span>
+                      <span className="text-[8px] text-slate-200 uppercase font-bold mt-0.5 leading-none">
+                        {t('home.stats.waiting') || "Waiting"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="h-6 border-r border-white/15" />
+
+                  {/* Stat 2: Adopted */}
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-[#fef3c7]/20 text-[#fef3c7] flex items-center justify-center shrink-0">
+                      <PawPrint className="w-4 h-4" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs sm:text-sm font-black leading-none">
+                        {stats?.adopted || 0}
+                      </span>
+                      <span className="text-[8px] text-slate-200 uppercase font-bold mt-0.5 leading-none">
+                        {t('home.stats.saved') || "Adopted"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="h-6 border-r border-white/15" />
+
+                  {/* Stat 3: Active Users */}
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-[#e0f2fe]/20 text-[#e0f2fe] flex items-center justify-center shrink-0">
+                      <Users className="w-4 h-4" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs sm:text-sm font-black leading-none">
+                        320+
+                      </span>
+                      <span className="text-[8px] text-slate-200 uppercase font-bold mt-0.5 leading-none">
+                        Active Users
+                      </span>
+                    </div>
+                  </div>
+
+                </div>
               </div>
             </div>
 
@@ -272,63 +324,6 @@ export default function Index() {
             </div>
 
           </div>
-
-          {/* Mobile-Only Horizontal Stats Banner */}
-          <div className="md:hidden mt-3 w-full bg-[#0f5143] rounded-2xl p-3.5 text-white shadow-md">
-            <div className="flex items-center justify-between w-full gap-2">
-              
-              {/* Stat 1: Waiting */}
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#ccfbf1]/20 text-[#ccfbf1] flex items-center justify-center shrink-0">
-                  <HeartPulse className="w-4 h-4" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-xs sm:text-sm font-black leading-none">
-                    {stats?.waiting || 0}
-                  </span>
-                  <span className="text-[8px] text-slate-200 uppercase font-bold mt-0.5 leading-none">
-                    {t('home.stats.waiting') || "Waiting"}
-                  </span>
-                </div>
-              </div>
-
-              <div className="h-6 border-r border-white/15" />
-
-              {/* Stat 2: Adopted */}
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#fef3c7]/20 text-[#fef3c7] flex items-center justify-center shrink-0">
-                  <PawPrint className="w-4 h-4" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-xs sm:text-sm font-black leading-none">
-                    {stats?.adopted || 0}
-                  </span>
-                  <span className="text-[8px] text-slate-200 uppercase font-bold mt-0.5 leading-none">
-                    {t('home.stats.saved') || "Adopted"}
-                  </span>
-                </div>
-              </div>
-
-              <div className="h-6 border-r border-white/15" />
-
-              {/* Stat 3: Active Users */}
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#e0f2fe]/20 text-[#e0f2fe] flex items-center justify-center shrink-0">
-                  <Users className="w-4 h-4" />
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-xs sm:text-sm font-black leading-none">
-                    320+
-                  </span>
-                  <span className="text-[8px] text-slate-200 uppercase font-bold mt-0.5 leading-none">
-                    Active Users
-                  </span>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
         </div>
       </section>
 
