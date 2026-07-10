@@ -223,7 +223,7 @@ export default function Index() {
                     </div>
                     <div className="flex flex-col">
                       <span className="text-xs sm:text-sm font-black leading-none">
-                        320+
+                        100+
                       </span>
                       <span className="text-[8px] text-slate-200 uppercase font-bold mt-0.5 leading-none">
                         Active Users
@@ -311,7 +311,7 @@ export default function Index() {
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm lg:text-base font-black leading-none">
-                      320+
+                      100+
                     </span>
                     <span className="text-[8px] lg:text-[9px] text-[#e0f2fe] uppercase font-bold tracking-wider mt-0.5">
                       Active
