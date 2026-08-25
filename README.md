@@ -1,168 +1,647 @@
 # PawConnect 🐾
 
-PawConnect (`pawconnect.lk`) is a modern, community-driven web application designed to connect stray, abandoned, and lost animals in Sri Lanka with loving forever homes. By offering a platform to report strays, post active lost alerts, and browse adoptable pets, PawConnect empowers local communities to make a life-saving impact.
+**PawConnect** is a modern, community-driven web application designed to connect stray, abandoned, and lost animals in Sri Lanka with loving forever homes.
+
+The platform allows communities to report stray animals, publish lost-pet alerts, discover animals available for adoption, and interact with other users.
+
+PawConnect follows a **Serverless / Backend-as-a-Service (BaaS) architecture** powered primarily by **Supabase**, with **Cloudinary** for media management and **OpenStreetMap Nominatim** for reverse geocoding.
+
+> **There is no standalone custom backend server such as Express.js, Node.js, Django, or Spring Boot.**
+> The React frontend communicates directly with managed backend services through the Supabase client, REST APIs, RPC functions, and WebSockets.
 
 ---
 
 ## ✨ Features
 
-- **🐾 Browse Animals**: View reported stray animals waiting for adoption, displayed in a responsive grid layout with custom cards.
-- **🚨 Lost & Found Alerts**: Active ticker carousel on the Home screen highlighting recent missing pets in the neighborhood.
-- **📱 Mobile-Tab-Bar Layout**: Sleek mobile navigation mimicking native application experiences, along with responsive layouts for desktops.
-- **🔍 Advanced Filtering**: Dynamic filters for species (Dogs, Cats), gender, and status, complete with collapsible mobile menus.
-- **📍 Report Strays & Lost Pets**: Authenticated users can publish detailed reports including visual media, contact details, and locations.
-- **💬 Real-Time Interactions**: Support for community likes, reactions, and comments directly on pet detail pages.
-- **🗣️ Multi-Lingual Support**: Complete localization in **English (`en`)**, **Sinhala (`si`)**, and **Tamil (`ta`)**.
-- **📊 Analytics Dashboard**: Visual analytics showing statistics on total rescues, monthly adoptions, and geographic distributions.
+* 🐾 **Browse Animals**
+  Browse reported stray and adoptable animals through responsive animal cards.
+
+* 🚨 **Lost & Found Alerts**
+  View recent missing-pet reports and alerts.
+
+* 📱 **Responsive Design**
+  Mobile-first interface with native-app-inspired navigation and desktop layouts.
+
+* 🔍 **Advanced Filtering**
+  Filter animals by species, gender, and status.
+
+* 📍 **Report Strays & Lost Pets**
+  Authenticated users can submit animal reports with images, contact details, and location information.
+
+* 💬 **Community Interactions**
+  Users can like, react to, and comment on animal reports.
+
+* ⚡ **Real-Time Updates**
+  Live updates for comments, reactions, notifications, and animal-related changes.
+
+* 🌐 **Multi-Language Support**
+  Full localization for:
+
+  * English (`en`)
+  * Sinhala (`si`)
+  * Tamil (`ta`)
+
+* 📊 **Analytics Dashboard**
+  Visual statistics for rescues, adoptions, and geographical distributions.
+
+* 🗺️ **Location Services**
+  GPS-based reporting with reverse geocoding through OpenStreetMap Nominatim.
 
 ---
 
-## 🏗️ System Architecture
+# 🏗️ System Architecture
+
+PawConnect uses a **Serverless / Backend-as-a-Service (BaaS)** architecture.
+
+Instead of maintaining a traditional backend application server, the frontend communicates directly with managed backend services.
 
 ```mermaid
-graph TD
-    %% Client Layer
-    subgraph Client ["Client-Side (React, Vite & Tailwind)"]
-        UI[React Components / Pages]
-        FM[Framer Motion Animations]
-        Router[React Router Dom]
+flowchart TD
+
+    Frontend["React Frontend<br/>Vite + TypeScript + React Query"]
+
+    subgraph Supabase["Supabase BaaS Backend"]
+
+        PostgREST["PostgREST<br/>HTTP API"]
+
+        PostgreSQL[("PostgreSQL<br/>+ Row Level Security")]
+
+        RPC["PostgreSQL RPC Functions"]
+
+        Realtime["Supabase Realtime<br/>WebSockets"]
     end
 
-    %% State Layer
-    subgraph State ["State & Localization"]
-        UC[UserContext - Auth & Session State]
-        RQ[React Query - Cache & Client Sync]
-        i18n[i18next - Multi-Language Provider]
-    end
+    Cloudinary["Cloudinary<br/>Image Storage & CDN"]
 
-    %% Services Layer
-    subgraph Services ["API & Services Layer"]
-        SClient[Supabase Client + Token Auth]
-        Cloudinary[Cloudinary API]
-        Compression[Image Compression Utility]
-    end
+    Nominatim["OpenStreetMap Nominatim<br/>Reverse Geocoding"]
 
-    %% Backend Layer
-    subgraph Backend ["Backend & Storage Layer"]
-        Postgres[(PostgreSQL DB)]
-        RLS[Row Level Security Policies]
-        Realtime[Realtime PubSub Channels]
-        CloudStorage[Cloudinary Media Assets]
-    end
+    Frontend -->|"HTTPS / REST"| PostgREST
+    Frontend -->|"RPC Requests"| RPC
 
-    %% Relationships
-    UI --> FM
-    UI --> Router
-    UI --> UC
-    UI --> RQ
-    UI --> i18n
-    
-    RQ --> SClient
-    SClient --> Postgres
-    Postgres --> RLS
-    Postgres --> Realtime
-    Realtime -->|WebSocket Push| RQ
-    
-    UI --> Compression
-    Compression --> Cloudinary
-    Cloudinary --> CloudStorage
+    PostgREST --> PostgreSQL
+    RPC --> PostgreSQL
+
+    PostgreSQL -->|"Database Changes"| Realtime
+    Realtime -->|"WebSocket Updates"| Frontend
+
+    Frontend -->|"Image Uploads"| Cloudinary
+    Frontend -->|"Reverse Geocoding"| Nominatim
 ```
 
 ---
 
-## 🛠️ Technology Stack
+# 🔌 Backend Architecture
 
-- **Frontend Core**: [React 18](https://reactjs.org/) + [Vite](https://vitejs.dev/) + [TypeScript](https://www.typescriptlang.org/)
-- **State Management & Caching**: [TanStack Query (React Query v5)](https://tanstack.com/query/v5)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) + Custom CSS transitions & glassmorphic utilities
-- **Database & Real-time**: [Supabase](https://supabase.com/) (PostgreSQL + Real-time Listeners)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/) (micro-interactions & slide transitions)
-- **Storage & CDN**: [Cloudinary](https://cloudinary.com/) (image hosting, dynamic cropping, and optimizations)
-- **Localization**: [i18next](https://www.i18next.com/)
+PawConnect's backend is provided through **Supabase BaaS**.
+
+Supabase provides the majority of backend functionality required by the application:
+
+* PostgreSQL database
+* PostgREST REST API
+* Row Level Security
+* PostgreSQL functions and RPC
+* Realtime WebSockets
+* Authentication infrastructure
+* Database triggers and policies
+
+There is **no separate Express.js or Node.js backend server**.
+
+The overall architecture is:
+
+```text
+React Frontend
+      │
+      ▼
+TanStack Query
+      │
+      ▼
+Supabase JavaScript Client
+      │
+      ├──────────────► PostgREST
+      │                    │
+      │                    ▼
+      │               PostgreSQL
+      │                    │
+      │                    ▼
+      │                   RLS
+      │
+      ├──────────────► PostgreSQL RPC
+      │
+      └──────────────► Supabase Realtime
+```
 
 ---
 
-## 📂 Project Directory Structure
+# 🌐 API & Data Access
 
+## PostgREST
+
+Supabase automatically exposes PostgreSQL data through **PostgREST**.
+
+The frontend uses the Supabase JavaScript client to perform operations such as:
+
+* Fetching animal reports
+* Creating animal reports
+* Updating animal information
+* Retrieving comments
+* Creating comments
+* Managing reactions
+* Retrieving notifications
+* Updating application data
+
+The request flow is:
+
+```text
+React Application
+       ↓
+Supabase JavaScript Client
+       ↓
+PostgREST HTTP API
+       ↓
+PostgreSQL
 ```
-Pawconnect/
-├── supabase/               # Backend database migrations and config
-│   └── migrations/         # SQL schemas, RLS policies, and database triggers
+
+This removes the need for a manually developed REST API server.
+
+---
+
+# 🔐 Authentication & Secure Operations
+
+Application-specific authentication and sensitive operations use **PostgreSQL stored functions** exposed through Supabase RPC.
+
+These functions handle operations such as:
+
+* User registration
+* User login
+* Password updates
+* Secure user-related operations
+
+The architecture is:
+
+```text
+React Frontend
+      ↓
+Supabase RPC
+      ↓
+PostgreSQL Function
+      ↓
+PostgreSQL Database
+```
+
+Sensitive database logic therefore remains inside the managed Supabase backend environment.
+
+---
+
+# 🛡️ Security & Authorization
+
+PawConnect uses **PostgreSQL Row Level Security (RLS)** as a core authorization mechanism.
+
+Rather than relying solely on frontend checks, access control is enforced directly at the database layer.
+
+### Security model
+
+1. **Row Level Security**
+
+   * PostgreSQL tables are protected by RLS policies.
+   * Policies determine which records users can access or modify.
+
+2. **Ownership Verification**
+
+   * User-owned resources are associated with their respective users.
+   * Database policies verify ownership before allowing protected operations.
+
+3. **Secure Request Context**
+
+   * Protected operations can provide user-specific security information through the request context.
+   * PostgreSQL policies use this information when evaluating authorization.
+
+4. **Database-Level Enforcement**
+
+   * Authorization is enforced inside PostgreSQL.
+   * Client-side restrictions alone are not relied upon for security.
+
+5. **Database Constraints**
+
+   * Appropriate database constraints help maintain data integrity and validation.
+
+### Authorization flow
+
+```text
+User
+ ↓
+React Frontend
+ ↓
+Supabase Client
+ ↓
+PostgREST / RPC
+ ↓
+PostgreSQL
+ ↓
+RLS Policy
+ ↓
+Authorized?
+ ├── Yes → Database Operation
+ └── No  → Request Rejected
+```
+
+---
+
+# ⚡ Real-Time Architecture
+
+PawConnect uses **Supabase Realtime** for live application updates.
+
+When relevant database changes occur, Supabase can broadcast those changes to connected clients through WebSockets.
+
+```text
+PostgreSQL Change
+       ↓
+Supabase Realtime
+       ↓
+WebSocket
+       ↓
+React Application
+       ↓
+TanStack Query
+       ↓
+Updated UI
+```
+
+Realtime functionality is used for features such as:
+
+* Comments
+* Reactions
+* Notifications
+* Animal report updates
+* Community activity
+
+---
+
+# 🖼️ Media Architecture
+
+Animal images are handled through **Cloudinary** rather than being stored directly inside PostgreSQL.
+
+Images are compressed and optimized on the client before being uploaded to Cloudinary.
+
+```text
+User
+ ↓
+React Application
+ ↓
+Client-Side Image Compression
+ ↓
+Cloudinary
+ ↓
+Optimized Image
+ ↓
+CDN
+ ↓
+PawConnect UI
+```
+
+Cloudinary provides:
+
+* Image storage
+* Image optimization
+* Dynamic transformations
+* Responsive delivery
+* CDN distribution
+
+The database stores the relevant image references rather than the image files themselves.
+
+---
+
+# 🗺️ Location Services
+
+PawConnect uses **OpenStreetMap Nominatim** for reverse geocoding.
+
+When a user reports an animal using GPS coordinates, the coordinates can be converted into a human-readable location.
+
+```text
+GPS Coordinates
+       ↓
+React Application
+       ↓
+OpenStreetMap Nominatim
+       ↓
+Human-Readable Location
+       ↓
+Animal Report
+```
+
+---
+
+# 📦 State Management
+
+PawConnect uses **TanStack Query** for server-state management.
+
+It handles:
+
+* Data fetching
+* Request caching
+* Cache invalidation
+* Mutations
+* Loading states
+* Error handling
+* Backend synchronization
+* Realtime data updates
+
+Global client-side state, such as user information and preferences, is handled through React Context.
+
+---
+
+# 🌐 Internationalization
+
+PawConnect currently supports three languages:
+
+| Language | Code |
+| -------- | ---- |
+| English  | `en` |
+| Sinhala  | `si` |
+| Tamil    | `ta` |
+
+Internationalization is implemented using **i18next**, allowing the application interface to dynamically switch between supported languages.
+
+---
+
+# 🛠️ Technology Stack
+
+## Frontend
+
+| Technology        | Purpose                       |
+| ----------------- | ----------------------------- |
+| **React 18**      | User interface                |
+| **Vite**          | Development and build tooling |
+| **TypeScript**    | Static typing                 |
+| **React Router**  | Client-side routing           |
+| **Tailwind CSS**  | Styling                       |
+| **Framer Motion** | Animations and interactions   |
+
+## Backend / BaaS
+
+| Technology             | Purpose                                |
+| ---------------------- | -------------------------------------- |
+| **Supabase**           | Backend-as-a-Service                   |
+| **PostgreSQL**         | Relational database                    |
+| **PostgREST**          | REST API                               |
+| **Supabase Realtime**  | WebSocket-based realtime communication |
+| **PostgreSQL RPC**     | Database-side business logic           |
+| **Row Level Security** | Database authorization                 |
+
+## State & Localization
+
+| Technology            | Purpose                  |
+| --------------------- | ------------------------ |
+| **TanStack Query v5** | Server-state management  |
+| **React Context**     | Global client-side state |
+| **i18next**           | Internationalization     |
+
+## External Services
+
+| Service                     | Purpose                              |
+| --------------------------- | ------------------------------------ |
+| **Cloudinary**              | Image storage, optimization, and CDN |
+| **OpenStreetMap Nominatim** | Reverse geocoding                    |
+
+---
+
+# 📂 Project Structure
+
+```text
+PawConnect/
+│
+├── supabase/
+│   └── migrations/
+│       └── Database schema,
+│           RLS policies,
+│           functions, and triggers
+│
 ├── src/
-│   ├── components/         # Reusable UI components
-│   │   ├── ui/             # Radix & Shadcn primitives
-│   │   ├── Layout.tsx      # Main layout grid, top/bottom navigation, and transition anchors
-│   │   └── ...             # Cards, empty states, and language components
-│   ├── contexts/           # Global application states
-│   │   └── UserContext.tsx # Authentication, user registration, and preferences
-│   ├── hooks/              # Custom React Query hooks
-│   │   ├── useAnimals.ts   # CRUD hooks, realtime updates, and stat counters
-│   │   ├── useComments.ts  # Comment updates
+│   ├── components/
+│   │   ├── ui/
+│   │   └── Layout.tsx
+│   │
+│   ├── contexts/
+│   │   └── UserContext.tsx
+│   │
+│   ├── hooks/
+│   │   ├── useAnimals.ts
+│   │   ├── useComments.ts
 │   │   ├── useNotifications.ts
 │   │   └── useReactions.ts
-│   ├── i18n/               # Multi-language translations and config files
-│   ├── integrations/       # Supabase type overrides and initialization clients
-│   ├── pages/              # Primary route views (Home, Browse, Dashboard, Details, etc.)
-│   └── utils/              # Client-side media compression and networking helpers
+│   │
+│   ├── i18n/
+│   │
+│   ├── integrations/
+│   │
+│   ├── pages/
+│   │
+│   └── utils/
+│
+├── public/
+│
+├── package.json
+└── README.md
 ```
 
 ---
 
-## 🚀 Getting Started
+# 🚀 Getting Started
 
-Follow these steps to run the PawConnect platform locally.
+## Prerequisites
 
-### Prerequisites
-- Node.js (v18 or higher recommended)
-- A Supabase project and account
-- A Cloudinary account for media upload hosting
+Make sure the following are installed or available:
 
-### 1. Clone the Repository
+* Node.js 18+
+* Git
+* Supabase account and project
+* Cloudinary account
+
+---
+
+## 1. Clone the Repository
+
 ```bash
 git clone https://github.com/yourusername/pawconnect.git
 cd pawconnect
 ```
 
-### 2. Install Dependencies
+---
+
+## 2. Install Dependencies
+
 ```bash
 npm install
 ```
 
-### 3. Configure Environment Variables
-Create a `.env` file in the root directory:
-```env
-VITE_SUPABASE_URL=https://your-supabase-project-id.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=your-supabase-anon-key
-VITE_CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
-VITE_CLOUDINARY_UPLOAD_PRESET=your-unsigned-preset-name
+---
+
+## 3. Configure Environment Variables
+
+Create a `.env` file in the project root.
+
+Required configuration includes:
+
+```text
+Supabase Project URL
+Supabase Publishable Key
+Cloudinary Cloud Name
+Cloudinary Upload Preset
 ```
 
-### 4. Database Setup
-Apply migrations to your Supabase PostgreSQL instance. You can run the `.sql` scripts located in `supabase/migrations/` sequentially in your Supabase SQL Editor. 
-*Note: Make sure `20260405170000_security_hardening.sql` is run to enable Row Level Security.*
+Do not commit private credentials or secrets to the repository.
 
-### 5. Run the Local Development Server
+---
+
+## 4. Configure the Database
+
+The database schema, functions, triggers, and RLS policies are maintained under:
+
+```text
+supabase/migrations/
+```
+
+Apply the migrations to the Supabase project in the required order.
+
+Make sure the security-hardening migration is applied so that the required **Row Level Security policies** are enabled.
+
+---
+
+## 5. Run the Development Server
+
 ```bash
 npm run dev
 ```
-Open [http://localhost:8080](http://localhost:8080) to access the application.
+
+The Vite development server will display the local development URL in the terminal.
 
 ---
 
-## 🔒 Security & Data Architecture
+# ☁️ Deployment Architecture
 
-PawConnect features an ownership verification model built directly on PostgreSQL **Row Level Security (RLS)**:
-- **Session Tokens**: When users register, a secure server function provides a private `user_token`. This token is stored in the browser's local cache.
-- **Request Headers**: When performing updates, edits, or marking a pet as adopted/reunited, requests are routed through a custom client header (`x-user-token`).
-- **RLS Policy Definers**: PostgreSQL policies examine this header value and contrast it with user keys inside the database to determine whether updates/deletions are permitted.
-- **Constraints**: Constraints on fields like contact numbers, text length, and formatting are strictly validated at the database engine level to ensure consistency.
+PawConnect does not require a dedicated backend server for deployment.
+
+A production deployment can use a static frontend hosting provider together with Supabase and Cloudinary.
+
+```text
+                         ┌─────────────────┐
+                         │   Web Browser   │
+                         └────────┬────────┘
+                                  │
+                                  ▼
+                         ┌─────────────────┐
+                         │ React Frontend  │
+                         │ Vite Application│
+                         └────────┬────────┘
+                                  │
+              ┌───────────────────┼───────────────────┐
+              │                   │                   │
+              ▼                   ▼                   ▼
+       ┌─────────────┐     ┌─────────────┐     ┌──────────────┐
+       │  Supabase   │     │ Cloudinary  │     │ OpenStreetMap│
+       │     BaaS    │     │    Media    │     │  Nominatim   │
+       └──────┬──────┘     └─────────────┘     └──────────────┘
+              │
+              ▼
+       ┌─────────────┐
+       │ PostgreSQL  │
+       │    + RLS    │
+       └─────────────┘
+```
+
+### Deployment Components
+
+* **Frontend:** Static React/Vite application
+* **Backend:** Supabase BaaS
+* **Database:** Supabase PostgreSQL
+* **Realtime:** Supabase Realtime
+* **Media:** Cloudinary
+* **Geocoding:** OpenStreetMap Nominatim
+
+This architecture significantly reduces infrastructure and backend maintenance requirements.
 
 ---
 
-## 📝 License
+# 🧩 Why BaaS?
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Using a Backend-as-a-Service architecture allows PawConnect to focus primarily on the application experience while delegating infrastructure management to managed services.
+
+### Advantages
+
+* No custom backend server to maintain
+* No API server infrastructure to manage
+* Managed PostgreSQL database
+* Automatically generated REST API
+* Database-level authorization
+* Built-in realtime capabilities
+* Managed authentication infrastructure
+* Easy frontend integration
+* Independent media infrastructure
+* Reduced operational complexity
+
+### Architectural Trade-Offs
+
+The BaaS approach also means that application logic is distributed across several layers:
+
+```text
+Frontend
+   +
+Supabase Services
+   +
+PostgreSQL Functions
+   +
+RLS Policies
+   +
+Cloudinary
+   +
+External APIs
+```
+
+This makes database design, authorization policies, and service boundaries particularly important.
 
 ---
 
-*Every life deserves a home. Thank you for supporting PawConnect!* ❤️
+# 📈 Scalability
+
+The serverless architecture allows individual components to scale independently.
+
+For example:
+
+* **Frontend** can be served through a CDN.
+* **Supabase** manages database and backend infrastructure.
+* **PostgreSQL** handles structured application data.
+* **Supabase Realtime** manages live connections.
+* **Cloudinary** handles media processing and delivery.
+* **OpenStreetMap Nominatim** provides geocoding functionality.
+
+This avoids maintaining a continuously running custom application server for the core platform.
+
+---
+
+# 🔒 Security Principles
+
+PawConnect follows several security principles:
+
+* Database-level Row Level Security
+* Ownership-based authorization
+* Secure PostgreSQL functions for sensitive operations
+* Database constraints for data integrity
+* Environment variables for service configuration
+* No private service credentials exposed in the frontend
+* Client-side validation combined with database-level enforcement
+* Controlled access to user-owned resources
+
+---
+
+# 📜 License
+
+Distributed under the **MIT License**.
+
+See [`LICENSE`](LICENSE) for more information.
+
+---
+
+# ❤️ Project Vision
+
+PawConnect aims to make animal rescue and adoption more accessible by connecting people, communities, and animals through a single digital platform.
+
+> **Every life deserves a home.**
