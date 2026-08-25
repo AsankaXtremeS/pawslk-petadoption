@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaCamera as Camera, FaCat as Cat, FaDog as Dog, FaMapMarkerAlt as MapPin, FaMars as Mars, FaPaw as PawPrint, FaVenus as Venus, FaCrosshairs as Crosshairs, FaTimes as X, FaPlus as Plus } from 'react-icons/fa';
 import { parsePhotoUrls } from '@/utils/imageCompression';
 import { useTranslation } from 'react-i18next';
+import CityAutocomplete from '@/components/CityAutocomplete';
 
 const MAX_PHOTOS = 3;
 
@@ -516,19 +517,15 @@ export default function ReportStray() {
               <MapPin className="w-4 h-4 text-primary" />
               {form.post_type === 'lost' ? 'Last Seen Location' : t('report.location')}
             </label>
-            <div className="relative group">
-              <input
-                id="report-location"
-                placeholder={form.post_type === 'lost' ? 'e.g. Mattegoda, near petrol station' : t('report.locationPlaceholder')}
-                value={form.location_name}
-                onChange={e => setForm(f => ({ ...f, location_name: e.target.value }))}
-                className="w-full pl-11 pr-4 py-3 bg-muted/30 border-2 border-transparent focus:border-primary/30 rounded-2xl outline-none transition-all duration-300 group-hover:bg-muted/50"
-                required
-              />
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors">
-                <MapPin className="w-5 h-5" />
-              </div>
-            </div>
+            <CityAutocomplete
+              id="report-location"
+              placeholder={form.post_type === 'lost' ? 'e.g. Mattegoda, near petrol station' : t('report.locationPlaceholder')}
+              value={form.location_name}
+              onChange={val => setForm(f => ({ ...f, location_name: val }))}
+              icon="pin"
+              required
+              inputClassName="w-full pl-11 pr-10 py-3 bg-muted/30 border-2 border-transparent focus:border-primary/30 rounded-2xl outline-none transition-all duration-300 hover:bg-muted/50 focus:bg-card text-sm text-foreground placeholder:text-muted-foreground"
+            />
             <button
               type="button"
               onClick={handleFetchLocation}

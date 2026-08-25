@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useAnimals } from '@/hooks/useAnimals';
 import AnimalCard from '@/components/AnimalCard';
 import EmptyState from '@/components/EmptyState';
+import CityAutocomplete from '@/components/CityAutocomplete';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaCat as Cat,
@@ -142,23 +143,15 @@ export default function BrowseAnimals() {
 
       {/* ===== SEARCH + FILTER CONTROLS ===== */}
       <div className="browse-controls">
-        {/* Search bar */}
+        {/* Search bar with City Auto-suggestions */}
         <div className="browse-search">
-          <Search className="browse-search-icon" />
-          <input
-            placeholder={t('browse.searchPlaceholder')}
+          <CityAutocomplete
             value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="browse-search-input"
+            onChange={setSearch}
+            placeholder={t('browse.searchPlaceholder')}
+            icon="search"
+            inputClassName="browse-search-input"
           />
-          {search && (
-            <button
-              onClick={() => setSearch('')}
-              className="browse-search-clear"
-            >
-              <X className="w-3 h-3" />
-            </button>
-          )}
         </div>
 
         {/* Mobile: Filter toggle button */}
