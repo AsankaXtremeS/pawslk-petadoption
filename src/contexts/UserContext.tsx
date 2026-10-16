@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import { supabase, createSecureClient } from '@/utils/supabase';
 
 export interface UserData {
@@ -53,6 +53,23 @@ export function UserProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
+  // On app load, make sure the stored token is still valid (it is rotated on
+  // password change). Only log out when the server confirms no match — never
+  // on network errors.
+  const storedToken = user?.userToken;
+  useEffect(() => {
+    if (!storedToken) return;
+    let cancelled = false;
+    createSecureClient(storedToken)
+      .rpc('get_my_profile')
+      .then(({ data, error }) => {
+        if (!cancelled && !error && Array.isArray(data) && data.length === 0) {
+          clearUser();
+        }
+      });
+    return () => { cancelled = true; };
+  }, [storedToken, clearUser]);
+
   /**
    * Register a new user or return existing user if mobile already exists.
    * Uses the secure_register database function to prevent user_token leakage.
@@ -96,7 +113,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
       .rpc('secure_login', { p_mobile: cleanMobile, p_password: password });
 
     if (error) throw new Error(error.message || 'Failed to look up user');
-    if (!result || result.length === 0) throw new Error('No account found with this number');
+    // A wrong password returns no rows (so the server can count failed attempts)
+    if (!result || result.length === 0) throw new Error('Invalid password');
 
     const row = result[0];
     const userData: UserData = {
@@ -175,7 +193,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
     const secureClient = createSecureClient(user.userToken);
 
-    const { error } = await secureClient
+    const { data: newToken, error } = await secureClient
       .rpc('update_password', {
         p_user_id: user.id,
         p_current_password: currentPassword,
@@ -183,7 +201,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
       });
 
     if (error) throw new Error(error.message || 'Failed to update password');
-  }, [user]);
+
+    // The server rotates user_token on password change — keep the new one
+    if (typeof newToken === 'string' && newToken) {
+      setUser({ ...user, userToken: newToken });
+    }
+  }, [user, setUser]);
 
   return (
     <UserContext.Provider value={{

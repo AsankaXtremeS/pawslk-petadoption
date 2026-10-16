@@ -6,13 +6,14 @@ import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { safeRedirect } from '@/lib/utils';
 import { CONTACT, COUNTRY_CODES } from '@/lib/constants';
 
 export default function LoginPage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get('redirect') || '/';
+  const redirectTo = safeRedirect(searchParams.get('redirect'));
   
   const { loginByMobile, isRegistered } = useUser();
 
@@ -26,7 +27,7 @@ export default function LoginPage() {
 
   // If already logged in, redirect immediately
   if (isRegistered) {
-    navigate(decodeURIComponent(redirectTo), { replace: true });
+    navigate(redirectTo, { replace: true });
     return null;
   }
 
@@ -58,7 +59,7 @@ export default function LoginPage() {
     try {
       await loginByMobile(fullMobile, password);
       toast.success('Welcome back! 🐾');
-      navigate(decodeURIComponent(redirectTo), { replace: true });
+      navigate(redirectTo, { replace: true });
     } catch (err) {
       const msg = (err as Error).message || t('auth.errors.loginFailed');
       setError(msg);

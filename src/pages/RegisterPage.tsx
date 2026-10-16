@@ -6,6 +6,7 @@ import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { useTranslation, Trans } from 'react-i18next';
+import { safeRedirect } from '@/lib/utils';
 import { COUNTRY_CODES, LANGUAGES, type Language } from '@/lib/constants';
 
 const slideVariants = {
@@ -27,7 +28,7 @@ export default function RegisterPage() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get('redirect') || '/';
+  const redirectTo = safeRedirect(searchParams.get('redirect'));
   const { registerUser, isRegistered } = useUser();
 
   const [step, setStep] = useState<1 | 2>(1);
@@ -52,7 +53,7 @@ export default function RegisterPage() {
 
   // If already logged in, redirect immediately
   if (isRegistered) {
-    navigate(decodeURIComponent(redirectTo), { replace: true });
+    navigate(redirectTo, { replace: true });
     return null;
   }
 
@@ -126,7 +127,7 @@ export default function RegisterPage() {
         language: i18n.language as Language,
       });
       toast.success('Welcome to PawConnect! 🐾');
-      navigate(decodeURIComponent(redirectTo), { replace: true });
+      navigate(redirectTo, { replace: true });
     } catch (err) {
       toast.error((err as Error).message || 'Registration failed. Please try again.');
     } finally {

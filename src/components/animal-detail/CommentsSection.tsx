@@ -133,6 +133,7 @@ export default function CommentsSection({ animalId, commentCount }: CommentsSect
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
           placeholder={t('detail.addCommentPlaceholder')}
+          maxLength={1000}
           className="w-full min-h-[90px] bg-muted/20 dark:bg-muted/5 border border-border/30 dark:border-border/10 rounded-2xl p-4 text-xs md:text-sm resize-none focus:ring-2 focus:ring-primary/20 transition-all outline-none pb-12 text-foreground"
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
