@@ -4,6 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pi
 import { motion } from 'framer-motion';
 import { FaCat as Cat, FaCheckCircle as CheckCircle2, FaClock as Clock3, FaDog as Dog, FaMapMarkerAlt as MapPin, FaPaw as PawPrint, FaRegStar as Sparkles, FaChartLine as TrendingUp } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import { getDateLocale } from '@/lib/utils';
 
 const COLORS = ['hsl(262, 52%, 56%)', 'hsl(24, 90%, 58%)'];
 
@@ -162,7 +163,7 @@ export default function Dashboard() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{a.location_name}</p>
-                    <p className="text-xs text-muted-foreground">{a.adopted_at ? new Date(a.adopted_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric' }) : ''}</p>
+                    <p className="text-xs text-muted-foreground">{a.adopted_at ? new Date(a.adopted_at).toLocaleDateString(getDateLocale(i18n.language), { month: 'short', day: 'numeric' }) : ''}</p>
                   </div>
                   <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
                 </div>

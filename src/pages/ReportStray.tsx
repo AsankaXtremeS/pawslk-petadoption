@@ -257,6 +257,7 @@ export default function ReportStray() {
           user_id: user?.id,
           contact_number: user?.mobile || undefined,
           post_type: form.post_type,
+          userToken: user?.userToken || '',
         });
         toast.success(t('report.success.reported'));
         navigate('/animals');

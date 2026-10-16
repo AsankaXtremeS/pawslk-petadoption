@@ -9,6 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useState } from 'react';
+import { getDateLocale } from '@/lib/utils';
 
 export default function NotificationDropdown() {
   const { t, i18n } = useTranslation();
@@ -100,7 +101,7 @@ export default function NotificationDropdown() {
                           </span>
                         </p>
                         <p className="text-[10px] text-muted-foreground mt-1">
-                          {new Date(notif.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                          {new Date(notif.created_at).toLocaleDateString(getDateLocale(i18n.language), { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
                       {!notif.is_read && (

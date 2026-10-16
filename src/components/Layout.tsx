@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 import { FaPhoneAlt as Phone, FaEnvelope as Email, FaMapMarkerAlt as MapMarker } from 'react-icons/fa';
 import NotificationDropdown from './NotificationDropdown';
+import { CONTACT } from '@/lib/constants';
 
 const navItems = [
   { to: '/', labelKey: 'nav.home', Icon: Home },
@@ -186,19 +187,19 @@ export default function Layout() {
                   <div className="w-7 h-7 rounded-lg bg-primary/5 flex items-center justify-center text-primary shrink-0">
                     <MapMarker className="h-3.5 w-3.5" />
                   </div>
-                  <span>Galle, Sri Lanka</span>
+                  <span>{CONTACT.location}</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="w-7 h-7 rounded-lg bg-primary/5 flex items-center justify-center text-primary shrink-0">
                     <Email className="h-3.5 w-3.5" />
                   </div>
-                  <span className="break-all">asankasampath200228@gmail.com</span>
+                  <span className="break-all">{CONTACT.email}</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <div className="w-7 h-7 rounded-lg bg-primary/5 flex items-center justify-center text-primary shrink-0">
                     <Phone className="h-3.5 w-3.5" />
                   </div>
-                  <span>0760589218</span>
+                  <span>{CONTACT.phone}</span>
                 </li>
               </ul>
             </div>

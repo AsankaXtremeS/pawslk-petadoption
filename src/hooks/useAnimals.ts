@@ -176,7 +176,7 @@ export function useAnimal(id: string) {
 export function useReportAnimal() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (animal: {
+    mutationFn: async ({ userToken, ...animal }: {
       type: string;
       gender: string;
       photo_url?: string;
@@ -186,8 +186,11 @@ export function useReportAnimal() {
       user_id?: string;
       contact_number?: string;
       post_type?: string;
+      userToken: string;
     }) => {
-      const { data, error } = await supabase.from('animals').insert([animal]).select().single();
+      // Insert with the user_token header — RLS only allows posting as yourself
+      const secureClient = createSecureClient(userToken);
+      const { data, error } = await secureClient.from('animals').insert([animal]).select().single();
       if (error) throw error;
       return data;
     },

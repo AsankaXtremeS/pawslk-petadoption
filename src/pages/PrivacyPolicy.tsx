@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { FaShieldAlt as Shield, FaUserCircle as User, FaCamera as Camera, FaLock as Lock } from 'react-icons/fa';
+import { CONTACT } from '@/lib/constants';
 
 export default function PrivacyPolicy() {
   const sections = [
@@ -87,8 +88,8 @@ export default function PrivacyPolicy() {
             </div>
             <div className="text-sm font-bold text-foreground text-center md:text-right">
               <p>Asanka Sampath</p>
-              <p className="text-primary">asankasampath200228@gmail.com</p>
-              <p className="text-muted-foreground font-normal">Galle, Sri Lanka</p>
+              <p className="text-primary">{CONTACT.email}</p>
+              <p className="text-muted-foreground font-normal">{CONTACT.location}</p>
             </div>
           </section>
         </div>
