@@ -17,8 +17,11 @@ import {
   FaSlidersH as SlidersH,
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import { usePageMeta } from '@/hooks/usePageMeta';
+import { PAGE_META } from '@/lib/seo';
 
 export default function BrowseAnimals() {
+  usePageMeta(PAGE_META['/animals']);
   const { t } = useTranslation();
   const [postType, setPostType] = useState('adopt'); // 'adopt' | 'lost'
   const [type, setType] = useState('all');

@@ -2,8 +2,11 @@ import { motion } from 'framer-motion';
 import { FaPhoneAlt as Phone, FaEnvelope as Envelope, FaMapMarkerAlt as MapMarker, FaPaw as PawPrint } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { CONTACT } from '@/lib/constants';
+import { usePageMeta } from '@/hooks/usePageMeta';
+import { PAGE_META } from '@/lib/seo';
 
 export default function ContactUs() {
+  usePageMeta(PAGE_META['/contact']);
   const contactInfo = [
     {
       icon: <Phone className="text-xl" />,

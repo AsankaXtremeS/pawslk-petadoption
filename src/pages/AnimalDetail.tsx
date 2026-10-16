@@ -27,6 +27,37 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { usePageMeta } from '@/hooks/usePageMeta';
+import { DEFAULT_META, truncate, type PageMeta } from '@/lib/seo';
+
+// SEO meta is always English to match <html lang="en"> and the static tags in index.html.
+function getAnimalMeta(
+  animal: { type: string; post_type?: string; is_adopted: boolean; location_name: string; description: string | null } | null | undefined,
+  id: string,
+  image: string | undefined,
+): PageMeta {
+  const path = `/animals/${id}`;
+  if (!animal) {
+    return { title: 'Animal Not Found | PawConnect', description: DEFAULT_META.description, path, noindex: true };
+  }
+  const species = animal.type === 'dog' ? 'Dog' : 'Cat';
+  const lost = animal.post_type === 'lost';
+  const heading = lost
+    ? `${animal.is_adopted ? 'Reunited' : 'Lost'} ${species} in ${animal.location_name}`
+    : animal.is_adopted
+      ? `${species} Adopted in ${animal.location_name}`
+      : `${species} for Adoption in ${animal.location_name}`;
+  const fallback = lost
+    ? `Help find this lost ${species.toLowerCase()} last seen in ${animal.location_name}, Sri Lanka. Share or contact the owner on PawConnect.`
+    : `Meet this ${species.toLowerCase()} looking for a loving home in ${animal.location_name}, Sri Lanka. Adopt for free on PawConnect.`;
+  return {
+    title: `${heading} | PawConnect`,
+    description: truncate(animal.description?.trim() || fallback),
+    path,
+    image,
+    type: 'article',
+  };
+}
 
 export default function AnimalDetail() {
   const { t, i18n } = useTranslation();
@@ -47,6 +78,8 @@ export default function AnimalDetail() {
 
   // Parse multiple photo URLs
   const photoUrls = animal ? parsePhotoUrls(animal.photo_url) : [];
+
+  usePageMeta(isLoading ? null : getAnimalMeta(animal, id!, photoUrls[0]));
 
   const handleAdopt = async (targetAdopted: boolean = true) => {
     if (!user) {

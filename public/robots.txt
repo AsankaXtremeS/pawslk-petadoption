@@ -1,26 +1,94 @@
-# PawConnect Robots.txt
-# https://pawconnect.lk
+# robots.txt for https://pawconnect.lk
+# Search engines and social link previews are allowed.
+# AI training crawlers, AI assistants and AI agents are NOT permitted.
 
-User-agent: Googlebot
-Allow: /
-Disallow: /profile
-Disallow: /notifications
+# ------------------------------------------------------------
+# AI crawlers, AI assistants & AI agents: blocked site-wide
+# ------------------------------------------------------------
 
-User-agent: Bingbot
-Allow: /
-Disallow: /profile
-Disallow: /notifications
+# OpenAI
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
+User-agent: Operator
+# Anthropic
+User-agent: ClaudeBot
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: Claude-Web
+User-agent: anthropic-ai
+# Google AI (Gemini / Vertex training; Google Search NOT affected)
+User-agent: Google-Extended
+User-agent: Google-CloudVertexBot
+User-agent: GoogleAgent-Mariner
+# Apple AI (Apple Intelligence training; Applebot search NOT affected)
+User-agent: Applebot-Extended
+# Meta
+User-agent: Meta-ExternalAgent
+User-agent: Meta-ExternalFetcher
+User-agent: FacebookBot
+# Perplexity
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+# Microsoft / Amazon
+User-agent: Amazonbot
+User-agent: NovaAct
+# ByteDance / other LLM vendors
+User-agent: Bytespider
+User-agent: DeepSeekBot
+User-agent: MistralAI-User
+User-agent: cohere-ai
+User-agent: cohere-training-data-crawler
+User-agent: YouBot
+User-agent: PhindBot
+User-agent: DuckAssistBot
+User-agent: AI2Bot
+User-agent: Ai2Bot-Dolma
+User-agent: PanguBot
+User-agent: Kangaroo Bot
+User-agent: TikTokSpider
+# Dataset builders & scrapers
+User-agent: CCBot
+User-agent: Diffbot
+User-agent: Omgilibot
+User-agent: omgili
+User-agent: Webzio-Extended
+User-agent: ImagesiftBot
+User-agent: Timpibot
+User-agent: VelenPublicWebCrawler
+User-agent: ICC-Crawler
+User-agent: img2dataset
+User-agent: Scrapy
+User-agent: FirecrawlAgent
+User-agent: Brightbot
+# SEO tool crawlers (heavy crawl load, no search traffic value)
+User-agent: AhrefsBot
+User-agent: SemrushBot
+User-agent: MJ12bot
+User-agent: DotBot
+User-agent: PetalBot
+User-agent: DataForSeoBot
+User-agent: BLEXBot
+Disallow: /
 
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
+# ------------------------------------------------------------
+# Search engines, social previews & everyone else
+# ------------------------------------------------------------
 User-agent: *
 Allow: /
+# Private / authenticated areas (redirect to login for crawlers)
 Disallow: /profile
 Disallow: /notifications
+Disallow: /report
+# Auth pages: thin content, no search value
+Disallow: /login
+Disallow: /register
+# Avoid crawling infinite filter/search URL variations
+Disallow: /animals?*
+Disallow: /*?*utm_
+Disallow: /*?*fbclid=
+Disallow: /*?*gclid=
+# Note: /assets/ (JS/CSS) is intentionally NOT blocked; Google needs it to render the SPA
 
-# Sitemap
 Sitemap: https://pawconnect.lk/sitemap.xml
+Sitemap: https://pawconnect.lk/sitemap-animals.xml

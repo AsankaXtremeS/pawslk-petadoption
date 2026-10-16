@@ -7,8 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { getDateLocale } from '@/lib/utils';
 
 const COLORS = ['hsl(262, 52%, 56%)', 'hsl(24, 90%, 58%)'];
+import { usePageMeta } from '@/hooks/usePageMeta';
+import { PAGE_META } from '@/lib/seo';
 
 export default function Dashboard() {
+  usePageMeta(PAGE_META['/dashboard']);
   const { t, i18n } = useTranslation();
   const { data: stats, isLoading } = useAnimalStats();
 
