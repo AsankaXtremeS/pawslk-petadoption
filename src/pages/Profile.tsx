@@ -1,265 +1,34 @@
-import { memo, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   FaPaw as PawPrint,
-  FaPhone as Phone,
-  FaGlobeAsia as Globe,
   FaList as ListIcon,
-  FaTrash as Trash,
-  FaEdit as Edit,
   FaSignOutAlt as LogOut,
-  FaExclamationTriangle as AlertTriangle,
-  FaCheckCircle as CheckCircle,
-  FaHeart as Heart,
-  FaEye as Eye,
-  FaTimes as X,
-  FaCat as Cat,
-  FaDog as Dog,
-  FaChevronRight as ChevronRight,
-  FaLock as Lock,
-  FaEyeSlash as EyeSlash,
-  FaUndo as Undo,
 } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
-import { useUserAnimals, useDeleteAnimal, useMarkAdopted, type Animal } from '@/hooks/useAnimals';
-import { parsePhotoUrls } from '@/utils/imageCompression';
+import { useUserAnimals, useDeleteAnimal, useMarkAdopted } from '@/hooks/useAnimals';
 import { friendlyError } from '@/utils/errors';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { COUNTRY_CODES, LANGUAGES } from '@/lib/constants';
-import { formatPhone, getDateLocale } from '@/lib/utils';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-
-const ProfileListingCard = memo(function ProfileListingCard({ animal, onDelete, onToggleStatus }: { 
-  animal: Animal; 
-  onDelete: (id: string) => void;
-  onToggleStatus: (id: string, currentStatus: boolean) => void;
-}) {
-  const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
-  const photoUrls = parsePhotoUrls(animal.photo_url);
-  const coverUrl = photoUrls[0];
-  const TypeIcon = animal.type === 'dog' ? Dog : Cat;
-
-  return (
-    <motion.div
-      className="flex items-center gap-3 p-2 rounded-2xl border bg-background mb-2 transition-[border-color,shadow] hover:border-primary/20 hover:shadow-sm transform-gpu will-change-transform"
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8, transition: { duration: 0.2 } }}
-      layout
-    >
-      {/* Thumbnail */}
-      <div
-        className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 relative cursor-pointer bg-muted transform-gpu"
-        onClick={() => navigate(`/animals/${animal.id}`)}
-      >
-        {coverUrl ? (
-          <img src={coverUrl} alt={`${animal.type} at ${animal.location_name}`} className="w-full h-full object-cover hover:scale-105 transition-transform" loading="lazy" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-warm-gradient text-primary/30">
-            <TypeIcon className="w-6 h-6" />
-          </div>
-        )}
-        {/* Status badge */}
-        <div className={`absolute bottom-0.5 left-0.5 inline-flex items-center gap-[2px] px-1.5 py-[1px] rounded-md text-[9px] font-bold ${animal.is_adopted ? 'bg-success text-success-foreground' : 'bg-waiting text-waiting-foreground'}`}>
-          {animal.is_adopted ? <CheckCircle className="w-[7px] h-[7px]" /> : <Heart className="w-[7px] h-[7px]" />}
-          <span>{animal.is_adopted ? t('browse.adopted') : t('browse.waiting')}</span>
-        </div>
-      </div>
-
-      {/* Info */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5 text-sm font-bold truncate">
-          <TypeIcon className="w-3.5 h-3.5 text-primary/60 flex-shrink-0" />
-          <span className="capitalize truncate">{t('common.animalTitle.' + animal.type, { location: animal.location_name })}</span>
-        </div>
-        <div className="flex items-center gap-2 mt-0.5">
-          <p className="text-[11px] text-muted-foreground font-medium">
-            {new Date(animal.created_at).toLocaleDateString(getDateLocale(i18n.language), { month: 'short', day: 'numeric', year: 'numeric' })}
-          </p>
-          <div className="w-[1px] h-2.5 bg-border" />
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <button className="text-[11px] font-bold text-destructive/70 hover:text-destructive flex items-center gap-1 transition-colors" title={t('common.delete')}>
-                <Trash className="w-2.5 h-2.5" />
-                <span>{t('common.delete')}</span>
-              </button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
-              <AlertDialogHeader>
-                <AlertDialogTitle className="font-heading inline-flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-destructive" />
-                  {t('profile.listings.deleteTitle')}
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  {t('profile.listings.deleteDesc', { type: t('common.animalTitle.' + animal.type, { location: animal.location_name }), location: animal.location_name })}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => onDelete(animal.id)}
-                  className="rounded-xl bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-                >
-                  {t('profile.actions.delete')}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      </div>
-
-      {/* Actions */}
-      <div className="flex gap-1 flex-shrink-0">
-        <button
-          className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
-          onClick={() => navigate(`/animals/${animal.id}`)}
-          title={t('common.view')}
-        >
-          <Eye className="w-3 h-3" />
-        </button>
-        {animal.is_adopted ? (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <button
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-success hover:bg-success/10 transition-colors"
-                title={t('detail.undoAdoption')}
-              >
-                <Undo className="w-3 h-3" />
-              </button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
-              <AlertDialogHeader>
-                <AlertDialogTitle className="font-heading">
-                  {t('detail.confirmUndoTitle')}
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  {t('detail.confirmUndoDesc')}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
-                <AlertDialogAction 
-                  onClick={() => onToggleStatus(animal.id, animal.is_adopted)} 
-                  className="rounded-xl bg-primary hover:bg-primary/90"
-                >
-                  {t('detail.yesUndo')}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        ) : (
-          <button
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
-            onClick={() => navigate(`/report?edit=${animal.id}`)}
-            title={t('common.edit')}
-          >
-            <Edit className="w-3 h-3" />
-          </button>
-        )}
-      </div>
-    </motion.div>
-  );
-});
+import { formatPhone } from '@/lib/utils';
+import ProfileListingCard from '@/components/profile/ProfileListingCard';
+import PhoneSettings from '@/components/profile/PhoneSettings';
+import LanguageSettings from '@/components/profile/LanguageSettings';
+import PasswordSettings from '@/components/profile/PasswordSettings';
+import DangerZone from '@/components/profile/DangerZone';
 
 export default function Profile() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user, updateUser, deleteAccount, clearUser, updatePassword } = useUser();
+  const { user, clearUser } = useUser();
   const { data: userAnimals, isLoading: animalsLoading } = useUserAnimals(user?.id);
   const deleteAnimal = useDeleteAnimal();
   const toggleStatus = useMarkAdopted();
-
-  // Edit states
-  const [editingPhone, setEditingPhone] = useState(false);
-  const [newCountryCode, setNewCountryCode] = useState(user?.countryCode || '+94');
-  const [newMobile, setNewMobile] = useState('');
-  const [phoneSaving, setPhoneSaving] = useState(false);
-
-  const [editingLang, setEditingLang] = useState(false);
-  const [langSaving, setLangSaving] = useState(false);
-
-  const [editingPassword, setEditingPassword] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [passwordSaving, setPasswordSaving] = useState(false);
-
-  const [deletingAccount, setDeletingAccount] = useState(false);
 
   if (!user) {
     navigate('/login');
     return null;
   }
-
-  const handlePhoneSave = async () => {
-    let clean = newMobile.replace(/[^0-9]/g, '');
-    if (clean.startsWith('0')) {
-      clean = clean.substring(1);
-    }
-    
-    if (!clean) { toast.error(t('profile.phone.required')); return; }
-    if (!/^[0-9]{9}$/.test(clean)) { toast.error(t('profile.phone.invalid')); return; }
-
-    setPhoneSaving(true);
-    try {
-      const fullMobile = newCountryCode.replace('+', '') + clean;
-      await updateUser({ mobile: fullMobile, countryCode: newCountryCode });
-      toast.success(t('profile.success.phoneUpdated'));
-      setEditingPhone(false);
-      setNewMobile('');
-    } catch (err) {
-      toast.error(friendlyError(err, 'Failed to update phone number.'));
-    } finally {
-      setPhoneSaving(false);
-    }
-  };
-
-  const handleLanguageChange = async (lang: 'en' | 'si' | 'ta') => {
-    if (lang === user.language) return;
-    setLangSaving(true);
-    try {
-      await i18n.changeLanguage(lang);
-      await updateUser({ language: lang });
-      toast.success(t('profile.language.updated'));
-      setEditingLang(false);
-    } catch (err) {
-      toast.error(friendlyError(err, 'Failed to update language.'));
-    } finally {
-      setLangSaving(false);
-    }
-  };
-
-  const handlePasswordSave = async () => {
-    if (!currentPassword) { toast.error(t('profile.password.required')); return; }
-    if (newPassword.length < 6) { toast.error(t('profile.password.length')); return; }
-    
-    setPasswordSaving(true);
-    try {
-      await updatePassword(currentPassword, newPassword);
-      toast.success(t('profile.password.updated'));
-      setEditingPassword(false);
-      setCurrentPassword('');
-      setNewPassword('');
-    } catch (err) {
-      toast.error((err as Error).message || 'Failed to update password.');
-    } finally {
-      setPasswordSaving(false);
-    }
-  };
 
   const handleDeleteListing = async (animalId: string) => {
     try {
@@ -272,9 +41,9 @@ export default function Profile() {
 
   const handleToggleStatus = async (animalId: string, currentStatus: boolean) => {
     try {
-      await toggleStatus.mutateAsync({ 
-        id: animalId, 
-        userId: user!.id, 
+      await toggleStatus.mutateAsync({
+        id: animalId,
+        userId: user!.id,
         userToken: user!.userToken,
         isAdopted: !currentStatus
       });
@@ -284,20 +53,6 @@ export default function Profile() {
     }
   };
 
-  const handleDeleteAccount = async () => {
-    setDeletingAccount(true);
-    try {
-      await deleteAccount();
-      toast.success(t('profile.success.accountDeleted'));
-      navigate('/', { replace: true });
-    } catch (err) {
-      toast.error(friendlyError(err, 'Failed to delete account.'));
-    } finally {
-      setDeletingAccount(false);
-    }
-  };
-
-  const currentLang = LANGUAGES.find(l => l.code === user.language) || LANGUAGES[0];
   const waitingCount = userAnimals?.filter(a => !a.is_adopted).length || 0;
   const adoptedCount = userAnimals?.filter(a => a.is_adopted).length || 0;
 
@@ -348,203 +103,9 @@ export default function Profile() {
         {/* Settings Sections */}
         <div className="flex flex-col gap-3">
 
-          {/* Phone Number */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-card border rounded-2xl overflow-hidden transition-shadow hover:shadow-sm">
-            <div className="flex items-center gap-3 p-4">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center text-primary flex-shrink-0">
-                <Phone className="w-[18px] h-[18px]" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-bold">{t('profile.phone.title')}</h3>
-                <p className="text-xs text-muted-foreground truncate mt-0.5">{formatPhone(user.mobile)}</p>
-              </div>
-              <button
-                className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all flex-shrink-0"
-                onClick={() => { setEditingPhone(!editingPhone); setNewMobile(''); }}
-              >
-                {editingPhone ? <X className="w-3.5 h-3.5" /> : <Edit className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-
-            <AnimatePresence>
-              {editingPhone && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden border-t"
-                >
-                  <div className="p-4 flex flex-col gap-3">
-                    <div className="rf-input-wrapper rf-mobile-input">
-                      <select
-                        className="rf-country-code"
-                        value={newCountryCode}
-                        onChange={(e) => setNewCountryCode(e.target.value)}
-                        aria-label="Country code"
-                      >
-                        {COUNTRY_CODES.map(cc => (
-                          <option key={cc.code} value={cc.code}>{cc.flag} {cc.code}</option>
-                        ))}
-                      </select>
-                      <div className="rf-input-divider" />
-                      <input
-                        type="tel"
-                        className="rf-input"
-                        placeholder={t('profile.phone.placeholder')}
-                        value={newMobile}
-                        onChange={(e) => setNewMobile(e.target.value.replace(/[^0-9\s]/g, ''))}
-                        autoComplete="tel"
-                      />
-                    </div>
-                    <button
-                      className="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-[hsl(173_60%_32%)] text-primary-foreground font-bold text-sm shadow-glow hover:shadow-lg hover:-translate-y-px transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
-                      onClick={handlePhoneSave}
-                      disabled={phoneSaving}
-                    >
-                      {phoneSaving ? t('profile.actions.saving') : t('profile.actions.save')}
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-
-          {/* Language */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="bg-card border rounded-2xl overflow-hidden transition-shadow hover:shadow-sm">
-            <div className="flex items-center gap-3 p-4">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center text-primary flex-shrink-0">
-                <Globe className="w-[18px] h-[18px]" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-bold">{t('profile.language.title')}</h3>
-                <p className="text-xs text-muted-foreground mt-0.5">{currentLang.flag} {currentLang.nativeLabel}</p>
-              </div>
-              <button
-                className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all flex-shrink-0"
-                onClick={() => setEditingLang(!editingLang)}
-              >
-                {editingLang ? <X className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-
-            <AnimatePresence>
-              {editingLang && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden border-t"
-                >
-                  <div className="p-4 flex flex-col gap-2">
-                    {LANGUAGES.map(lang => (
-                      <button
-                        key={lang.code}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-xl border-[1.5px] w-full text-left transition-all ${
-                          user.language === lang.code
-                            ? 'border-primary bg-primary/5'
-                            : 'border-border bg-background hover:border-primary/30 hover:bg-primary/[0.02]'
-                        }`}
-                        onClick={() => handleLanguageChange(lang.code)}
-                        disabled={langSaving}
-                      >
-                        <span className="text-lg">{lang.flag}</span>
-                        <span className="text-sm font-bold flex-1">{lang.nativeLabel}</span>
-                        {user.language === lang.code && <CheckCircle className="w-4 h-4 text-primary" />}
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-
-          {/* Password */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }} className="bg-card border rounded-2xl overflow-hidden transition-shadow hover:shadow-sm">
-            <div className="flex items-center gap-3 p-4">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/15 flex items-center justify-center text-primary flex-shrink-0">
-                <Lock className="w-[18px] h-[18px]" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-bold">{t('profile.password.title')}</h3>
-                <p className="text-xs text-muted-foreground mt-0.5">{t('profile.password.subtitle')}</p>
-              </div>
-              <button
-                className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all flex-shrink-0"
-                onClick={() => {
-                  setEditingPassword(!editingPassword);
-                  setCurrentPassword('');
-                  setNewPassword('');
-                }}
-              >
-                {editingPassword ? <X className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
-              </button>
-            </div>
-
-            <AnimatePresence>
-              {editingPassword && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden border-t"
-                >
-                  <div className="p-4 flex flex-col gap-3">
-                    <div className="rf-field">
-                      <label className="text-xs font-bold text-muted-foreground mb-1 block">{t('profile.password.current')}</label>
-                      <div className="rf-input-wrapper flex items-center">
-                        <input
-                          type={showCurrentPassword ? "text" : "password"}
-                          className="rf-input w-full bg-transparent border-none focus:outline-none"
-                          placeholder={t('profile.password.currentPlaceholder')}
-                          value={currentPassword}
-                          onChange={(e) => setCurrentPassword(e.target.value)}
-                          style={{ paddingLeft: '0.75rem' }}
-                        />
-                        <button
-                          type="button"
-                          className="p-2 text-muted-foreground"
-                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                        >
-                          {showCurrentPassword ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </div>
-                    <div className="rf-field">
-                      <label className="text-xs font-bold text-muted-foreground mb-1 block border-t pt-2">{t('profile.password.new')}</label>
-                      <div className="rf-input-wrapper flex items-center">
-                        <input
-                          type={showNewPassword ? "text" : "password"}
-                          className="rf-input w-full bg-transparent border-none focus:outline-none"
-                          placeholder={t('profile.password.newPlaceholder')}
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          style={{ paddingLeft: '0.75rem' }}
-                        />
-                        <button
-                          type="button"
-                          className="p-2 text-muted-foreground"
-                          onClick={() => setShowNewPassword(!showNewPassword)}
-                        >
-                          {showNewPassword ? <EyeSlash className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </div>
-                    
-                    <button
-                      className="w-full py-3 mt-1 rounded-xl bg-gradient-to-r from-primary to-[hsl(173_60%_32%)] text-primary-foreground font-bold text-sm shadow-glow hover:shadow-lg hover:-translate-y-px transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0"
-                      onClick={handlePasswordSave}
-                      disabled={passwordSaving}
-                    >
-                      {passwordSaving ? t('profile.actions.updating') : t('profile.actions.update')}
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+          <PhoneSettings user={user} />
+          <LanguageSettings user={user} />
+          <PasswordSettings />
 
           {/* My Listings */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-card border rounded-2xl overflow-hidden">
@@ -603,53 +164,7 @@ export default function Profile() {
             </button>
           </motion.div>
 
-          {/* Danger Zone */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-destructive/[0.03] border border-destructive/15 rounded-2xl p-5"
-          >
-            <h4 className="flex items-center gap-2 text-sm font-extrabold text-destructive mb-2">
-              <AlertTriangle className="w-4 h-4" />
-              <span>{t('profile.dangerZone.title')}</span>
-            </h4>
-            <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-              {t('profile.dangerZone.desc')}
-            </p>
-
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button
-                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border-[1.5px] border-destructive/30 text-destructive text-sm font-bold hover:bg-destructive/[0.08] hover:border-destructive transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-                  disabled={deletingAccount}
-                >
-                  <Trash className="w-3.5 h-3.5" />
-                  <span>{deletingAccount ? t('profile.actions.deleting') : t('profile.actions.deleteAccount')}</span>
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent className="rounded-2xl w-[calc(100%-2rem)]">
-                <AlertDialogHeader>
-                  <AlertDialogTitle className="font-heading inline-flex items-center gap-2 text-destructive">
-                    <AlertTriangle className="h-5 w-5" />
-                    {t('profile.dangerZone.dialogTitle')}
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    {t('profile.dangerZone.dialogDesc')}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel className="rounded-xl">{t('profile.actions.cancel')}</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDeleteAccount}
-                    className="rounded-xl bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-                  >
-                    {t('profile.dangerZone.confirm')}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </motion.div>
+          <DangerZone />
 
         </div>
       </div>
