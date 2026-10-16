@@ -4,8 +4,11 @@ import { Button } from "@/components/ui/button";
 import { FaPaw as PawPrint, FaHome as Home } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { usePageMeta } from "@/hooks/usePageMeta";
+import { DEFAULT_META } from "@/lib/seo";
 
 const NotFound = () => {
+  usePageMeta({ title: "Page Not Found | PawConnect", description: DEFAULT_META.description, noindex: true });
   const { t } = useTranslation();
   const location = useLocation();
 

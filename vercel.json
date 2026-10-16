@@ -1,5 +1,10 @@
 {
+  "cleanUrls": true,
   "rewrites": [
+    {
+      "source": "/sitemap-animals.xml",
+      "destination": "/api/sitemap-animals"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"

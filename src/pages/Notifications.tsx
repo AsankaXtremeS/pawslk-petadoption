@@ -5,8 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaHeart as HeartSolid, FaComment as CommentIcon, FaCheck as CheckIcon, FaArrowLeft as ArrowLeft, FaBell as BellOff } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
+import { usePageMeta } from '@/hooks/usePageMeta';
+import { DEFAULT_META } from '@/lib/seo';
 
 export default function Notifications() {
+  usePageMeta({ title: 'Notifications | PawConnect', description: DEFAULT_META.description, noindex: true });
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useUser();

@@ -3,8 +3,11 @@ import HeroSection from '@/components/home/HeroSection';
 import LostPetsCarousel from '@/components/home/LostPetsCarousel';
 import RecentAnimals from '@/components/home/RecentAnimals';
 import AboutFaqSection from '@/components/home/AboutFaqSection';
+import { usePageMeta } from '@/hooks/usePageMeta';
+import { PAGE_META } from '@/lib/seo';
 
 export default function Index() {
+  usePageMeta(PAGE_META['/']);
   const { data: animals, isLoading } = useWaitingAnimals();
   const { data: lostAnimals } = useLostAnimals();
   const { data: stats } = useAnimalStats();

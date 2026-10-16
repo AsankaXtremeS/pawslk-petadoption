@@ -12,8 +12,11 @@ import { useTranslation } from 'react-i18next';
 import CityAutocomplete from '@/components/CityAutocomplete';
 
 const MAX_PHOTOS = 3;
+import { usePageMeta } from '@/hooks/usePageMeta';
+import { DEFAULT_META } from '@/lib/seo';
 
 export default function ReportStray() {
+  usePageMeta({ title: 'Report a Stray | PawConnect', description: DEFAULT_META.description, noindex: true });
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

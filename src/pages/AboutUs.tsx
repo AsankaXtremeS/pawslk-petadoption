@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion';
 import { FaPaw as PawPrint, FaHeart as Heart, FaShieldAlt as Shield, FaGlobeAsia as Globe } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { usePageMeta } from '@/hooks/usePageMeta';
+import { PAGE_META } from '@/lib/seo';
 
 export default function AboutUs() {
+  usePageMeta(PAGE_META['/about']);
   return (
     <div className="min-h-screen bg-background pt-20 pb-12 px-4">
       <div className="container max-w-5xl mx-auto space-y-10">

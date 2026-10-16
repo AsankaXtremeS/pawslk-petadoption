@@ -16,8 +16,11 @@ import PhoneSettings from '@/components/profile/PhoneSettings';
 import LanguageSettings from '@/components/profile/LanguageSettings';
 import PasswordSettings from '@/components/profile/PasswordSettings';
 import DangerZone from '@/components/profile/DangerZone';
+import { usePageMeta } from '@/hooks/usePageMeta';
+import { DEFAULT_META } from '@/lib/seo';
 
 export default function Profile() {
+  usePageMeta({ title: 'My Profile | PawConnect', description: DEFAULT_META.description, noindex: true });
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, clearUser } = useUser();

@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion';
 import { FaShieldAlt as Shield, FaUserCircle as User, FaCamera as Camera, FaLock as Lock } from 'react-icons/fa';
 import { CONTACT } from '@/lib/constants';
+import { usePageMeta } from '@/hooks/usePageMeta';
+import { PAGE_META } from '@/lib/seo';
 
 export default function PrivacyPolicy() {
+  usePageMeta(PAGE_META['/privacy']);
   const sections = [
     {
       icon: <User className="text-lg" />,
