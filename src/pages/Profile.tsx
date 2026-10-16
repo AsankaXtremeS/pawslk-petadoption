@@ -27,6 +27,8 @@ import { parsePhotoUrls } from '@/utils/imageCompression';
 import { friendlyError } from '@/utils/errors';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { COUNTRY_CODES, LANGUAGES } from '@/lib/constants';
+import { formatPhone, getDateLocale } from '@/lib/utils';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,25 +40,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-
-const countryCodes = [
-  { code: '+94', country: 'Sri Lanka', flag: '🇱🇰' },
-  { code: '+91', country: 'India', flag: '🇮🇳' },
-  { code: '+1', country: 'USA', flag: '🇺🇸' },
-  { code: '+44', country: 'UK', flag: '🇬🇧' },
-  { code: '+61', country: 'Australia', flag: '🇦🇺' },
-  { code: '+65', country: 'Singapore', flag: '🇸🇬' },
-  { code: '+971', country: 'UAE', flag: '🇦🇪' },
-  { code: '+966', country: 'Saudi Arabia', flag: '🇸🇦' },
-  { code: '+82', country: 'South Korea', flag: '🇰🇷' },
-  { code: '+81', country: 'Japan', flag: '🇯🇵' },
-];
-
-const languages = [
-  { code: 'en' as const, label: 'English', nativeLabel: 'English', flag: '🇬🇧' },
-  { code: 'si' as const, label: 'Sinhala', nativeLabel: 'සිංහල', flag: '🇱🇰' },
-  { code: 'ta' as const, label: 'Tamil', nativeLabel: 'தமிழ்', flag: '🇱🇰' },
-];
 
 const ProfileListingCard = memo(function ProfileListingCard({ animal, onDelete, onToggleStatus }: { 
   animal: Animal; 
@@ -104,7 +87,7 @@ const ProfileListingCard = memo(function ProfileListingCard({ animal, onDelete, 
         </div>
         <div className="flex items-center gap-2 mt-0.5">
           <p className="text-[11px] text-muted-foreground font-medium">
-            {new Date(animal.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric', year: 'numeric' })}
+            {new Date(animal.created_at).toLocaleDateString(getDateLocale(i18n.language), { month: 'short', day: 'numeric', year: 'numeric' })}
           </p>
           <div className="w-[1px] h-2.5 bg-border" />
           <AlertDialog>
@@ -222,11 +205,6 @@ export default function Profile() {
     return null;
   }
 
-  const formatDisplayMobile = (mobile: string) => {
-    if (!mobile) return '';
-    return mobile.startsWith('+') ? mobile : `+${mobile}`;
-  };
-
   const handlePhoneSave = async () => {
     let clean = newMobile.replace(/[^0-9]/g, '');
     if (clean.startsWith('0')) {
@@ -319,7 +297,7 @@ export default function Profile() {
     }
   };
 
-  const currentLang = languages.find(l => l.code === user.language) || languages[0];
+  const currentLang = LANGUAGES.find(l => l.code === user.language) || LANGUAGES[0];
   const waitingCount = userAnimals?.filter(a => !a.is_adopted).length || 0;
   const adoptedCount = userAnimals?.filter(a => a.is_adopted).length || 0;
 
@@ -340,7 +318,7 @@ export default function Profile() {
           </div>
           <div className="flex-1 min-w-0">
             <h1 className="text-2xl font-heading font-extrabold truncate">{user.name}</h1>
-            <p className="text-sm text-muted-foreground font-medium mt-0.5">{formatDisplayMobile(user.mobile)}</p>
+            <p className="text-sm text-muted-foreground font-medium mt-0.5">{formatPhone(user.mobile)}</p>
           </div>
         </motion.div>
 
@@ -378,7 +356,7 @@ export default function Profile() {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-sm font-bold">{t('profile.phone.title')}</h3>
-                <p className="text-xs text-muted-foreground truncate mt-0.5">{formatDisplayMobile(user.mobile)}</p>
+                <p className="text-xs text-muted-foreground truncate mt-0.5">{formatPhone(user.mobile)}</p>
               </div>
               <button
                 className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all flex-shrink-0"
@@ -405,7 +383,7 @@ export default function Profile() {
                         onChange={(e) => setNewCountryCode(e.target.value)}
                         aria-label="Country code"
                       >
-                        {countryCodes.map(cc => (
+                        {COUNTRY_CODES.map(cc => (
                           <option key={cc.code} value={cc.code}>{cc.flag} {cc.code}</option>
                         ))}
                       </select>
@@ -460,7 +438,7 @@ export default function Profile() {
                   className="overflow-hidden border-t"
                 >
                   <div className="p-4 flex flex-col gap-2">
-                    {languages.map(lang => (
+                    {LANGUAGES.map(lang => (
                       <button
                         key={lang.code}
                         className={`flex items-center gap-3 px-4 py-3 rounded-xl border-[1.5px] w-full text-left transition-all ${

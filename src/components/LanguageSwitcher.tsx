@@ -3,12 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
 import { FaGlobeAsia as Globe, FaChevronDown as ChevronDown } from 'react-icons/fa';
 import { useUser } from '@/contexts/UserContext';
-
-const languages = [
-  { code: 'en', label: 'English', native: 'English', flag: '🇬🇧' },
-  { code: 'si', label: 'Sinhala', native: 'සිංහල', flag: '🇱🇰' },
-  { code: 'ta', label: 'Tamil', native: 'தமிழ்', flag: '🇱🇰' },
-];
+import { LANGUAGES } from '@/lib/constants';
 
 export default function LanguageSwitcher({ mini = false }: { mini?: boolean }) {
   const { i18n } = useTranslation();
@@ -16,7 +11,7 @@ export default function LanguageSwitcher({ mini = false }: { mini?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const currentLanguage = languages.find(l => l.code === i18n.language) || languages[0];
+  const currentLanguage = LANGUAGES.find(l => l.code === i18n.language) || LANGUAGES[0];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -61,7 +56,7 @@ export default function LanguageSwitcher({ mini = false }: { mini?: boolean }) {
               className="absolute bottom-full right-0 mb-3 bg-background border rounded-2xl shadow-xl overflow-hidden min-w-[140px] z-50 p-1.5"
             >
               <div className="text-[10px] font-bold text-muted-foreground px-3 py-1 uppercase tracking-wider">Language</div>
-              {languages.map(lang => (
+              {LANGUAGES.map(lang => (
                 <button
                   key={lang.code}
                   onClick={() => handleLanguageChange(lang.code)}
@@ -71,7 +66,7 @@ export default function LanguageSwitcher({ mini = false }: { mini?: boolean }) {
                   `}
                 >
                   <span className="text-base">{lang.flag}</span>
-                  <span className="text-xs">{lang.native}</span>
+                  <span className="text-xs">{lang.nativeLabel}</span>
                 </button>
               ))}
             </motion.div>
@@ -100,7 +95,7 @@ export default function LanguageSwitcher({ mini = false }: { mini?: boolean }) {
             exit={{ opacity: 0, y: 8, scale: 0.95 }}
             className="absolute top-full right-0 mt-2 bg-background border rounded-2xl shadow-xl overflow-hidden min-w-[160px] z-50 p-1.5"
           >
-            {languages.map(lang => (
+            {LANGUAGES.map(lang => (
               <button
                 key={lang.code}
                 onClick={() => handleLanguageChange(lang.code)}
@@ -112,7 +107,7 @@ export default function LanguageSwitcher({ mini = false }: { mini?: boolean }) {
                 <div className="flex items-center gap-3">
                   <span className="text-lg leading-none">{lang.flag}</span>
                   <div className="flex flex-col items-start leading-none">
-                    <span className="text-[11px] font-bold">{lang.native}</span>
+                    <span className="text-[11px] font-bold">{lang.nativeLabel}</span>
                     <span className="text-[9px] opacity-70">{lang.label}</span>
                   </div>
                 </div>

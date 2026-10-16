@@ -6,19 +6,7 @@ import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-
-const countryCodes = [
-  { code: '+94', country: 'Sri Lanka', flag: '🇱🇰' },
-  { code: '+91', country: 'India', flag: '🇮🇳' },
-  { code: '+1', country: 'USA', flag: '🇺🇸' },
-  { code: '+44', country: 'UK', flag: '🇬🇧' },
-  { code: '+61', country: 'Australia', flag: '🇦🇺' },
-  { code: '+65', country: 'Singapore', flag: '🇸🇬' },
-  { code: '+971', country: 'UAE', flag: '🇦🇪' },
-  { code: '+966', country: 'Saudi Arabia', flag: '🇸🇦' },
-  { code: '+82', country: 'South Korea', flag: '🇰🇷' },
-  { code: '+81', country: 'Japan', flag: '🇯🇵' },
-];
+import { CONTACT, COUNTRY_CODES } from '@/lib/constants';
 
 export default function LoginPage() {
   const { t, i18n } = useTranslation();
@@ -132,7 +120,7 @@ export default function LoginPage() {
                   onChange={(e) => setCountryCode(e.target.value)}
                   aria-label="Country code"
                 >
-                  {countryCodes.map(cc => (
+                  {COUNTRY_CODES.map(cc => (
                     <option key={cc.code} value={cc.code}>
                       {cc.flag} {cc.code}
                     </option>
@@ -247,7 +235,7 @@ export default function LoginPage() {
                       {t('auth.resetPasswordInstruction')}
                     </p>
                     <a
-                      href={`https://wa.me/94760589218?text=${encodeURIComponent(
+                      href={`https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(
                         mobile.replace(/[^0-9]/g, '') 
                           ? `Hi Admin, I forgot my password on PawConnect. Please help me reset it. My registered mobile number is: ${countryCode.replace('+', '')}${mobile.replace(/[^0-9]/g, '')}`
                           : `Hi Admin, I forgot my password on PawConnect. Please help me reset it.`

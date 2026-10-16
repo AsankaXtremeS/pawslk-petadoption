@@ -6,27 +6,7 @@ import { FaPaw as PawPrint, FaArrowLeft as ArrowLeft, FaArrowRight as ArrowRight
 import { useUser } from '@/contexts/UserContext';
 import { toast } from 'sonner';
 import { useTranslation, Trans } from 'react-i18next';
-
-type Language = 'en' | 'si' | 'ta';
-
-const languagesList: { code: Language; label: string; nativeLabel: string; flag: string }[] = [
-  { code: 'en', label: 'English', nativeLabel: 'English', flag: '🇬🇧' },
-  { code: 'si', label: 'Sinhala', nativeLabel: 'සිංහල', flag: '🇱🇰' },
-  { code: 'ta', label: 'Tamil', nativeLabel: 'தமிழ்', flag: '🇱🇰' },
-];
-
-const countryCodes = [
-  { code: '+94', country: 'Sri Lanka', flag: '🇱🇰' },
-  { code: '+91', country: 'India', flag: '🇮🇳' },
-  { code: '+1', country: 'USA', flag: '🇺🇸' },
-  { code: '+44', country: 'UK', flag: '🇬🇧' },
-  { code: '+61', country: 'Australia', flag: '🇦🇺' },
-  { code: '+65', country: 'Singapore', flag: '🇸🇬' },
-  { code: '+971', country: 'UAE', flag: '🇦🇪' },
-  { code: '+966', country: 'Saudi Arabia', flag: '🇸🇦' },
-  { code: '+82', country: 'South Korea', flag: '🇰🇷' },
-  { code: '+81', country: 'Japan', flag: '🇯🇵' },
-];
+import { COUNTRY_CODES, LANGUAGES, type Language } from '@/lib/constants';
 
 const slideVariants = {
   enter: (direction: number) => ({
@@ -251,7 +231,7 @@ export default function RegisterPage() {
               </div>
 
               <div className="rf-lang-grid">
-                {languagesList.map((lang) => (
+                {LANGUAGES.map((lang) => (
                   <motion.button
                     key={lang.code}
                     className={`rf-lang-card ${i18n.language === lang.code ? 'selected' : ''}`}
@@ -334,7 +314,7 @@ export default function RegisterPage() {
                       onChange={(e) => setCountryCode(e.target.value)}
                       aria-label="Country code"
                     >
-                      {countryCodes.map(cc => (
+                      {COUNTRY_CODES.map(cc => (
                         <option key={cc.code} value={cc.code}>
                           {cc.flag} {cc.code}
                         </option>

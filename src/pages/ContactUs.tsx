@@ -1,27 +1,28 @@
 import { motion } from 'framer-motion';
 import { FaPhoneAlt as Phone, FaEnvelope as Envelope, FaMapMarkerAlt as MapMarker, FaPaw as PawPrint } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { CONTACT } from '@/lib/constants';
 
 export default function ContactUs() {
   const contactInfo = [
     {
       icon: <Phone className="text-xl" />,
       label: 'Phone Number',
-      value: '0760589218',
-      href: 'tel:0760589218',
+      value: CONTACT.phone,
+      href: `tel:${CONTACT.phone}`,
       color: 'bg-emerald-500/10 text-emerald-500',
     },
     {
       icon: <Envelope className="text-xl" />,
       label: 'Email Address',
-      value: 'asankasampath200228@gmail.com',
-      href: 'mailto:asankasampath200228@gmail.com',
+      value: CONTACT.email,
+      href: `mailto:${CONTACT.email}`,
       color: 'bg-blue-500/10 text-blue-500',
     },
     {
       icon: <MapMarker className="text-xl" />,
       label: 'Our Location',
-      value: 'Galle, Sri Lanka',
+      value: CONTACT.location,
       href: '#',
       color: 'bg-orange-500/10 text-orange-500',
     },
@@ -46,8 +47,8 @@ export default function ContactUs() {
                 "name": "PawConnect",
                 "alternateName": ["Paw Connect", "PawConnect LK", "pawconnect.lk"],
                 "url": "https://pawconnect.lk",
-                "email": "asankasampath200228@gmail.com",
-                "telephone": "+94760589218",
+                "email": CONTACT.email,
+                "telephone": CONTACT.phoneIntl,
                 "address": {
                   "@type": "PostalAddress",
                   "addressLocality": "Galle",
@@ -56,9 +57,9 @@ export default function ContactUs() {
                 },
                 "contactPoint": {
                   "@type": "ContactPoint",
-                  "telephone": "+94760589218",
+                  "telephone": CONTACT.phoneIntl,
                   "contactType": "customer service",
-                  "email": "asankasampath200228@gmail.com",
+                  "email": CONTACT.email,
                   "areaServed": "LK",
                   "availableLanguage": ["English", "Sinhala", "Tamil"]
                 }

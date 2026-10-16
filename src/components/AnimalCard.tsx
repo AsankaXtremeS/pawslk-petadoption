@@ -5,19 +5,13 @@ import { FaCat as Cat, FaCheckCircle as CheckCircle2, FaDog as Dog, FaHeart as H
 import { getPrimaryPhotoUrl } from '@/utils/imageCompression';
 import { getThumbnailUrl } from '@/utils/cloudinary';
 import { useTranslation } from 'react-i18next';
+import { formatPhone, getDateLocale } from '@/lib/utils';
 
 function AnimalCard({ animal }: { animal: Animal }) {
   const { t, i18n } = useTranslation();
   const isAdopted = animal.is_adopted;
   const rawPrimaryPhoto = getPrimaryPhotoUrl(animal.photo_url);
   const primaryPhoto = getThumbnailUrl(rawPrimaryPhoto, 600);
-
-  // Format contact number for display (e.g., "94760589218" → "+94 760 589 218")
-  const formatPhone = (num: string | null) => {
-    if (!num) return null;
-    const withPlus = num.startsWith('+') ? num : `+${num}`;
-    return withPlus;
-  };
 
   return (
     <Link to={`/animals/${animal.id}`} className="block group h-full">
@@ -114,7 +108,7 @@ function AnimalCard({ animal }: { animal: Animal }) {
               </span>
             </div>
             <span className="text-muted-foreground shrink-0">
-              {new Date(animal.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric' })}
+              {new Date(animal.created_at).toLocaleDateString(getDateLocale(i18n.language), { month: 'short', day: 'numeric' })}
             </span>
           </div>
         </div>

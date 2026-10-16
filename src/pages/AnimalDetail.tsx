@@ -13,6 +13,7 @@ import { friendlyError } from '@/utils/errors';
 import { useReactionStatus, useToggleReaction } from '@/hooks/useReactions';
 import { useComments, useAddComment, useDeleteComment } from '@/hooks/useComments';
 import { FaRegComment as CommentIcon, FaHeart as HeartSolid, FaRegHeart as HeartOutline, FaPaperPlane as SendIcon, FaTrashAlt as TrashIcon } from 'react-icons/fa';
+import { formatPhone, getDateLocale } from '@/lib/utils';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -203,13 +204,8 @@ export default function AnimalDetail() {
     });
   };
 
-  const formatPhone = (num: string | null) => {
-    if (!num) return null;
-    return num.startsWith('+') ? num : `+${num}`;
-  };
-
   const getLocalDate = (date: string) => {
-    return new Date(date).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'long', day: 'numeric', year: 'numeric' });
+    return new Date(date).toLocaleDateString(getDateLocale(i18n.language), { month: 'long', day: 'numeric', year: 'numeric' });
   };
 
   if (isLoading) {
@@ -689,7 +685,7 @@ export default function AnimalDetail() {
                       </span>
                       <div className="flex items-center gap-2">
                         <span className="text-[9px] text-muted-foreground font-semibold">
-                          {new Date(comment.created_at).toLocaleDateString(i18n.language === 'en' ? 'en-US' : (i18n.language === 'si' ? 'si-LK' : 'ta-LK'), { month: 'short', day: 'numeric' })}
+                          {new Date(comment.created_at).toLocaleDateString(getDateLocale(i18n.language), { month: 'short', day: 'numeric' })}
                         </span>
                         {user && comment.user_id === user.id && (
                           <button
