@@ -94,7 +94,7 @@ export default function HeroSection({ stats }: HeroSectionProps) {
     },
     {
       icon: Users,
-      value: '170+',
+      value: '250+',
       label: 'Active Users',
       iconClass: 'bg-[#e0f2fe]/20 text-[#e0f2fe]',
       desktopLabelClass: 'text-[#e0f2fe]',
