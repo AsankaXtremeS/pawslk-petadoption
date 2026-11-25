@@ -1,20 +1,18 @@
 # robots.txt for https://pawconnect.lk
-# Search engines and social link previews are allowed.
-# AI training crawlers, AI assistants and AI agents are NOT permitted.
+# Search engines, AI search/answer engines and social link previews are allowed,
+# so people asking ChatGPT, Perplexity, Claude etc. "where can I adopt a dog in
+# Sri Lanka?" can be pointed here.
+# AI *training* crawlers, autonomous agents and bulk scrapers are NOT permitted.
 
 # ------------------------------------------------------------
-# AI crawlers, AI assistants & AI agents: blocked site-wide
+# AI training crawlers, agents & scrapers: blocked site-wide
 # ------------------------------------------------------------
 
-# OpenAI
+# OpenAI (training + agent; OAI-SearchBot and ChatGPT-User are allowed)
 User-agent: GPTBot
-User-agent: ChatGPT-User
-User-agent: OAI-SearchBot
 User-agent: Operator
-# Anthropic
+# Anthropic (training; Claude-SearchBot and Claude-User are allowed)
 User-agent: ClaudeBot
-User-agent: Claude-User
-User-agent: Claude-SearchBot
 User-agent: Claude-Web
 User-agent: anthropic-ai
 # Google AI (Gemini / Vertex training; Google Search NOT affected)
@@ -27,9 +25,6 @@ User-agent: Applebot-Extended
 User-agent: Meta-ExternalAgent
 User-agent: Meta-ExternalFetcher
 User-agent: FacebookBot
-# Perplexity
-User-agent: PerplexityBot
-User-agent: Perplexity-User
 # Microsoft / Amazon
 User-agent: Amazonbot
 User-agent: NovaAct
@@ -39,9 +34,6 @@ User-agent: DeepSeekBot
 User-agent: MistralAI-User
 User-agent: cohere-ai
 User-agent: cohere-training-data-crawler
-User-agent: YouBot
-User-agent: PhindBot
-User-agent: DuckAssistBot
 User-agent: AI2Bot
 User-agent: Ai2Bot-Dolma
 User-agent: PanguBot
@@ -76,13 +68,11 @@ Disallow: /
 # ------------------------------------------------------------
 User-agent: *
 Allow: /
-# Private / authenticated areas (redirect to login for crawlers)
-Disallow: /profile
-Disallow: /notifications
-Disallow: /report
-# Auth pages: thin content, no search value
-Disallow: /login
-Disallow: /register
+# Serverless functions (sitemaps are served from their own URLs below)
+Disallow: /api/
+# /login, /register, /report, /profile and /notifications are deliberately NOT
+# blocked: their HTML carries <meta name="robots" content="noindex">, and Google
+# must be able to crawl them to see it and drop them from results.
 # Avoid crawling infinite filter/search URL variations
 Disallow: /animals?*
 Disallow: /*?*utm_

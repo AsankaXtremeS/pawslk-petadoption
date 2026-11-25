@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { FaPaw as PawPrint, FaChevronLeft as ChevronLeft, FaChevronRight as ChevronRight } from 'react-icons/fa';
 import type { Animal } from '@/hooks/useAnimals';
@@ -7,6 +8,7 @@ import { getThumbnailUrl } from '@/utils/cloudinary';
 
 /** Thin horizontal strip of lost-pet alerts shown on the home page. */
 export default function LostPetsCarousel({ animals }: { animals: Animal[] }) {
+  const { t } = useTranslation();
   const lostScrollRef = useRef<HTMLDivElement>(null);
 
   const scrollLost = (direction: 'left' | 'right') => {
@@ -25,23 +27,29 @@ export default function LostPetsCarousel({ animals }: { animals: Animal[] }) {
         <div>
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/10 text-rose-600 dark:bg-rose-950/30 dark:text-rose-400">
             <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-            Active Alerts
+            {t('home.lost.badge')}
           </span>
-          <h2 className="text-xl md:text-2xl font-heading font-black tracking-tight mt-1">Lost & Found Pets</h2>
+          <h2 className="text-xl md:text-2xl font-heading font-black tracking-tight mt-1">{t('home.lost.title')}</h2>
         </div>
 
         <div className="flex items-center gap-1.5">
+          <Link
+            to="/lost-pets"
+            className="mr-1 text-xs font-bold text-rose-600 hover:text-rose-700 dark:text-rose-400 transition-colors"
+          >
+            {t('home.lost.viewAll')}
+          </Link>
           <button
             onClick={() => scrollLost('left')}
             className="w-8 h-8 rounded-full border border-border bg-card flex items-center justify-center text-foreground hover:bg-muted transition-colors shadow-sm"
-            aria-label="Scroll left"
+            aria-label={t('home.lost.scrollLeft')}
           >
             <ChevronLeft className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => scrollLost('right')}
             className="w-8 h-8 rounded-full border border-border bg-card flex items-center justify-center text-foreground hover:bg-muted transition-colors shadow-sm"
-            aria-label="Scroll right"
+            aria-label={t('home.lost.scrollRight')}
           >
             <ChevronRight className="h-3.5 w-3.5" />
           </button>
@@ -65,7 +73,7 @@ export default function LostPetsCarousel({ animals }: { animals: Animal[] }) {
               {primaryPhoto ? (
                 <img
                   src={primaryPhoto}
-                  alt=""
+                  alt={t('common.lostTitle.' + animal.type, { location: animal.location_name })}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
@@ -81,12 +89,12 @@ export default function LostPetsCarousel({ animals }: { animals: Animal[] }) {
               {/* Top Alert Badge */}
               <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-rose-600 text-white font-black text-[9px] uppercase shadow-sm">
                 <span className="w-1 h-1 rounded-full bg-white animate-pulse" />
-                Lost
+                {t('browse.lost')}
               </div>
 
               {/* Location info */}
               <div className="absolute bottom-2.5 inset-x-2 text-white">
-                <p className="text-[8px] font-black uppercase text-rose-300 tracking-widest mb-0.5">Last Seen</p>
+                <p className="text-[8px] font-black uppercase text-rose-300 tracking-widest mb-0.5">{t('home.lost.lastSeen')}</p>
                 <p className="text-xs font-bold leading-tight truncate">{animal.location_name}</p>
               </div>
             </Link>

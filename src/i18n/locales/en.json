@@ -23,6 +23,10 @@
     "animalTitle": {
       "dog": "Dog in {{location}}",
       "cat": "Cat in {{location}}"
+    },
+    "lostTitle": {
+      "dog": "Lost dog in {{location}}",
+      "cat": "Lost cat in {{location}}"
     }
   },
   "nav": {
@@ -32,7 +36,8 @@
     "stats": "Stats"
   },
   "footer": {
-    "tagline": "Helping Sri Lanka's stray animals find loving homes."
+    "tagline": "Helping Sri Lanka's stray animals find loving homes.",
+    "findPet": "Find a Pet"
   },
   "auth": {
     "welcomeBack": "Welcome back",
@@ -124,6 +129,15 @@
       "a4": "PawConnect Sri Lanka covers the entire island. Whether you're in Colombo, Galle, Kandy, Jaffna, or any town in between, you can use PawConnect to report and adopt animals. Our platform is available in English, Sinhala, and Tamil.",
       "q5": "How do I report a stray animal?",
       "a5": "Create a free account on pawconnect.lk, then click \"Add New\" to report a stray. Upload up to 3 photos, select the animal type and gender, add the location, and submit. Your report goes live immediately so potential adopters can see the animal."
+    },
+    "heroH1": "Adopt Dogs & Cats in Sri Lanka",
+    "lost": {
+      "badge": "Active Alerts",
+      "title": "Lost & Found Pets",
+      "lastSeen": "Last Seen",
+      "viewAll": "View all",
+      "scrollLeft": "Scroll left",
+      "scrollRight": "Scroll right"
     }
   },
   "browse": {
@@ -147,7 +161,37 @@
     "cats": "Cats",
     "any": "Any",
     "male": "Male",
-    "female": "Female"
+    "female": "Female",
+    "adoptTab": "For Adoption",
+    "lostTab": "Lost Pets",
+    "allTitle": "Dogs & Cats for Adoption in Sri Lanka",
+    "dogsTitle": "Dogs & Puppies for Adoption in Sri Lanka",
+    "dogsSubtitle": "Rescued dogs and puppies looking for a loving family. Adoption on PawConnect is free — බලු පැටව් නොමිලේ.",
+    "catsTitle": "Cats & Kittens for Adoption in Sri Lanka",
+    "catsSubtitle": "Rescued cats and kittens looking for a loving home. Adoption on PawConnect is free — පූස් පැටව් නොමිලේ.",
+    "districtTitle": "Dogs & Cats for Adoption in {{district}}",
+    "districtSubtitle": "Pets waiting for a home in {{district}} District, including rescued strays. Contact the owner directly — adoption is free.",
+    "lostTitle": "Lost & Found Pets in Sri Lanka",
+    "lostSubtitle": "Help us find lost pets in your neighbourhood.",
+    "reunitedTitle": "Found & Reunited Pets",
+    "reunitedSubtitle": "Celebrating pets reunited with their families.",
+    "stillMissing": "Still Missing",
+    "foundReunited": "Found & Reunited",
+    "reunited": "Reunited",
+    "lost": "Lost",
+    "noReunitedYet": "No reunited pets yet.",
+    "noLostPets": "No lost pets reported right now.",
+    "exploreTitle": "Find pets near you",
+    "byDistrict": "Pets for adoption by district",
+    "adoptDog": "Adopt a Dog",
+    "adoptCat": "Adopt a Cat",
+    "dogsCrumb": "Dogs for Adoption",
+    "catsCrumb": "Cats for Adoption",
+    "noAdoptedYet": "No adopted pets yet.",
+    "lostDistrictTitle": "Lost & Found Pets in {{district}}",
+    "lostDistrictSubtitle": "Lost pet alerts from {{district}} District. Seen one of these pets? Contact the owner directly.",
+    "lostByDistrict": "Lost pets by district",
+    "reportCta": "Report a stray or lost pet"
   },
   "report": {
     "title": "Report a Stray",
@@ -299,7 +343,24 @@
     "commentAdded": "Comment added successfully!",
     "commentDeleted": "Comment removed.",
     "loginToComment": "Log in to ask a question",
-    "interactLogin": "Please log in to love or comment on animals"
+    "interactLogin": "Please log in to love or comment on animals",
+    "breadcrumb": "Breadcrumb",
+    "reunitedSuccess": "This pet has been marked as reunited! Thank you!",
+    "reunitedUndoSuccess": "Reunited status removed.",
+    "contactOwner": "Contact Owner / Reporter",
+    "markAsReunited": "Mark as Reunited",
+    "confirmReunited": "Confirm Reunited",
+    "confirmReunitedDesc": "Are you sure this pet has been reunited? This will move the post into the reunited section and remove it from the main view.",
+    "yesMarkReunited": "Yes, Mark as Reunited!",
+    "lostStatsNotice": "Has this pet been found? Please mark it as reunited to keep our records accurate.",
+    "lostInterested": "Have you seen this pet or have information? Contact the reporter using the phone number above.",
+    "petReunited": "This pet has been reunited!",
+    "reunitedOn": "Reunited on {{date}}",
+    "undoReunited": "Undo Reunited",
+    "confirmUndoReunitedTitle": "Bring back to lost list?",
+    "confirmUndoReunitedDesc": "This will move the pet back to the main view and mark it as still missing.",
+    "yesUndoReunited": "Yes, Undo Reunited",
+    "photo": "Photo"
   },
   "notifications": {
     "title": "Notifications",

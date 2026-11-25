@@ -25,7 +25,7 @@ function AnimalCard({ animal }: { animal: Animal }) {
           {primaryPhoto ? (
             <img
               src={primaryPhoto}
-              alt={t('common.animalTitle.' + animal.type, { location: animal.location_name })}
+              alt={t((animal.post_type === 'lost' ? 'common.lostTitle.' : 'common.animalTitle.') + animal.type, { location: animal.location_name })}
               width="400"
               height="300"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -49,12 +49,12 @@ function AnimalCard({ animal }: { animal: Animal }) {
               isAdopted ? (
                 <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-success text-success-foreground shadow-sm">
                   <CheckCircle2 className="h-2 w-2 sm:h-2.5 sm:w-2.5" />
-                  Reunited
+                  {t('browse.reunited')}
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold bg-rose-600 text-white shadow-sm border border-rose-500/30">
                   <Heart className="h-2 w-2 sm:h-2.5 sm:w-2.5 text-white fill-white animate-pulse" />
-                  Lost
+                  {t('browse.lost')}
                 </span>
               )
             ) : (

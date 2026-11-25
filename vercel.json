@@ -6,8 +6,12 @@
       "destination": "/api/sitemap-animals"
     },
     {
+      "source": "/animals/:id",
+      "destination": "/api/animal-page?id=:id"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/"
     }
   ],
   "headers": [
