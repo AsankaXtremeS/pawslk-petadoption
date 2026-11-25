@@ -8,6 +8,19 @@ import { FaPhoneAlt as Phone, FaEnvelope as Email, FaMapMarkerAlt as MapMarker }
 import NotificationDropdown from './NotificationDropdown';
 import { CONTACT } from '@/lib/constants';
 
+// Crawlable footer links to the main listing pages.
+const findPetLinks = [
+  { to: '/adopt/dogs', labelKey: 'browse.adoptDog' },
+  { to: '/adopt/cats', labelKey: 'browse.adoptCat' },
+  { to: '/lost-pets', labelKey: 'browse.lostTab' },
+];
+const footerDistricts = [
+  { to: '/adopt/colombo', label: 'Colombo' },
+  { to: '/adopt/gampaha', label: 'Gampaha' },
+  { to: '/adopt/kandy', label: 'Kandy' },
+  { to: '/adopt/galle', label: 'Galle' },
+];
+
 const navItems = [
   { to: '/', labelKey: 'nav.home', Icon: Home },
   { to: '/animals', labelKey: 'nav.browse', Icon: PawPrint },
@@ -134,7 +147,7 @@ export default function Layout() {
       {/* Footer — desktop only */}
       <footer className="hidden md:block bg-muted/30 border-t pt-10 pb-8">
         <div className="container max-w-7xl">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8 mb-8">
             {/* Branding Column */}
             <div className="space-y-4">
               <Link to="/" className="flex items-center gap-2 group w-fit">
@@ -158,6 +171,23 @@ export default function Layout() {
                       <item.Icon className="h-3 w-3" />
                       {t(item.labelKey)}
                     </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Find a Pet Column */}
+            <div className="space-y-4">
+              <h4 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{t('footer.findPet')}</h4>
+              <ul className="space-y-2">
+                {findPetLinks.map(item => (
+                  <li key={item.to}>
+                    <Link to={item.to} className="text-[13px] text-muted-foreground hover:text-primary transition-colors">{t(item.labelKey)}</Link>
+                  </li>
+                ))}
+                {footerDistricts.map(item => (
+                  <li key={item.to}>
+                    <Link to={item.to} className="text-[13px] text-muted-foreground hover:text-primary transition-colors">Pets in {item.label}</Link>
                   </li>
                 ))}
               </ul>
@@ -228,6 +258,11 @@ export default function Layout() {
           <p className="text-[11px] text-muted-foreground leading-relaxed max-w-xs">
             PawConnect (pawconnect.lk) empowers communities across Sri Lanka to rescue, report, and adopt stray animals.
           </p>
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-[11px] text-muted-foreground font-semibold">
+            {findPetLinks.map(item => (
+              <Link key={item.to} to={item.to} className="hover:text-primary transition-colors">{t(item.labelKey)}</Link>
+            ))}
+          </div>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-[11px] text-muted-foreground font-semibold">
             <Link to="/about" className="hover:text-primary transition-colors">About Us</Link>
             <Link to="/contact" className="hover:text-primary transition-colors">Contact Us</Link>

@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useAnimal, useMarkAdopted, useDeleteAnimal } from '@/hooks/useAnimals';
 import { useUser } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/button';
@@ -28,36 +28,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { usePageMeta } from '@/hooks/usePageMeta';
-import { DEFAULT_META, truncate, type PageMeta } from '@/lib/seo';
-
-// SEO meta is always English to match <html lang="en"> and the static tags in index.html.
-function getAnimalMeta(
-  animal: { type: string; post_type?: string; is_adopted: boolean; location_name: string; description: string | null } | null | undefined,
-  id: string,
-  image: string | undefined,
-): PageMeta {
-  const path = `/animals/${id}`;
-  if (!animal) {
-    return { title: 'Animal Not Found | PawConnect', description: DEFAULT_META.description, path, noindex: true };
-  }
-  const species = animal.type === 'dog' ? 'Dog' : 'Cat';
-  const lost = animal.post_type === 'lost';
-  const heading = lost
-    ? `${animal.is_adopted ? 'Reunited' : 'Lost'} ${species} in ${animal.location_name}`
-    : animal.is_adopted
-      ? `${species} Adopted in ${animal.location_name}`
-      : `${species} for Adoption in ${animal.location_name}`;
-  const fallback = lost
-    ? `Help find this lost ${species.toLowerCase()} last seen in ${animal.location_name}, Sri Lanka. Share or contact the owner on PawConnect.`
-    : `Meet this ${species.toLowerCase()} looking for a loving home in ${animal.location_name}, Sri Lanka. Adopt for free on PawConnect.`;
-  return {
-    title: `${heading} | PawConnect`,
-    description: truncate(animal.description?.trim() || fallback),
-    path,
-    image,
-    type: 'article',
-  };
-}
+import { animalCategory, getAnimalMeta } from '@/lib/seo';
 
 export default function AnimalDetail() {
   const { t, i18n } = useTranslation();
@@ -79,7 +50,7 @@ export default function AnimalDetail() {
   // Parse multiple photo URLs
   const photoUrls = animal ? parsePhotoUrls(animal.photo_url) : [];
 
-  usePageMeta(isLoading ? null : getAnimalMeta(animal, id!, photoUrls[0]));
+  usePageMeta(isLoading ? null : getAnimalMeta(animal, id!));
 
   const handleAdopt = async (targetAdopted: boolean = true) => {
     if (!user) {
@@ -96,7 +67,7 @@ export default function AnimalDetail() {
       
       if (targetAdopted) {
         setJustAdopted(true);
-        toast.success(animal?.post_type === 'lost' ? 'This pet has been marked as reunited! Thank you!' : t('detail.adoptedSuccess'));
+        toast.success(animal?.post_type === 'lost' ? t('detail.reunitedSuccess') : t('detail.adoptedSuccess'));
         confetti({
           particleCount: 150,
           spread: 80,
@@ -105,7 +76,7 @@ export default function AnimalDetail() {
         });
       } else {
         setJustAdopted(false);
-        toast.success(animal?.post_type === 'lost' ? 'Reunited status removed.' : t('detail.undoSuccess'));
+        toast.success(animal?.post_type === 'lost' ? t('detail.reunitedUndoSuccess') : t('detail.undoSuccess'));
       }
     } catch (err) {
       toast.error(friendlyError(err, t('detail.genericError')));
@@ -170,7 +141,7 @@ export default function AnimalDetail() {
         <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
           <Search className="h-7 w-7 text-muted-foreground" />
         </div>
-        <h2 className="font-heading text-xl font-bold">{t('detail.notFound')}</h2>
+        <h1 className="font-heading text-xl font-bold">{t('detail.notFound')}</h1>
         <p className="text-sm text-muted-foreground mt-2">{t('detail.notFoundDesc')}</p>
       </div>
     );
@@ -178,6 +149,10 @@ export default function AnimalDetail() {
 
   const isAdopted = animal.is_adopted || justAdopted;
   const TypeIcon = animal.type === 'dog' ? Dog : Cat;
+  const isLost = animal.post_type === 'lost';
+  const animalTitle = t((isLost ? 'common.lostTitle.' : 'common.animalTitle.') + animal.type, { location: animal.location_name });
+  const category = animalCategory(animal);
+  const categoryLabel = isLost ? t('browse.lostTab') : animal.type === 'cat' ? t('browse.catsCrumb') : t('browse.dogsCrumb');
 
   return (
     <div className="pb-16 relative overflow-x-hidden pt-5 md:pt-2">
@@ -188,19 +163,31 @@ export default function AnimalDetail() {
         </div>
       )}
 
+      {/* Breadcrumb — mirrors the BreadcrumbList structured data */}
+      <nav aria-label={t('detail.breadcrumb')} className="relative z-10 max-w-2xl mx-auto px-4 md:px-0">
+        <ol className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium min-w-0">
+          <li><Link to="/" className="hover:text-primary transition-colors">{t('nav.home')}</Link></li>
+          <li aria-hidden="true">›</li>
+          <li><Link to={category.path} className="hover:text-primary transition-colors">{categoryLabel}</Link></li>
+          <li aria-hidden="true">›</li>
+          <li aria-current="page" className="truncate text-foreground/70 capitalize">{animalTitle}</li>
+        </ol>
+      </nav>
+
       {/* Photo carousel section */}
       <div className="relative max-w-2xl mx-auto px-4 md:px-0 mt-2 md:mt-4 z-10">
         <div className={`relative aspect-square xs:aspect-[4/3] md:aspect-video bg-muted overflow-hidden rounded-3xl shadow-lg border border-black/5 dark:border-white/5 ${isAdopted ? 'ring-4 ring-success/20' : ''}`}>
           <PhotoCarousel
             key={animal.id}
             photoUrls={photoUrls}
-            alt={t('common.animalTitle.' + animal.type, { location: animal.location_name })}
+            alt={animalTitle}
             fallbackIcon={TypeIcon}
           />
 
           {/* Back button */}
           <button
             onClick={() => navigate(-1)}
+            aria-label={t('common.back')}
             className="absolute top-3 left-3 w-9 h-9 rounded-full bg-black/45 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/60 transition-colors z-20 shadow-md"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -211,7 +198,7 @@ export default function AnimalDetail() {
             <div className="absolute top-3 right-3 z-20">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-success text-success-foreground shadow-md">
                 <CheckCircle2 className="h-3.5 w-3.5" />
-                {animal.post_type === 'lost' ? 'Reunited' : t('browse.adopted')}
+                {isLost ? t('browse.reunited') : t('browse.adopted')}
               </span>
             </div>
           ) : (
@@ -219,7 +206,7 @@ export default function AnimalDetail() {
               <div className="absolute top-3 right-3 z-20">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-600 text-white shadow-md border border-rose-500/30">
                   <Heart className="h-3.5 w-3.5 text-white fill-white animate-pulse" />
-                  Lost
+                  {t('browse.lost')}
                 </span>
               </div>
             )
@@ -270,7 +257,7 @@ export default function AnimalDetail() {
             </div>
             <div className="flex-1 min-w-0">
               <h1 className="font-heading text-xl md:text-2xl font-black capitalize text-foreground tracking-tight leading-tight">
-                {t('common.animalTitle.' + animal.type, { location: animal.location_name })}
+                {animalTitle}
               </h1>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground mt-1.5 font-semibold">
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-muted/50 dark:bg-muted/30">
@@ -319,7 +306,7 @@ export default function AnimalDetail() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-[10px] md:text-xs text-muted-foreground font-bold uppercase tracking-wider">
-                {animal.post_type === 'lost' ? 'Contact Owner / Reporter' : t('detail.contactToAdopt')}
+                {isLost ? t('detail.contactOwner') : t('detail.contactToAdopt')}
               </p>
               <p className="text-sm font-black text-foreground truncate">{formatPhone(animal.contact_number)}</p>
             </div>
@@ -354,25 +341,23 @@ export default function AnimalDetail() {
               <AlertDialogTrigger asChild>
                 <Button variant="success" size="lg" className="w-full text-base rounded-2xl font-bold h-11">
                   <CheckCircle2 className="h-5 w-5 mr-2" />
-                  {animal.post_type === 'lost' ? 'Mark as Reunited' : t('detail.markAsAdopted')}
+                  {isLost ? t('detail.markAsReunited') : t('detail.markAsAdopted')}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent className="rounded-3xl w-[calc(100%-2rem)]">
                 <AlertDialogHeader>
                   <AlertDialogTitle className="font-heading inline-flex items-center gap-2 text-foreground font-bold">
                     <CircleCheck className="h-5 w-5 text-success" />
-                    {animal.post_type === 'lost' ? 'Confirm Reunited' : t('detail.confirmAdoption')}
+                    {isLost ? t('detail.confirmReunited') : t('detail.confirmAdoption')}
                   </AlertDialogTitle>
                   <AlertDialogDescription className="text-muted-foreground">
-                    {animal.post_type === 'lost' 
-                      ? 'Are you sure this pet has been reunited? This will move the post into the reunited section and remove it from the main view.'
-                      : t('detail.confirmDesc')}
+                    {isLost ? t('detail.confirmReunitedDesc') : t('detail.confirmDesc')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter className="gap-2 sm:gap-0">
                   <AlertDialogCancel className="rounded-2xl">{t('profile.actions.cancel')}</AlertDialogCancel>
                   <AlertDialogAction onClick={() => handleAdopt(true)} disabled={markAdopted.isPending} className="rounded-2xl bg-success hover:bg-success/90">
-                    {markAdopted.isPending ? t('profile.actions.updating') : (animal.post_type === 'lost' ? 'Yes, Mark as Reunited!' : t('detail.yesMark'))}
+                    {markAdopted.isPending ? t('profile.actions.updating') : (isLost ? t('detail.yesMarkReunited') : t('detail.yesMark'))}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -393,9 +378,7 @@ export default function AnimalDetail() {
           <div className="bg-primary/5 dark:bg-primary/10 border border-primary/10 rounded-3xl p-4 flex items-start gap-3">
             <Chart className="w-5 h-5 text-primary shrink-0 mt-0.5" />
             <p className="text-xs text-muted-foreground leading-relaxed font-medium">
-              {animal.post_type === 'lost'
-                ? 'Helping us keep accurate records? If this pet has been found, please mark it as reunited.'
-                : t('detail.statsNotice')}
+              {isLost ? t('detail.lostStatsNotice') : t('detail.statsNotice')}
             </p>
           </div>
         )}
@@ -404,9 +387,7 @@ export default function AnimalDetail() {
         {!isOwner && !isAdopted && animal.contact_number && (
           <div className="bg-muted/30 dark:bg-muted/10 rounded-3xl p-4 text-center border border-border/5">
             <p className="text-xs md:text-sm text-muted-foreground font-semibold">
-              {animal.post_type === 'lost'
-                ? 'Have you seen this pet or have information? Contact the reporter using the phone number above.'
-                : t('detail.interested')}
+              {isLost ? t('detail.lostInterested') : t('detail.interested')}
             </p>
           </div>
         )}
@@ -420,12 +401,12 @@ export default function AnimalDetail() {
           >
             <p className="text-lg font-heading font-black text-success inline-flex items-center justify-center gap-2">
               <CircleCheck className="h-5 w-5" />
-              {animal.post_type === 'lost' ? 'This pet has been reunited!' : t('detail.animalAdopted')}
+              {isLost ? t('detail.petReunited') : t('detail.animalAdopted')}
             </p>
             {animal.adopted_at && (
               <p className="text-sm text-muted-foreground mt-1.5 font-medium">
-                {animal.post_type === 'lost'
-                  ? `Reunited on ${getLocalDate(animal.adopted_at)}`
+                {isLost
+                  ? t('detail.reunitedOn', { date: getLocalDate(animal.adopted_at) })
                   : t('detail.adoptedOn', { date: getLocalDate(animal.adopted_at) })}
               </p>
             )}
@@ -434,24 +415,22 @@ export default function AnimalDetail() {
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="outline" size="sm" className="mt-4 border-success/30 hover:bg-success/5 text-success rounded-2xl font-bold">
-                    {animal.post_type === 'lost' ? 'Undo Reunited' : t('detail.undoAdoption')}
+                    {isLost ? t('detail.undoReunited') : t('detail.undoAdoption')}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent className="rounded-3xl w-[calc(100%-2rem)]">
                   <AlertDialogHeader>
                     <AlertDialogTitle className="font-heading text-foreground font-bold">
-                      {animal.post_type === 'lost' ? 'Bring back to lost list?' : t('detail.confirmUndoTitle')}
+                      {isLost ? t('detail.confirmUndoReunitedTitle') : t('detail.confirmUndoTitle')}
                     </AlertDialogTitle>
                     <AlertDialogDescription className="text-muted-foreground">
-                      {animal.post_type === 'lost'
-                        ? 'This will move the pet back to the main view and mark it as still missing.'
-                        : t('detail.confirmUndoDesc')}
+                      {isLost ? t('detail.confirmUndoReunitedDesc') : t('detail.confirmUndoDesc')}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter className="gap-2 sm:gap-0">
                     <AlertDialogCancel className="rounded-2xl">{t('profile.actions.cancel')}</AlertDialogCancel>
                     <AlertDialogAction onClick={() => handleAdopt(false)} disabled={markAdopted.isPending} className="rounded-2xl bg-primary hover:bg-primary/90">
-                      {markAdopted.isPending ? t('profile.actions.updating') : (animal.post_type === 'lost' ? 'Yes, Undo Reunited' : t('detail.yesUndo'))}
+                      {markAdopted.isPending ? t('profile.actions.updating') : (isLost ? t('detail.yesUndoReunited') : t('detail.yesUndo'))}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

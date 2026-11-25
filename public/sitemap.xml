@@ -1,31 +1,245 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Static pages. Keep in sync with PAGE_META in src/lib/seo.ts (checked by src/lib/seo.test.ts).
+     Individual animal pages are listed in /sitemap-animals.xml (api/sitemap-animals.js). -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://pawconnect.lk/</loc>
-    <lastmod>2026-10-16</lastmod>
+    <lastmod>2026-11-25</lastmod>
     <image:image>
       <image:loc>https://pawconnect.lk/Hero.webp</image:loc>
     </image:image>
   </url>
   <url>
     <loc>https://pawconnect.lk/animals</loc>
-    <lastmod>2026-10-16</lastmod>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/dogs</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/cats</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/colombo</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/gampaha</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/kalutara</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/kandy</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/matale</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/nuwara-eliya</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/galle</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/matara</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/hambantota</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/jaffna</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/kilinochchi</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/mannar</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/vavuniya</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/mullaitivu</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/batticaloa</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/ampara</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/trincomalee</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/kurunegala</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/puttalam</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/anuradhapura</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/polonnaruwa</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/badulla</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/monaragala</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/ratnapura</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/adopt/kegalle</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/colombo</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/gampaha</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/kalutara</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/kandy</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/matale</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/nuwara-eliya</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/galle</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/matara</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/hambantota</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/jaffna</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/kilinochchi</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/mannar</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/vavuniya</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/mullaitivu</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/batticaloa</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/ampara</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/trincomalee</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/kurunegala</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/puttalam</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/anuradhapura</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/polonnaruwa</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/badulla</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/monaragala</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/ratnapura</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://pawconnect.lk/lost-pets/kegalle</loc>
+    <lastmod>2026-11-25</lastmod>
   </url>
   <url>
     <loc>https://pawconnect.lk/dashboard</loc>
-    <lastmod>2026-10-16</lastmod>
+    <lastmod>2026-11-25</lastmod>
   </url>
   <url>
     <loc>https://pawconnect.lk/about</loc>
-    <lastmod>2026-10-16</lastmod>
+    <lastmod>2026-11-25</lastmod>
   </url>
   <url>
     <loc>https://pawconnect.lk/contact</loc>
-    <lastmod>2026-10-16</lastmod>
+    <lastmod>2026-11-25</lastmod>
   </url>
   <url>
     <loc>https://pawconnect.lk/privacy</loc>
-    <lastmod>2026-10-16</lastmod>
+    <lastmod>2026-11-25</lastmod>
   </url>
 </urlset>

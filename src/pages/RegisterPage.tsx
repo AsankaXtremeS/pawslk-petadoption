@@ -24,10 +24,10 @@ const slideVariants = {
   }),
 };
 import { usePageMeta } from '@/hooks/usePageMeta';
-import { DEFAULT_META } from '@/lib/seo';
+import { NOINDEX_META } from '@/lib/seo';
 
 export default function RegisterPage() {
-  usePageMeta({ title: 'Sign Up | PawConnect', description: DEFAULT_META.description, noindex: true });
+  usePageMeta(NOINDEX_META['/register']);
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();

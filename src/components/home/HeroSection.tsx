@@ -126,19 +126,19 @@ export default function HeroSection({ stats }: HeroSectionProps) {
                 transition={{ duration: 0.5 }}
                 className="text-center md:text-left flex flex-col items-center md:items-start"
               >
-                {/* Be their hero badge */}
-                <div className="mb-2.5 md:mb-4">
+                {/* Page H1: the keyword-bearing badge. The big tagline below is decorative. */}
+                <h1 className="mb-2.5 md:mb-4">
                   <Link to="/animals" className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors text-primary text-[10px] sm:text-xs font-bold">
                     <HeartPulse className="h-3 w-3 sm:h-3.5 sm:w-3.5 animate-pulse" />
-                    <span>Paw Connect</span>
+                    <span>{t('home.heroH1')}</span>
                   </Link>
-                </div>
+                </h1>
 
-                <h1 className="text-4xl xs:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-heading font-black leading-[1.12] text-slate-800 tracking-tight">
+                <p className="text-4xl xs:text-5xl md:text-5xl lg:text-6xl xl:text-7xl font-heading font-black leading-[1.12] text-slate-800 tracking-tight">
                   {t('home.heroTitle')}
                   <br />
                   <span className="text-primary font-extrabold">{t('home.heroTitleGradient')}</span>
-                </h1>
+                </p>
 
                 <p className="text-xs xs:text-sm md:text-lg text-slate-500 mt-1.5 md:mt-4 max-w-xs md:max-w-xl lg:max-w-2xl leading-relaxed">
                   {t('home.heroSubtitle')}

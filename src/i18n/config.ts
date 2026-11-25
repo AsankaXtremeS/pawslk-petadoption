@@ -27,4 +27,11 @@ i18n
     },
   });
 
+// Keep <html lang> in step with the UI language (screen readers, browser translation, search engines).
+const syncHtmlLang = (lng: string) => {
+  if (typeof document !== 'undefined') document.documentElement.lang = (lng || 'en').split('-')[0];
+};
+syncHtmlLang(i18n.resolvedLanguage || i18n.language);
+i18n.on('languageChanged', syncHtmlLang);
+
 export default i18n;

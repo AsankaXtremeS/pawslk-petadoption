@@ -64,6 +64,12 @@ function AppContent() {
             <Route path="/" element={<Index />} />
             <Route path="/animals" element={<BrowseAnimals />} />
             <Route path="/animals/:id" element={<AnimalDetail />} />
+            {/* SEO landing pages — all render the browse page with a preset view */}
+            <Route path="/adopt/dogs" element={<BrowseAnimals />} />
+            <Route path="/adopt/cats" element={<BrowseAnimals />} />
+            <Route path="/adopt/:district" element={<BrowseAnimals />} />
+            <Route path="/lost-pets" element={<BrowseAnimals />} />
+            <Route path="/lost-pets/:district" element={<BrowseAnimals />} />
             <Route path="/dashboard" element={<Dashboard />} />
 
             {/* Protected routes — require authentication */}
